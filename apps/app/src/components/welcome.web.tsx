@@ -48,10 +48,7 @@ export function Welcome() {
       </View>
       <View style={styles.buttons}>
         <View style={styles.button}>
-          <Button
-            title={t('welcome.signUp')}
-            onPress={() => router.push({ pathname: '/sign-in', params: { mode: 'sign-up' } })}
-          />
+          <Button title={t('welcome.signUp')} onPress={() => router.push('/sign-up')} />
         </View>
         {stores.map((store) => (
           <View key={store.url} style={styles.button}>

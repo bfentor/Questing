@@ -39,3 +39,18 @@ test('password managers recognise the sign-in form', async ({ page }) => {
   await password.press('Enter');
   await expect(page).not.toHaveURL(/sign-in/);
 });
+
+test('sign-in and sign-up each have their own address', async ({ page }) => {
+  await page.goto('/sign-in');
+  await page.getByRole('button', { name: 'New here? Create an account' }).click();
+  await expect(page).toHaveURL(/\/sign-up$/);
+  await expect(page.getByText('Create your account')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Have an account? Sign in' }).click();
+  await expect(page).toHaveURL(/\/sign-in$/);
+  await expect(page.getByText('Welcome back')).toBeVisible();
+
+  // Old links to the sign-up form still arrive there.
+  await page.goto('/sign-in?mode=sign-up');
+  await expect(page).toHaveURL(/\/sign-up$/);
+});

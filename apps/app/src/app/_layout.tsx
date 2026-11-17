@@ -83,6 +83,7 @@ function RootStack() {
         options={{ title: t('calendarSync.title') }}
       />
       <Stack.Screen name="sign-in" options={{ title: t('common.signIn'), presentation: 'modal' }} />
+      <Stack.Screen name="sign-up" options={{ title: t('auth.signUp'), presentation: 'modal' }} />
       <Stack.Screen name="settings" options={{ title: t('common.settings') }} />
       <Stack.Screen name="edit-profile" options={{ title: t('profile.edit') }} />
       <Stack.Screen name="follow-requests" options={{ title: t('followRequests.title') }} />
