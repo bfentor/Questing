@@ -16,6 +16,11 @@ type DateTimeFieldProps = {
   mode?: 'date' | 'datetime';
 };
 
+// React Native Web gives its own Text and TextInput this font, but a plain <input> only
+// inherits the browser's default (often a serif). Same stack, so the field matches the rest.
+const SYSTEM_FONT_STACK =
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+
 const pad = (n: number) => String(n).padStart(2, '0');
 
 /** "2030-01-10T18:00" in local time, as <input type="datetime-local"> wants it. */
@@ -59,8 +64,7 @@ export function DateTimeField({
           borderRadius: Spacing.two,
           backgroundColor: theme.backgroundElement,
           color: theme.text,
-          font: 'inherit',
-          fontSize: 16,
+          font: `16px ${SYSTEM_FONT_STACK}`,
           colorScheme: 'light dark',
         }}
       />
