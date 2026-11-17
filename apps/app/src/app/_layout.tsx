@@ -12,6 +12,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { restoreAppearance } from '@/lib/appearance';
 import { createPersistOptions, createQueryClient } from '@/lib/query-cache';
 import { applyPreferredLanguage, type Language } from '@/i18n';
+import { HeaderActions } from '@/components/home-button';
 import { OnboardingGate } from '@/components/onboarding-gate';
 import { TermsGate } from '@/components/terms-gate';
 import { ThemeReady } from '@/components/theme-ready';
@@ -58,7 +59,8 @@ function RootStack() {
   const { t } = useTranslation();
 
   return (
-    <Stack>
+    // Every screen with a header gets a way home; screens with their own buttons use HeaderActions.
+    <Stack screenOptions={{ headerRight: () => <HeaderActions /> }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="embed/[handle]" options={{ headerShown: false }} />
       <Stack.Screen name="events/[id]/index" options={{ title: t('event.title') }} />
@@ -91,7 +93,12 @@ function RootStack() {
       <Stack.Screen
         name="onboarding"
         // Leaving goes through the steps' own buttons, which mark onboarding as done.
-        options={{ title: t('onboarding.title'), headerLeft: () => null, gestureEnabled: false }}
+        options={{
+          title: t('onboarding.title'),
+          headerLeft: () => null,
+          headerRight: () => null,
+          gestureEnabled: false,
+        }}
       />
       <Stack.Screen name="organizations/index" options={{ title: t('organizations.title') }} />
       <Stack.Screen name="organizations/new" options={{ title: t('organizations.create') }} />

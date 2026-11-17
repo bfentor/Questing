@@ -5,6 +5,7 @@ import { Button } from '@/components/button';
 
 import { ContentMenu } from '@/components/content-menu';
 import { FollowButton } from '@/components/follow-button';
+import { HeaderActions } from '@/components/home-button';
 import { ProfileAction } from '@/components/profile-header';
 import { ProfileView } from '@/components/profile-view';
 import { useActingProfiles } from '@/hooks/use-acting-profiles';
@@ -21,7 +22,9 @@ export default function ProfileScreen() {
         options={{
           title: `@${handle}`,
           headerRight: () => (
-            <ContentMenu target={{ type: 'profile', id: handle }} owner={{ handle }} />
+            <HeaderActions>
+              <ContentMenu target={{ type: 'profile', id: handle }} owner={{ handle }} />
+            </HeaderActions>
           ),
         }}
       />

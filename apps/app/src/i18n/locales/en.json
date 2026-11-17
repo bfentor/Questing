@@ -7,6 +7,7 @@
     "notifications": "Notifications"
   },
   "common": {
+    "home": "Home",
     "tryAgain": "Try again",
     "signIn": "Sign in",
     "signOut": "Sign out",

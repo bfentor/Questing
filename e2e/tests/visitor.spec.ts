@@ -54,3 +54,12 @@ test('sign-in and sign-up each have their own address', async ({ page }) => {
   await page.goto('/sign-in?mode=sign-up');
   await expect(page).toHaveURL(/\/sign-up$/);
 });
+
+test('every page has a way back to the home page', async ({ page }) => {
+  // Opened straight from a link, so there is nothing to go back to.
+  for (const path of ['/sign-in', '/sign-up', '/legal/terms']) {
+    await page.goto(path);
+    await page.getByRole('link', { name: 'Home' }).click();
+    await expect(page).toHaveURL(/\/$/);
+  }
+});

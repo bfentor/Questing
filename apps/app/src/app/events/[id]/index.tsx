@@ -5,6 +5,7 @@ import type { GenerateMetadataFunction } from 'expo-server';
 import { useTranslation } from 'react-i18next';
 
 import { EventDetails, EventMenu } from '@/components/event-details';
+import { HeaderActions } from '@/components/home-button';
 import { Screen } from '@/components/screen';
 import { eventMetadata } from '@/lib/metadata';
 import { goBack } from '@/lib/navigation';
@@ -23,9 +24,11 @@ export default function EventScreen() {
       <Stack.Screen
         options={{
           title: event?.title ?? t('event.title'),
-          headerRight: event
-            ? () => <EventMenu event={event} onDeleted={() => goBack('/')} />
-            : undefined,
+          headerRight: () => (
+            <HeaderActions>
+              {event ? <EventMenu event={event} onDeleted={() => goBack('/')} /> : null}
+            </HeaderActions>
+          ),
         }}
       />
       <EventDetails id={Number(id)} />
