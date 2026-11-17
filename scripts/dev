@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# Runs the API and the app together in one terminal: `npm run dev` (or `scripts/dev`).
+#
+# The API runs in the background, its output prefixed with "api │". Expo runs in the
+# foreground and keeps the keyboard, so w / i / a / r work as usual. Ctrl+C stops both.
+# Arguments go to `expo start`, e.g. `npm run dev -- --web` or `npm run dev -- --clear`.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+API_PORT=8000
+APP_PORT=8081
+
+bold=$'\e[1m' dim=$'\e[2m' blue=$'\e[34m' red=$'\e[31m' reset=$'\e[0m'
+say() { printf '%s▸ %s%s\n' "$bold" "$*" "$reset"; }
+fail() {
+  printf '%s✗ %s%s\n' "$red" "$*" "$reset" >&2
+  exit 1
+}
+
+port_in_use() { (exec 3<>"/dev/tcp/127.0.0.1/$1") 2>/dev/null; }
+
+for port in "$API_PORT" "$APP_PORT"; do
+  port_in_use "$port" && fail "Port $port is already in use. Is the dev server already running elsewhere?"
+done
+
+# First run: the same .env files Getting started in README.md makes.
+if [[ ! -f "$ROOT/backend/.env" ]]; then
+  cp "$ROOT/backend/.env.example" "$ROOT/backend/.env"
+  say "Created backend/.env from .env.example"
+fi
+if [[ ! -f "$ROOT/apps/app/.env.local" ]]; then
+  cp "$ROOT/apps/app/.env.example" "$ROOT/apps/app/.env.local"
+  say "Created apps/app/.env.local from .env.example"
+fi
+
+# The docker compose database listens on 5433; start it when that's the one in use.
+if grep -q '^DATABASE_URL=.*:5433/' "$ROOT/backend/.env" && command -v docker >/dev/null; then
+  say "Starting the database (docker compose db)"
+  docker compose -f "$ROOT/docker-compose.yml" up -d --wait db
+fi
+
+# Stops a process and everything it started (uv → Django's autoreloader → the server).
+kill_tree() {
+  local child
+  for child in $(pgrep -P "$1" 2>/dev/null); do
+    kill_tree "$child"
+  done
+  kill "$1" 2>/dev/null || true
+}
+
+api_pid=""
+cleanup() {
+  trap - EXIT INT TERM
+  if [[ -n "$api_pid" ]]; then
+    printf '\n'
+    say "Stopping the API"
+    kill_tree "$api_pid"
+    wait "$api_pid" 2>/dev/null || true
+  fi
+}
+trap cleanup EXIT
+trap 'exit 130' INT TERM
+
+say "Applying migrations"
+(cd "$ROOT/backend" && uv run python manage.py migrate) || fail "Migrations failed; is the database running?"
+
+say "Starting the API on http://localhost:$API_PORT"
+(
+  cd "$ROOT/backend"
+  PYTHONUNBUFFERED=1 uv run python manage.py runserver "$API_PORT" 2>&1 </dev/null |
+    while IFS= read -r line; do
+      printf '%sapi │%s %s\n' "$blue" "$reset" "$line"
+    done
+) &
+api_pid=$!
+
+say "Starting the app ${dim}(w = web, i = iOS, a = Android, Ctrl+C stops both)${reset}"
+cd "$ROOT/apps/app"
+npx expo start --port "$APP_PORT" "$@"
