@@ -540,7 +540,9 @@ function Code({ look }: { look: Look }) {
   };
 
   return (
-    <Section title="Code" hint="Replaces Colors and Shape in src/constants/theme.ts.">
+    <Section
+      title="Code"
+      hint="Paste over src/constants/theme.ts from `export const Colors` to `export type ShapeValues`.">
       <ThemedView type="backgroundElement" style={[styles.code, shape.inner]}>
         <ThemedText type="code" selectable>
           {code}
