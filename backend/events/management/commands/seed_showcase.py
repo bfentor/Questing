@@ -58,6 +58,21 @@ SKIES = {
     "fire": ((40, 25, 30), (240, 130, 40)),
 }
 
+# The organizer of the Lahti events; seeding stops early once it exists.
+LAHTI_ORGANIZER = "lahti_students"
+
+# (venue, (lng, lat)): Lahti's centre, then a few towns around it, nearest first.
+LAHTI_PLACES = {
+    "market": ("Lahti market square", (25.6573, 60.9833)),
+    "sibelius": ("Sibelius Hall", (25.6496, 60.9905)),
+    "harbour": ("Vesijärvi harbour", (25.6560, 60.9925)),
+    "ski_jumps": ("Lahti Sports Centre", (25.6290, 60.9805)),
+    "campus": ("LUT University, Lahti campus", (25.6466, 61.0124)),
+    "hollola": ("Tiirismaa, Hollola", (25.5200, 60.9950)),
+    "orimattila": ("Orimattila", (25.7300, 60.8040)),
+    "heinola": ("Heinola", (26.0360, 61.2050)),
+}
+
 # handle, name, pronouns, faculty, study year, bio, interests, has a picture
 PEOPLE = [
     (
@@ -162,13 +177,19 @@ class Command(BaseCommand):
     def handle(self, *args, viewer, **options):
         if not settings.DEBUG:
             raise CommandError("Refusing to seed showcase data with DEBUG off.")
-        if Profile.objects.filter(handle="aino").exists():
+        seeded = Profile.objects.filter(handle="aino").exists()
+        if seeded and Profile.objects.filter(handle=LAHTI_ORGANIZER).exists():
             self.stdout.write("Showcase data already exists.")
             return
         call_command("seed_demo", stdout=self.stdout)
         user = User.objects.filter(email=viewer).first()
         if user is None:
             raise CommandError(f"No account with the email {viewer}.")
+        if seeded:
+            # Showcases seeded before the Lahti events existed get just those.
+            Showcase(user).add_lahti()
+            self.stdout.write(self.style.SUCCESS("Added the Lahti events to the showcase."))
+            return
         Showcase(user).build()
         self.stdout.write(
             self.style.SUCCESS(
@@ -185,6 +206,7 @@ class Showcase:
         self.now = timezone.now()
         self.random = random.Random(7)
         self.categories = {c.slug: c for c in Category.objects.all()}
+        self.lut = University.objects.filter(short_name="LUT").first()
 
     @transaction.atomic
     def build(self):
@@ -192,8 +214,13 @@ class Showcase:
         self.organizations()
         self.connections()
         self.events()
+        self.lahti()
         self.posts()
         self.notifications()
+
+    @transaction.atomic
+    def add_lahti(self):
+        self.lahti()
 
     # Pictures
 
@@ -239,7 +266,6 @@ class Showcase:
     # People and organizations
 
     def people(self):
-        lut = University.objects.filter(short_name="LUT").first()
         adult = {
             "birth_date": date(2001, 3, 9),
             "terms_version": settings.TERMS_VERSION,
@@ -293,16 +319,15 @@ class Showcase:
         self.me.avatar = self.me.avatar or self.avatar("campus")
         self.me.save()
         self.me.interests.add(self.categories["games"], self.categories["outdoors"])
-        if lut is not None:
+        if self.lut is not None:
             StudentStatus.objects.get_or_create(
                 user=self.viewer,
                 defaults={
-                    "university": lut,
+                    "university": self.lut,
                     "email": "student@student.lut.fi",
                     "verified_at": self.now,
                 },
             )
-        self.lut = lut
 
     def organizations(self):
         union = Profile.objects.get(handle="student_union")
@@ -681,6 +706,131 @@ class Showcase:
         self.comment(p["sofia"], "Is there a dress code?", event=self.gala)
         self.comment(self.union, "Smart casual! Ties optional 🎩", event=self.gala)
         self.comment(p["aino"], f"@{p['sofia'].handle} let's go together!", event=self.gala)
+
+    def lahti(self):
+        """A second town, at distances that fill each of the Nearby tab's radii differently."""
+        handles = ["aino", "mikko", "helmi", "outdoor_club"]
+        p = {profile.handle: profile for profile in Profile.objects.filter(handle__in=handles)}
+        club = Profile.objects.create(
+            kind=Profile.Kind.ORGANIZATION,
+            handle=LAHTI_ORGANIZER,
+            display_name="LUT Lahti Students",
+            bio="Events for everyone on the Lahti campus.",
+            avatar=self.avatar("lake"),
+            cover=self.picture("lake", size=(1500, 500)),
+        )
+        Membership.objects.create(
+            organization=club, user=p["helmi"].user, role=Membership.Role.ADMIN
+        )
+        self.follow(self.me, club)
+        for slug, organizer, title, starts_in, hours, extra in [
+            (
+                "market",
+                club,
+                "Christmas market stroll",
+                50,
+                3,
+                {
+                    "categories": ["food", "culture"],
+                    "sky": "snow",
+                    "description": "Glögi, gingerbread and stalls on the market square 🎄",
+                },
+            ),
+            (
+                "sibelius",
+                club,
+                "Lakeside jazz night",
+                4,
+                3,
+                {
+                    "categories": ["music"],
+                    "sky": "night",
+                    "price": Decimal("15.00"),
+                    "description": "A student big band by Lake Vesijärvi. Doors at 19.",
+                },
+            ),
+            (
+                "harbour",
+                club,
+                "Harbour sauna and ice swim",
+                28,
+                3,
+                {
+                    "categories": ["wellbeing", "outdoors"],
+                    "capacity": 10,
+                    "description": "Sauna, then a dip through the ice. Towels provided.",
+                },
+            ),
+            (
+                "ski_jumps",
+                p["mikko"],
+                "Ski jump stairs workout",
+                20,
+                1,
+                {
+                    "categories": ["sports"],
+                    "description": "Up and down the ski jump stairs. Brutal, but what a view.",
+                },
+            ),
+            (
+                "campus",
+                club,
+                "Career breakfast",
+                70,
+                2,
+                {
+                    "categories": ["career"],
+                    "students_of": self.lut,
+                    "capacity": 30,
+                    "description": "Coffee with alumni from local companies. Students only.",
+                },
+            ),
+            (
+                "hollola",
+                p["outdoor_club"],
+                "Tiirismaa day hike",
+                24 * 4,
+                6,
+                {
+                    "categories": ["outdoors"],
+                    "sky": "forest",
+                    "description": "The highest point in southern Finland. Lunch by the fire.",
+                },
+            ),
+            (
+                "orimattila",
+                p["aino"],
+                "Farm visit and pancakes",
+                24 * 6,
+                4,
+                {
+                    "categories": ["food", "community"],
+                    "sky": "food",
+                    "description": "Meet the animals, then pancakes with fresh jam 🥞",
+                },
+            ),
+            (
+                "heinola",
+                p["outdoor_club"],
+                "River paddle in Heinola",
+                24 * 8,
+                5,
+                {
+                    "categories": ["outdoors", "sports"],
+                    "sky": "lake",
+                    "description": "Just outside the widest search, about 30 km from Lahti.",
+                },
+            ),
+        ]:
+            venue, place = LAHTI_PLACES[slug]
+            event = self.event(
+                organizer, title, starts_in, hours, place=place, venue_name=venue, **extra
+            )
+            # One to three people going, so the cards don't all look the same.
+            for handle in ("aino", "mikko", "helmi")[: 1 + starts_in % 3]:
+                rsvp(event, p[handle], Attendance.Status.GOING)
+            if slug == "sibelius":
+                rsvp(event, self.me, Attendance.Status.GOING)
 
     # Posts
 

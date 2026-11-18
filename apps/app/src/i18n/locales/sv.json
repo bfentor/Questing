@@ -43,7 +43,10 @@
     "useMyLocation": "Använd min plats",
     "empty": "Inga evenemang nära dig just nu.",
     "within": "{{km}} km",
-    "showMap": "Visa karta"
+    "showMap": "Visa karta",
+    "emptyWithin": "Inga evenemang inom {{km}} km just nu.",
+    "widen": "Sök inom {{km}} km",
+    "youAreHere": "Du är här"
   },
   "following": {
     "signInPrompt": "Logga in för att se inlägg och evenemang från personer och organisationer du följer.",

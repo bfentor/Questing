@@ -1,4 +1,5 @@
 import pytest
+from django.contrib.gis.geos import Point
 from django.core.management import call_command
 from django.core.management.base import CommandError
 
@@ -33,6 +34,16 @@ def test_showcase_covers_the_app_from_the_demo_accounts_view():
     assert not feed.filter(author__handle="loud_larry").exists()  # muted
     assert PostImage.objects.filter(post__author__handle="student_union").count() == 4
     assert Event.objects.filter(published_at__isnull=True, organizer__handle="outdoor_club")
+
+
+@pytest.mark.django_db
+def test_lahti_events_fill_the_nearby_radii_differently():
+    call_command("seed_showcase")
+
+    centre = Point(25.6612, 60.9827, srid=4326)
+    near = {km: Event.objects.near(centre, km).count() for km in (2, 5, 10, 25)}
+    assert 0 < near[2] < near[5] < near[10] < near[25]
+    assert not Event.objects.near(centre, 25).filter(title="River paddle in Heinola").exists()
 
 
 @pytest.mark.django_db

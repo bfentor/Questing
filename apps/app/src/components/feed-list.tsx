@@ -29,6 +29,8 @@ type FeedListProps<T> = {
   keyExtractor: (item: T) => string;
   header?: ReactElement;
   emptyText: string;
+  /** Shown under the empty text, e.g. a way to widen the search. */
+  emptyAction?: ReactElement;
   /** Set when a navigation header already handles the top inset. */
   hasHeader?: boolean;
 };
@@ -40,6 +42,7 @@ export function FeedList<T>({
   keyExtractor,
   header,
   emptyText,
+  emptyAction,
   hasHeader,
 }: FeedListProps<T>) {
   const theme = useTheme();
@@ -68,9 +71,12 @@ export function FeedList<T>({
             />
           </View>
         ) : (
-          <ThemedText themeColor="textSecondary" style={styles.status}>
-            {emptyText}
-          </ThemedText>
+          <View style={styles.status}>
+            <ThemedText themeColor="textSecondary" style={styles.emptyText}>
+              {emptyText}
+            </ThemedText>
+            {emptyAction}
+          </View>
         )
       }
       ListFooterComponent={query.isFetchingNextPage ? <ActivityIndicator /> : undefined}
@@ -108,6 +114,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.three,
     paddingVertical: Spacing.six,
+    textAlign: 'center',
+  },
+  emptyText: {
     textAlign: 'center',
   },
 });

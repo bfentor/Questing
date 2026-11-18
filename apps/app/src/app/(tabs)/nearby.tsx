@@ -57,6 +57,7 @@ export default function NearbyScreen() {
 }
 
 const RADII_KM = [2, 5, 10, 25];
+const WIDEST_KM = RADII_KM[RADII_KM.length - 1];
 
 function NearbyFeed({ position }: { position: LatLng }) {
   const shape = useShape();
@@ -106,7 +107,16 @@ function NearbyFeed({ position }: { position: LatLng }) {
       }
       renderItem={(event) => <EventCard event={event} distanceM={event.distance_m} />}
       keyExtractor={(event) => String(event.id)}
-      emptyText={t('nearby.empty')}
+      emptyText={radius < WIDEST_KM ? t('nearby.emptyWithin', { km: radius }) : t('nearby.empty')}
+      emptyAction={
+        radius < WIDEST_KM ? (
+          <Button
+            title={t('nearby.widen', { km: WIDEST_KM })}
+            variant="secondary"
+            onPress={() => setRadius(WIDEST_KM)}
+          />
+        ) : undefined
+      }
     />
   );
 }

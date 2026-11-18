@@ -43,7 +43,10 @@
     "useMyLocation": "Käytä sijaintiani",
     "empty": "Lähelläsi ei ole nyt tapahtumia.",
     "within": "{{km}} km",
-    "showMap": "Näytä kartta"
+    "showMap": "Näytä kartta",
+    "emptyWithin": "{{km}} km:n säteellä ei ole nyt tapahtumia.",
+    "widen": "Hae {{km}} km:n säteeltä",
+    "youAreHere": "Olet tässä"
   },
   "following": {
     "signInPrompt": "Kirjaudu sisään nähdäksesi seuraamiesi ihmisten ja järjestöjen julkaisut ja tapahtumat.",

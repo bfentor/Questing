@@ -43,7 +43,10 @@
     "useMyLocation": "Use my location",
     "empty": "No events near you right now.",
     "within": "{{km}} km",
-    "showMap": "Show map"
+    "showMap": "Show map",
+    "emptyWithin": "No events within {{km}} km right now.",
+    "widen": "Search within {{km}} km",
+    "youAreHere": "You are here"
   },
   "following": {
     "signInPrompt": "Sign in to see posts and events from the people and organizations you follow.",
