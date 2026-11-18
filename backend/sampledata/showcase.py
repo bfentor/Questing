@@ -1,8 +1,9 @@
-"""Fills a development database with enough people, events and posts to try every feature.
+"""Enough people, events and posts to try every feature, on top of the demo data (demo.py).
 
-Builds on `seed_demo` (run first if needed) and is seen through the demo account, or the
-account given with --viewer: its feeds, notifications, organizations and settings all have
-something in them. Pictures are drawn here, so nothing is downloaded.
+It's seen through one account (the demo account unless another is given): its feeds,
+notifications, organizations and settings all have something in them. Every date is relative
+to now: events from a week ago to a month ahead. Pictures are drawn here, so nothing is
+downloaded.
 """
 
 import random
@@ -13,8 +14,6 @@ from io import BytesIO
 from allauth.account.models import EmailAddress
 from django.conf import settings
 from django.contrib.gis.geos import Point
-from django.core.management import call_command
-from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.utils import timezone
 from PIL import Image as PILImage
@@ -42,7 +41,8 @@ from posts.text import notify_mentions
 from profiles.models import Follow, FollowRequest, Invitation, Membership, Profile
 from students.models import StudentStatus, University
 
-from .seed_demo import DEMO_PASSWORD
+from .demo import DEMO_PASSWORD
+from .services import mark
 
 # Lappeenranta, where most of the showcase happens.
 CAMPUS = (28.0951, 61.0647)
@@ -58,7 +58,7 @@ SKIES = {
     "fire": ((40, 25, 30), (240, 130, 40)),
 }
 
-# The organizer of the Lahti events; seeding stops early once it exists.
+# The organizer of the Lahti events.
 LAHTI_ORGANIZER = "lahti_students"
 
 # (venue, (lng, lat)): Lahti's centre, then a few towns around it, nearest first.
@@ -72,6 +72,10 @@ LAHTI_PLACES = {
     "orimattila": ("Orimattila", (25.7300, 60.8040)),
     "heinola": ("Heinola", (26.0360, 61.2050)),
 }
+
+# The link previews the posts use; they go with the sample data.
+SAUNA_GUIDE = "https://example.com/sauna-guide"
+LINK_PREVIEWS = [SAUNA_GUIDE]
 
 # handle, name, pronouns, faculty, study year, bio, interests, has a picture
 PEOPLE = [
@@ -164,41 +168,6 @@ Bonus: get a proper winter coat before November, not after. Trust me on this one
 #lut #freshers #studentlife"""
 
 
-class Command(BaseCommand):
-    help = "Create a showcase of people, events and posts that exercises every feature."
-
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "--viewer",
-            default="demo@sidequest.test",
-            help="The account everything is set up around (default: the demo account).",
-        )
-
-    def handle(self, *args, viewer, **options):
-        if not settings.DEBUG:
-            raise CommandError("Refusing to seed showcase data with DEBUG off.")
-        seeded = Profile.objects.filter(handle="aino").exists()
-        if seeded and Profile.objects.filter(handle=LAHTI_ORGANIZER).exists():
-            self.stdout.write("Showcase data already exists.")
-            return
-        call_command("seed_demo", stdout=self.stdout)
-        user = User.objects.filter(email=viewer).first()
-        if user is None:
-            raise CommandError(f"No account with the email {viewer}.")
-        if seeded:
-            # Showcases seeded before the Lahti events existed get just those.
-            Showcase(user).add_lahti()
-            self.stdout.write(self.style.SUCCESS("Added the Lahti events to the showcase."))
-            return
-        Showcase(user).build()
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Seeded the showcase around {viewer}. Everyone else signs in with "
-                f"<handle>@sidequest.test / {DEMO_PASSWORD}"
-            )
-        )
-
-
 class Showcase:
     def __init__(self, viewer):
         self.viewer = viewer
@@ -217,10 +186,6 @@ class Showcase:
         self.lahti()
         self.posts()
         self.notifications()
-
-    @transaction.atomic
-    def add_lahti(self):
-        self.lahti()
 
     # Pictures
 
@@ -307,6 +272,7 @@ class Showcase:
             profile.save()
             profile.interests.set(self.categories[slug] for slug in interests)
             self.p[handle] = profile
+        mark(*self.p.values())
 
         # The viewer: a verified LUT student with a filled-in profile.
         # A new account is named after its email; give the demo account a proper name.
@@ -349,6 +315,7 @@ class Showcase:
                 avatar=self.avatar(sky),
                 cover=self.picture(sky, size=(1500, 500)),
             )
+            mark(org)
             for user in admins:
                 Membership.objects.create(organization=org, user=user, role=Membership.Role.ADMIN)
             for user in editors:
@@ -719,6 +686,7 @@ class Showcase:
             avatar=self.avatar("lake"),
             cover=self.picture("lake", size=(1500, 500)),
         )
+        mark(club)
         Membership.objects.create(
             organization=club, user=p["helmi"].user, role=Membership.Role.ADMIN
         )
@@ -874,7 +842,7 @@ class Showcase:
         friends = [p["aino"], p["mikko"], p["sofia"], p["leo"]]
 
         # Spread the posts publish_event made over the last few days, so the feed isn't all "now".
-        for post in Post.objects.filter(event__isnull=False, body=""):
+        for post in Post.objects.filter(event__isnull=False, body="", author__sample__isnull=False):
             Post.objects.filter(pk=post.pk).update(
                 created_at=self.now - timedelta(hours=self.random.randint(2, 90))
             )
@@ -911,7 +879,7 @@ class Showcase:
             likes=[p["aino"]],
         )
         guide = LinkPreview.objects.create(
-            url="https://example.com/sauna-guide",
+            url=SAUNA_GUIDE,
             title="A beginner's guide to sauna etiquette",
             description="How hot, how long, and what to do between rounds.",
             site_name="Example Magazine",
