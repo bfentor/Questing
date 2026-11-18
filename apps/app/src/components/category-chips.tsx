@@ -5,12 +5,14 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Spacing } from '@/constants/theme';
 import { useCategories } from '@/hooks/use-categories';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 
 /** Read-only chips for an event's categories. */
 export function CategoryChips({ slugs }: { slugs: string[] }) {
+  const shape = useShape();
   const { bySlug } = useCategories();
   const theme = useTheme();
   const categories = slugs.flatMap((slug) => bySlug.get(slug) ?? []);
@@ -22,7 +24,10 @@ export function CategoryChips({ slugs }: { slugs: string[] }) {
   return (
     <View style={styles.row}>
       {categories.map((category) => (
-        <ThemedView key={category.slug} type="backgroundElement" style={styles.chip}>
+        <ThemedView
+          key={category.slug}
+          type="backgroundElement"
+          style={[styles.chip, shape.selector]}>
           {/* Icon names come from the server; an unknown one simply renders nothing. */}
           {category.icon ? (
             <SymbolView
@@ -49,6 +54,7 @@ export function CategoryPicker({
   value: string[];
   onChange: (slugs: string[]) => void;
 }) {
+  const shape = useShape();
   const { categories } = useCategories();
   const theme = useTheme();
 
@@ -70,6 +76,7 @@ export function CategoryPicker({
             }
             style={[
               styles.option,
+              shape.selector,
               { backgroundColor: selected ? theme.tint : theme.backgroundElement },
             ]}>
             <ThemedText type="small" style={selected && { color: theme.onTint }}>
@@ -94,11 +101,9 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one,
-    borderRadius: 999,
   },
   option: {
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one + 2,
-    borderRadius: 999,
   },
 });

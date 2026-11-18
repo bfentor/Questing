@@ -1,5 +1,6 @@
 {
   "tabs": {
+    "home": "Home",
     "upcoming": "Upcoming",
     "nearby": "Nearby",
     "following": "Following",
@@ -7,6 +8,7 @@
     "notifications": "Notifications"
   },
   "common": {
+    "home": "Home",
     "tryAgain": "Try again",
     "signIn": "Sign in",
     "signOut": "Sign out",
@@ -42,7 +44,10 @@
     "useMyLocation": "Use my location",
     "empty": "No events near you right now.",
     "within": "{{km}} km",
-    "showMap": "Show map"
+    "showMap": "Show map",
+    "emptyWithin": "No events within {{km}} km right now.",
+    "widen": "Search within {{km}} km",
+    "youAreHere": "You are here"
   },
   "following": {
     "signInPrompt": "Sign in to see posts and events from the people and organizations you follow.",
@@ -74,7 +79,8 @@
     "noFollowing": "Not following anyone yet.",
     "requested": "Requested",
     "privateAccount": "This account is private",
-    "privateHint": "Follow it to see its posts and events."
+    "privateHint": "Follow it to see its posts and events.",
+    "share": "Share profile"
   },
   "event": {
     "title": "Event",
@@ -604,5 +610,17 @@
     "tabs": "Go to a tab, from Upcoming to Profile",
     "close": "Close the side panel or a dialog",
     "help": "Show these shortcuts"
+  },
+  "home": {
+    "nextEvent": "Your next event",
+    "comingUp": "Coming up",
+    "nearYou": "Near you",
+    "fromFollowing": "From people you follow",
+    "seeAll": "See all"
+  },
+  "drawer": {
+    "open": "Open menu",
+    "close": "Close menu",
+    "title": "Menu"
   }
 }

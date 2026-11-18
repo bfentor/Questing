@@ -10,11 +10,13 @@ import { StatTile } from '@/components/stat-tile';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-shape';
 import { WEB_URL } from '@/lib/config';
 import { useFormat } from '@/lib/format';
 
 /** How a profile you act for is doing: views, RSVPs and followers over 30 days, and per event. */
 export default function DashboardScreen() {
+  const shape = useShape();
   const { handle } = useLocalSearchParams<{ handle: string }>();
   const { t } = useTranslation();
   const format = useFormat();
@@ -104,7 +106,7 @@ export default function DashboardScreen() {
       )}
       <ThemedText type="heading">{t('embed.dashboardTitle')}</ThemedText>
       <ThemedText themeColor="textSecondary">{t('embed.dashboardHint')}</ThemedText>
-      <ThemedView type="backgroundElement" style={styles.snippet}>
+      <ThemedView type="backgroundElement" style={[styles.snippet, shape.inner]}>
         <ThemedText type="code" selectable>
           {`<iframe src="${WEB_URL}/embed/${handle}" title="Sidequest" width="100%" height="480" style="border:0"></iframe>`}
         </ThemedText>
@@ -140,7 +142,6 @@ const styles = StyleSheet.create({
   },
   snippet: {
     padding: Spacing.three,
-    borderRadius: Spacing.two,
   },
   number: {
     width: 76,

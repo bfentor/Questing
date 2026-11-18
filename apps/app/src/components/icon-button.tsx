@@ -32,7 +32,38 @@ export function IconButton({ icon, label, onPress, size = 20, color }: IconButto
   );
 }
 
+/** An icon in a filled circle, as tall as a small Button, e.g. "…" beside Follow. */
+export function RoundIconButton({ icon, label, onPress }: Omit<IconButtonProps, 'size' | 'color'>) {
+  const theme = useTheme();
+
+  return (
+    <Pressable
+      role="button"
+      accessibilityLabel={label}
+      hitSlop={6}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.round,
+        { backgroundColor: theme.backgroundElement },
+        pressed && styles.pressed,
+      ]}>
+      <SymbolView
+        name={{ ios: icon.ios, android: icon.material, web: icon.material }}
+        size={18}
+        tintColor={theme.text}
+      />
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
+  round: {
+    width: 34,
+    height: 34,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 999,
+  },
   button: {
     padding: 4,
     borderRadius: 999,

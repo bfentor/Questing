@@ -6,6 +6,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Spacing } from '@/constants/theme';
 import { useCategories } from '@/hooks/use-categories';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { timeWindow, type TimeWindow } from '@/lib/time-windows';
 
 import { ThemedText } from './themed-text';
@@ -13,13 +14,18 @@ import { ThemedText } from './themed-text';
 type ChipProps = { label: string; selected: boolean; onPress: () => void };
 
 function Chip({ label, selected, onPress }: ChipProps) {
+  const shape = useShape();
   const theme = useTheme();
   return (
     <Pressable
       role="checkbox"
       aria-checked={selected}
       onPress={onPress}
-      style={[styles.chip, { backgroundColor: selected ? theme.tint : theme.backgroundElement }]}>
+      style={[
+        styles.chip,
+        shape.selector,
+        { backgroundColor: selected ? theme.tint : theme.backgroundElement },
+      ]}>
       <ThemedText type="small" style={selected && { color: theme.onTint }}>
         {label}
       </ThemedText>
@@ -121,6 +127,5 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one + 2,
-    borderRadius: 999,
   },
 });

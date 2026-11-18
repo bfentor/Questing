@@ -16,6 +16,7 @@ import QRCode from 'react-native-qrcode-svg';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { authErrorMessage } from '@/lib/errors';
 import { useFormat } from '@/lib/format';
 
@@ -37,6 +38,7 @@ export function SecuritySection() {
 type Step = 'idle' | 'password' | 'setup' | 'codes';
 
 function TwoFactor() {
+  const shape = useShape();
   const { t } = useTranslation();
   const theme = useTheme();
   const queryClient = useQueryClient();
@@ -115,7 +117,7 @@ function TwoFactor() {
           <ThemedText type="small" themeColor="textSecondary">
             {t('twoFactor.scan')}
           </ThemedText>
-          <View style={styles.qr}>
+          <View style={[styles.qr, shape.inner]}>
             <QRCode value={totp.data.url} size={180} backgroundColor="#ffffff" color="#000000" />
           </View>
           <Pressable
@@ -142,7 +144,7 @@ function TwoFactor() {
           <ThemedText type="small" themeColor="textSecondary">
             {t('twoFactor.recoveryHint')}
           </ThemedText>
-          <ThemedView type="backgroundElement" style={styles.codes}>
+          <ThemedView type="backgroundElement" style={[styles.codes, shape.inner]}>
             <ThemedText type="code" selectable>
               {codes.join('\n')}
             </ThemedText>
@@ -243,11 +245,9 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     padding: Spacing.two,
     backgroundColor: '#ffffff',
-    borderRadius: Spacing.two,
   },
   codes: {
     padding: Spacing.three,
-    borderRadius: Spacing.two,
   },
   session: {
     flexDirection: 'row',

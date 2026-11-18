@@ -4,12 +4,14 @@ import { Linking, Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { ThemedText } from './themed-text';
 
 /** The page a post links to: its picture, site, title and description. Opens the page. */
 export function LinkPreview({ preview }: { preview: LinkPreviewData }) {
   const theme = useTheme();
+  const shape = useShape();
 
   return (
     <Pressable
@@ -18,6 +20,7 @@ export function LinkPreview({ preview }: { preview: LinkPreviewData }) {
       onPress={() => Linking.openURL(preview.url)}
       style={({ pressed }) => [
         styles.card,
+        shape.picture,
         { borderColor: theme.backgroundElement },
         pressed && styles.pressed,
       ]}>
@@ -51,7 +54,6 @@ export function LinkPreview({ preview }: { preview: LinkPreviewData }) {
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-    borderRadius: Spacing.three,
     overflow: 'hidden',
   },
   pressed: {

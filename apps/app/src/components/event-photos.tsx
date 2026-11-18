@@ -6,6 +6,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
 import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { Button } from './button';
 import { RemoteImage } from './remote-image';
@@ -19,6 +20,7 @@ const SHOWN = 12;
  * post it came from; adding one writes a post that shares the event.
  */
 export function EventPhotos({ event }: { event: Event }) {
+  const shape = useShape();
   const { t } = useTranslation();
   const { status } = useAuth();
   const started = new Date(event.starts_at) <= new Date();
@@ -43,7 +45,7 @@ export function EventPhotos({ event }: { event: Event }) {
               href={{ pathname: '/posts/[id]', params: { id: post_id } }}
               asChild>
               <Pressable
-                style={styles.cell}
+                style={[styles.cell, shape.inner]}
                 accessibilityLabel={t('eventPhotos.by', { name: author.display_name })}>
                 <RemoteImage image={image} style={styles.photo} contentFit="cover" />
               </Pressable>
@@ -79,7 +81,6 @@ const styles = StyleSheet.create({
     // Three to a row, with the gaps between them.
     width: '32.5%',
     aspectRatio: 1,
-    borderRadius: Spacing.two,
     overflow: 'hidden',
   },
   photo: {

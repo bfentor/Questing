@@ -13,6 +13,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { goBack } from '@/lib/navigation';
 
 const REASONS: ReportReasonEnum[] = [
@@ -26,6 +27,7 @@ const REASONS: ReportReasonEnum[] = [
 ];
 
 export default function ReportScreen() {
+  const shape = useShape();
   const { type, id } = useLocalSearchParams<ReportTarget>();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -46,7 +48,7 @@ export default function ReportScreen() {
   return (
     <Screen hasHeader>
       <ThemedText type="heading">{t('moderation.reportQuestion')}</ThemedText>
-      <ThemedView type="backgroundElement" style={styles.group} role="radiogroup">
+      <ThemedView type="backgroundElement" style={[styles.group, shape.box]} role="radiogroup">
         {REASONS.map((option) => {
           const selected = option === reason;
           return (
@@ -89,7 +91,6 @@ export default function ReportScreen() {
 
 const styles = StyleSheet.create({
   group: {
-    borderRadius: Spacing.three,
     overflow: 'hidden',
   },
   option: {

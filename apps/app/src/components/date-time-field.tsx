@@ -3,6 +3,7 @@ import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { useFormat } from '@/lib/format';
 
 import { ThemedText } from './themed-text';
@@ -26,6 +27,7 @@ export function DateTimeField({
   maximumDate,
   mode = 'datetime',
 }: DateTimeFieldProps) {
+  const shape = useShape();
   const theme = useTheme();
   const format = useFormat();
 
@@ -71,7 +73,7 @@ export function DateTimeField({
         role="button"
         accessibilityLabel={label}
         onPress={open}
-        style={[styles.input, { backgroundColor: theme.backgroundElement }]}>
+        style={[styles.input, shape.field, { backgroundColor: theme.backgroundElement }]}>
         <ThemedText>{mode === 'date' ? format.date(value) : format.dateTime(value)}</ThemedText>
       </Pressable>
     </View>
@@ -88,9 +90,7 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   input: {
-    minHeight: 44,
     justifyContent: 'center',
     paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.two,
   },
 });

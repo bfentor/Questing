@@ -8,6 +8,7 @@
     "e2e"
   ],
   "scripts": {
+    "dev": "scripts/dev",
     "app": "npm run start -w @sidequest/app --",
     "api:generate": "npm run generate -w @sidequest/api",
     "typecheck": "npm run typecheck --workspaces --if-present",

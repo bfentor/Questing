@@ -1,5 +1,6 @@
 {
   "tabs": {
+    "home": "Hem",
     "upcoming": "Kommande",
     "nearby": "I närheten",
     "following": "Följer",
@@ -7,6 +8,7 @@
     "notifications": "Notiser"
   },
   "common": {
+    "home": "Startsida",
     "tryAgain": "Försök igen",
     "signIn": "Logga in",
     "signOut": "Logga ut",
@@ -42,7 +44,10 @@
     "useMyLocation": "Använd min plats",
     "empty": "Inga evenemang nära dig just nu.",
     "within": "{{km}} km",
-    "showMap": "Visa karta"
+    "showMap": "Visa karta",
+    "emptyWithin": "Inga evenemang inom {{km}} km just nu.",
+    "widen": "Sök inom {{km}} km",
+    "youAreHere": "Du är här"
   },
   "following": {
     "signInPrompt": "Logga in för att se inlägg och evenemang från personer och organisationer du följer.",
@@ -74,7 +79,8 @@
     "noFollowing": "Följer ingen än.",
     "requested": "Förfrågan skickad",
     "privateAccount": "Kontot är privat",
-    "privateHint": "Följ det för att se dess inlägg och evenemang."
+    "privateHint": "Följ det för att se dess inlägg och evenemang.",
+    "share": "Dela profilen"
   },
   "event": {
     "title": "Evenemang",
@@ -604,5 +610,17 @@
     "tabs": "Gå till en flik, från Kommande till Profil",
     "close": "Stäng sidopanelen eller en dialog",
     "help": "Visa de här kortkommandona"
+  },
+  "home": {
+    "nextEvent": "Ditt nästa evenemang",
+    "comingUp": "På gång",
+    "nearYou": "Nära dig",
+    "fromFollowing": "Från dem du följer",
+    "seeAll": "Visa alla"
+  },
+  "drawer": {
+    "open": "Öppna menyn",
+    "close": "Stäng menyn",
+    "title": "Meny"
   }
 }

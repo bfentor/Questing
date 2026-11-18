@@ -6,16 +6,25 @@ export type TabDefinition = {
   name: string;
   href: Href;
   /** Key under `tabs` in the translation files. */
-  label: 'upcoming' | 'nearby' | 'following' | 'notifications' | 'profile';
+  label: 'home' | 'upcoming' | 'nearby' | 'notifications' | 'profile';
   /** SF Symbol on iOS; Material Symbol on Android and web. */
   icon: { ios: SFSymbol; material: AndroidSymbol };
 };
 
-/** The main sections of the app, shared by the native and web tab bars. */
+/**
+ * The main sections of the app, shared by the native and web tab bars and the drawer. At most
+ * five: Android's tab bar can't hold more.
+ */
 export const TABS: TabDefinition[] = [
   {
     name: 'index',
     href: '/',
+    label: 'home',
+    icon: { ios: 'house', material: 'home' },
+  },
+  {
+    name: 'upcoming',
+    href: '/upcoming',
     label: 'upcoming',
     icon: { ios: 'calendar', material: 'calendar_month' },
   },
@@ -24,12 +33,6 @@ export const TABS: TabDefinition[] = [
     href: '/nearby',
     label: 'nearby',
     icon: { ios: 'location', material: 'near_me' },
-  },
-  {
-    name: 'following',
-    href: '/following',
-    label: 'following',
-    icon: { ios: 'person.2', material: 'group' },
   },
   {
     name: 'notifications',

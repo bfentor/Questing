@@ -11,15 +11,17 @@ import { EventMap } from '@/components/event-map';
 import { FeedFilterBar, useFeedFilters } from '@/components/feed-filter-bar';
 import { FeedList } from '@/components/feed-list';
 import { Screen } from '@/components/screen';
+import { TabTitle } from '@/components/tab-title';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { useCurrentPosition } from '@/hooks/use-current-position';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { useBooleanPreference } from '@/lib/preferences';
 
 function Header() {
   const { t } = useTranslation();
-  return <ThemedText type="subtitle">{t('tabs.nearby')}</ThemedText>;
+  return <TabTitle title={t('tabs.nearby')} />;
 }
 
 export default function NearbyScreen() {
@@ -56,8 +58,10 @@ export default function NearbyScreen() {
 }
 
 const RADII_KM = [2, 5, 10, 25];
+const WIDEST_KM = RADII_KM[RADII_KM.length - 1];
 
 function NearbyFeed({ position }: { position: LatLng }) {
+  const shape = useShape();
   const { t } = useTranslation();
   const theme = useTheme();
   const [radius, setRadius] = useState(10);
@@ -81,6 +85,7 @@ function NearbyFeed({ position }: { position: LatLng }) {
                 onPress={() => setRadius(km)}
                 style={[
                   styles.radius,
+                  shape.selector,
                   { backgroundColor: radius === km ? theme.backgroundSelected : 'transparent' },
                 ]}>
                 <ThemedText type="small">{t('nearby.within', { km })}</ThemedText>
@@ -103,7 +108,16 @@ function NearbyFeed({ position }: { position: LatLng }) {
       }
       renderItem={(event) => <EventCard event={event} distanceM={event.distance_m} />}
       keyExtractor={(event) => String(event.id)}
-      emptyText={t('nearby.empty')}
+      emptyText={radius < WIDEST_KM ? t('nearby.emptyWithin', { km: radius }) : t('nearby.empty')}
+      emptyAction={
+        radius < WIDEST_KM ? (
+          <Button
+            title={t('nearby.widen', { km: WIDEST_KM })}
+            variant="secondary"
+            onPress={() => setRadius(WIDEST_KM)}
+          />
+        ) : undefined
+      }
     />
   );
 }
@@ -119,6 +133,5 @@ const styles = StyleSheet.create({
   radius: {
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one,
-    borderRadius: 999,
   },
 });

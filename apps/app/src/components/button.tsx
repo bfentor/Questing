@@ -2,6 +2,7 @@ import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { ThemedText } from './themed-text';
 
@@ -9,12 +10,22 @@ type ButtonProps = {
   title: string;
   onPress: () => void;
   variant?: 'primary' | 'secondary' | 'danger';
+  /** `small` is a compact pill, e.g. Follow or Edit profile beside a profile picture. */
+  size?: 'regular' | 'small';
   disabled?: boolean;
   loading?: boolean;
 };
 
-export function Button({ title, onPress, variant = 'primary', disabled, loading }: ButtonProps) {
+export function Button({
+  title,
+  onPress,
+  variant = 'primary',
+  size = 'regular',
+  disabled,
+  loading,
+}: ButtonProps) {
   const theme = useTheme();
+  const shape = useShape();
   const background = {
     primary: theme.tint,
     secondary: theme.backgroundElement,
@@ -29,6 +40,9 @@ export function Button({ title, onPress, variant = 'primary', disabled, loading 
       disabled={disabled || loading}
       style={({ pressed }) => [
         styles.button,
+        shape.button,
+        size === 'small' && styles.small,
+        variant !== 'secondary' && shape.raised,
         { backgroundColor: background },
         (pressed || disabled) && styles.dimmed,
       ]}>
@@ -47,11 +61,15 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 44,
     paddingHorizontal: Spacing.four,
     // Room around labels that wrap onto two lines on narrow screens.
     paddingVertical: Spacing.two,
-    borderRadius: Spacing.three,
+  },
+  small: {
+    // Still a comfortable tap target with the hit slop of the row around it.
+    minHeight: 34,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one,
   },
   dimmed: {
     opacity: 0.6,

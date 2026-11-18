@@ -17,6 +17,7 @@ import { TextField } from '@/components/text-field';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-shape';
 import { useFormat } from '@/lib/format';
 
 /** The messages in a DRF error response ({"field": ["…"]} or ["…"]). */
@@ -108,6 +109,7 @@ function SourceCard({
   removing: boolean;
   onRemove: () => void;
 }) {
+  const shape = useShape();
   const { t } = useTranslation();
   const format = useFormat();
   const status =
@@ -123,7 +125,7 @@ function SourceCard({
           : t('calendarSync.pending');
 
   return (
-    <ThemedView type="backgroundElement" style={styles.card}>
+    <ThemedView type="backgroundElement" style={[styles.card, shape.box]}>
       <ThemedText type="small" numberOfLines={1}>
         {source.url}
       </ThemedText>
@@ -144,6 +146,5 @@ const styles = StyleSheet.create({
   card: {
     gap: Spacing.two,
     padding: Spacing.three,
-    borderRadius: Spacing.three,
   },
 });

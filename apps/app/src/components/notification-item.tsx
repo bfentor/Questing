@@ -6,6 +6,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { useFormat } from '@/lib/format';
 
 import { Avatar } from './avatar';
@@ -66,6 +67,7 @@ function open(notification: Notification) {
 }
 
 export function NotificationItem({ notification }: { notification: Notification }) {
+  const shape = useShape();
   const { t } = useTranslation();
   const theme = useTheme();
   const format = useFormat();
@@ -75,6 +77,7 @@ export function NotificationItem({ notification }: { notification: Notification 
       onPress={() => open(notification)}
       style={({ pressed }) => [
         styles.item,
+        shape.box,
         !notification.read && { backgroundColor: theme.backgroundElement },
         pressed && styles.pressed,
       ]}>
@@ -105,7 +108,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.three,
     padding: Spacing.three,
-    borderRadius: Spacing.three,
   },
   text: {
     flex: 1,

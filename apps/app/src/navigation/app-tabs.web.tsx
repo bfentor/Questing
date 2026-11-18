@@ -110,7 +110,48 @@ function NavBar({ children }: TabListProps) {
         </ThemedText>
       </div>
       {children}
+      <SidebarLinks />
     </nav>
+  );
+}
+
+/** The drawer's places without a tab, under the tabs in the desktop sidebar (hidden on phones). */
+function SidebarLinks() {
+  const { t } = useTranslation();
+  const { status } = useAuth();
+  const pathname = usePathname();
+  const links: {
+    href: '/my-events' | '/organizations' | '/settings';
+    label: string;
+    icon: AndroidSymbol;
+  }[] = [
+    ...(status === 'signed-in'
+      ? [
+          {
+            href: '/my-events' as const,
+            label: t('myEvents.title'),
+            icon: 'event_available' as const,
+          },
+          {
+            href: '/organizations' as const,
+            label: t('organizations.title'),
+            icon: 'groups' as const,
+          },
+        ]
+      : []),
+    { href: '/settings', label: t('common.settings'), icon: 'settings' },
+  ];
+
+  return (
+    <div className={classes.extras}>
+      {links.map((link) => (
+        <Link key={link.href} href={link.href} asChild>
+          <TabButton icon={link.icon} isFocused={pathname === link.href}>
+            {link.label}
+          </TabButton>
+        </Link>
+      ))}
+    </div>
   );
 }
 

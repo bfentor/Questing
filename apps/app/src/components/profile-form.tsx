@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Switch, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-shape';
 import { useImageUpload } from '@/hooks/use-image-upload';
 
 import { CategoryPicker } from './category-chips';
@@ -28,6 +29,7 @@ type ProfileFormProps = {
 
 /** Pictures, details, interests and privacy of a profile (a person's or an organization's). */
 export function ProfileForm({ profile, showPrivacy, onSave, onSaved }: ProfileFormProps) {
+  const shape = useShape();
   const { t } = useTranslation();
   const upload = useImageUpload();
 
@@ -100,9 +102,11 @@ export function ProfileForm({ profile, showPrivacy, onSave, onSaved }: ProfileFo
     <>
       <Pressable onPress={() => pick('cover')} accessibilityLabel={t('editProfile.changeCover')}>
         {cover ? (
-          <RemoteImage image={cover} style={styles.cover} contentFit="cover" />
+          <RemoteImage image={cover} style={[styles.cover, shape.picture]} contentFit="cover" />
         ) : (
-          <ThemedView type="backgroundElement" style={[styles.cover, styles.coverEmpty]}>
+          <ThemedView
+            type="backgroundElement"
+            style={[styles.cover, shape.picture, styles.coverEmpty]}>
             <ThemedText themeColor="textSecondary">{t('editProfile.changeCover')}</ThemedText>
           </ThemedView>
         )}
@@ -186,7 +190,6 @@ const styles = StyleSheet.create({
   cover: {
     width: '100%',
     aspectRatio: 3,
-    borderRadius: Spacing.three,
   },
   coverEmpty: {
     alignItems: 'center',

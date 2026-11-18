@@ -18,6 +18,7 @@ import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useAuth } from '@/auth/auth-provider';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { useFormat } from '@/lib/format';
 
 import { RichText } from './rich-text';
@@ -76,6 +77,7 @@ type CommentsProps = {
 
 /** A comment thread, oldest first, with a box to add one (as yourself or an organization). */
 export function Comments({ parent, title, placeholder }: CommentsProps) {
+  const shape = useShape();
   const { t } = useTranslation();
   const theme = useTheme();
   const { status } = useAuth();
@@ -157,7 +159,11 @@ export function Comments({ parent, title, placeholder }: CommentsProps) {
             onChangeText={setBody}
             multiline
             maxLength={1000}
-            style={[styles.input, { color: theme.text, backgroundColor: theme.backgroundElement }]}
+            style={[
+              styles.input,
+              shape.field,
+              { color: theme.text, backgroundColor: theme.backgroundElement },
+            ]}
           />
           {error ? (
             <ThemedText type="small" themeColor="danger">
@@ -201,7 +207,6 @@ const styles = StyleSheet.create({
   input: {
     minHeight: 72,
     padding: Spacing.three,
-    borderRadius: Spacing.two,
     fontSize: 16,
     textAlignVertical: 'top',
   },

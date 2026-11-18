@@ -10,6 +10,7 @@ import { Modal, StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
 import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-shape';
 import { useReducedMotion } from '@/hooks/use-reduced-motion';
 
 import { Button } from './button';
@@ -18,6 +19,7 @@ import { ThemedView } from './themed-view';
 
 /** Asks signed-in people to accept the terms again after they change. */
 export function TermsGate() {
+  const shape = useShape();
   const reducedMotion = useReducedMotion();
   const { t } = useTranslation();
   const { status, signOut } = useAuth();
@@ -36,7 +38,7 @@ export function TermsGate() {
   return (
     <Modal visible={outdated} transparent animationType={reducedMotion ? 'none' : 'fade'}>
       <View style={styles.backdrop}>
-        <ThemedView style={styles.dialog} role="alertdialog">
+        <ThemedView style={[styles.dialog, shape.dialog]} role="alertdialog">
           <ThemedText type="heading">{t('legal.updatedTitle')}</ThemedText>
           <ThemedText themeColor="textSecondary">{t('legal.updatedMessage')}</ThemedText>
           <View style={styles.links}>
@@ -72,7 +74,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     gap: Spacing.three,
     padding: Spacing.four,
-    borderRadius: Spacing.four,
   },
   links: {
     flexDirection: 'row',

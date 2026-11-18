@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-shape';
 import { useReducedMotion } from '@/hooks/use-reduced-motion';
 
 import { Button } from './button';
@@ -28,6 +29,7 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  const shape = useShape();
   const reducedMotion = useReducedMotion();
   const { t } = useTranslation();
 
@@ -38,7 +40,10 @@ export function ConfirmDialog({
       animationType={reducedMotion ? 'none' : 'fade'}
       onRequestClose={onCancel}>
       <Pressable style={styles.backdrop} onPress={onCancel}>
-        <ThemedView style={styles.dialog} role="alertdialog" onStartShouldSetResponder={() => true}>
+        <ThemedView
+          style={[styles.dialog, shape.dialog]}
+          role="alertdialog"
+          onStartShouldSetResponder={() => true}>
           <ThemedText type="heading">{title}</ThemedText>
           {message ? <ThemedText themeColor="textSecondary">{message}</ThemedText> : null}
           <View style={styles.buttons}>
@@ -75,7 +80,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     gap: Spacing.three,
     padding: Spacing.four,
-    borderRadius: Spacing.four,
   },
   buttons: {
     flexDirection: 'row',

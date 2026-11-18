@@ -8,6 +8,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { WEB_URL } from '@/lib/config';
 import { useFormat } from '@/lib/format';
 
@@ -20,6 +21,7 @@ const SHOWN = 10;
  * their dashboard). Events open on Sidequest in a new tab.
  */
 export default function EmbedScreen() {
+  const shape = useShape();
   const { handle } = useLocalSearchParams<{ handle: string }>();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -51,7 +53,7 @@ export default function EmbedScreen() {
           role="link"
           onPress={() => open(`/events/${event.id}`)}
           style={({ pressed }) => pressed && styles.pressed}>
-          <ThemedView type="backgroundElement" style={styles.event}>
+          <ThemedView type="backgroundElement" style={[styles.event, shape.box]}>
             <ThemedText type="small" themeColor="tint">
               {format.eventTime(event.starts_at, event.ends_at)}
             </ThemedText>
@@ -83,7 +85,6 @@ const styles = StyleSheet.create({
   event: {
     gap: 2,
     padding: Spacing.three,
-    borderRadius: Spacing.three,
   },
   pressed: {
     opacity: 0.7,

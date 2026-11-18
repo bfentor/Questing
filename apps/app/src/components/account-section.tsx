@@ -12,6 +12,7 @@ import { Modal, StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
 import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-shape';
 import { toIsoDate } from '@/lib/dates';
 import { useFormat } from '@/lib/format';
 import { goBack } from '@/lib/navigation';
@@ -100,6 +101,7 @@ function BirthDate() {
 }
 
 function DeleteAccountDialog({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  const shape = useShape();
   const reducedMotion = useReducedMotion();
   const { t } = useTranslation();
   const { forgetSession } = useAuth();
@@ -129,7 +131,7 @@ function DeleteAccountDialog({ visible, onClose }: { visible: boolean; onClose: 
       animationType={reducedMotion ? 'none' : 'fade'}
       onRequestClose={onClose}>
       <View style={styles.backdrop}>
-        <ThemedView style={styles.dialog} role="alertdialog">
+        <ThemedView style={[styles.dialog, shape.dialog]} role="alertdialog">
           <ThemedText type="heading">{t('account.deleteConfirmTitle')}</ThemedText>
           <ThemedText themeColor="textSecondary">{t('account.deleteConfirmMessage')}</ThemedText>
           <TextField
@@ -170,6 +172,5 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     gap: Spacing.three,
     padding: Spacing.four,
-    borderRadius: Spacing.four,
   },
 });

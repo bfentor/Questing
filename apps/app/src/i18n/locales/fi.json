@@ -1,5 +1,6 @@
 {
   "tabs": {
+    "home": "Koti",
     "upcoming": "Tulossa",
     "nearby": "Lähellä",
     "following": "Seuratut",
@@ -7,6 +8,7 @@
     "notifications": "Ilmoitukset"
   },
   "common": {
+    "home": "Etusivu",
     "tryAgain": "Yritä uudelleen",
     "signIn": "Kirjaudu sisään",
     "signOut": "Kirjaudu ulos",
@@ -42,7 +44,10 @@
     "useMyLocation": "Käytä sijaintiani",
     "empty": "Lähelläsi ei ole nyt tapahtumia.",
     "within": "{{km}} km",
-    "showMap": "Näytä kartta"
+    "showMap": "Näytä kartta",
+    "emptyWithin": "{{km}} km:n säteellä ei ole nyt tapahtumia.",
+    "widen": "Hae {{km}} km:n säteeltä",
+    "youAreHere": "Olet tässä"
   },
   "following": {
     "signInPrompt": "Kirjaudu sisään nähdäksesi seuraamiesi ihmisten ja järjestöjen julkaisut ja tapahtumat.",
@@ -74,7 +79,8 @@
     "noFollowing": "Ei vielä seuraa ketään.",
     "requested": "Pyydetty",
     "privateAccount": "Tili on yksityinen",
-    "privateHint": "Seuraa sitä nähdäksesi sen julkaisut ja tapahtumat."
+    "privateHint": "Seuraa sitä nähdäksesi sen julkaisut ja tapahtumat.",
+    "share": "Jaa profiili"
   },
   "event": {
     "title": "Tapahtuma",
@@ -604,5 +610,17 @@
     "tabs": "Siirry välilehdelle Tulossa–Profiili",
     "close": "Sulje sivupaneeli tai ikkuna",
     "help": "Näytä nämä pikanäppäimet"
+  },
+  "home": {
+    "nextEvent": "Seuraava tapahtumasi",
+    "comingUp": "Tulossa",
+    "nearYou": "Lähelläsi",
+    "fromFollowing": "Seuraamiltasi",
+    "seeAll": "Näytä kaikki"
+  },
+  "drawer": {
+    "open": "Avaa valikko",
+    "close": "Sulje valikko",
+    "title": "Valikko"
   }
 }

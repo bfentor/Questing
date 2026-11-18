@@ -2,7 +2,9 @@ import type { Event, LatLng } from '@sidequest/api';
 import { AppleMaps, GoogleMaps } from 'expo-maps';
 import { Platform, StyleSheet } from 'react-native';
 
-import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-shape';
+import { useTheme } from '@/hooks/use-theme';
+import { withAlpha } from '@/lib/color';
 
 type EventMapProps = {
   center: LatLng;
@@ -18,10 +20,13 @@ export function zoomFor(radiusKm: number) {
 
 /**
  * Events with a location as markers, on Apple Maps (iOS) or Google Maps
- * (Android). Tapping a marker selects its event; on iOS that needs iOS 18,
- * older versions show the title only.
+ * (Android), with the viewer's position and the search radius. Tapping a
+ * marker selects its event; on iOS that needs iOS 18, older versions show
+ * the title only.
  */
 export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) {
+  const shape = useShape();
+  const theme = useTheme();
   const markers = events.flatMap((event) =>
     event.location
       ? [
@@ -37,6 +42,16 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
     coordinates: { latitude: center.lat, longitude: center.lng },
     zoom: zoomFor(radiusKm),
   };
+  const reach = [
+    {
+      id: 'reach',
+      center: { latitude: center.lat, longitude: center.lng },
+      radius: radiusKm * 1000,
+      color: withAlpha(theme.tint, 0.08),
+      lineColor: theme.tint,
+      lineWidth: 1.5,
+    },
+  ];
   const select = (marker: { id?: string }) => {
     const event = events.find((candidate) => String(candidate.id) === marker.id);
     if (event) onSelect(event);
@@ -44,17 +59,19 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
 
   return Platform.OS === 'ios' ? (
     <AppleMaps.View
-      style={styles.map}
+      style={[styles.map, shape.picture]}
       cameraPosition={cameraPosition}
       markers={markers}
+      circles={reach}
       properties={{ isMyLocationEnabled: true }}
       onMarkerClick={select}
     />
   ) : (
     <GoogleMaps.View
-      style={styles.map}
+      style={[styles.map, shape.picture]}
       cameraPosition={cameraPosition}
       markers={markers}
+      circles={reach}
       properties={{ isMyLocationEnabled: true }}
       onMarkerClick={select}
     />
@@ -64,7 +81,6 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
 const styles = StyleSheet.create({
   map: {
     height: 360,
-    borderRadius: Spacing.three,
     overflow: 'hidden',
   },
 });

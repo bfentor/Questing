@@ -72,6 +72,7 @@ cp .env.example .env
 uv sync
 uv run python manage.py migrate
 uv run python manage.py seed_demo           # optional: demo@sidequest.test / sidequest-demo
+uv run python manage.py seed_showcase       # optional: lots more, to try every feature as demo
 uv run python manage.py createsuperuser     # optional: for /admin/
 uv run python manage.py runserver
 cd ..
@@ -80,6 +81,8 @@ cd ..
 cp apps/app/.env.example apps/app/.env.local
 npm run app                                 # w = web, i = iOS simulator, a = Android emulator
 ```
+
+After the first setup, `npm run dev` starts both in one terminal: it applies migrations, runs the API in the background (its lines start with `api │`) and Expo in the foreground, so `w`, `i` and `a` work as usual. Ctrl+C stops both. Arguments go to `expo start`, e.g. `npm run dev -- --web`.
 
 The app opens in a development build by default (`expo-dev-client`); press `s` in the terminal to switch to Expo Go. A development build for your phone: `cd apps/app && npx eas-cli build --profile development`.
 

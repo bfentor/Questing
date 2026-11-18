@@ -2,6 +2,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { toIsoDate } from '@/lib/dates';
 
 import { ThemedText } from './themed-text';
@@ -15,6 +16,11 @@ type DateTimeFieldProps = {
   /** Only the date (e.g. a birth date), or date and time. */
   mode?: 'date' | 'datetime';
 };
+
+// React Native Web gives its own Text and TextInput this font, but a plain <input> only
+// inherits the browser's default (often a serif). Same stack, so the field matches the rest.
+const SYSTEM_FONT_STACK =
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -33,6 +39,7 @@ export function DateTimeField({
   mode = 'datetime',
 }: DateTimeFieldProps) {
   const theme = useTheme();
+  const shape = useShape();
   const toInput = mode === 'date' ? toIsoDate : toDateTimeInput;
 
   return (
@@ -53,14 +60,13 @@ export function DateTimeField({
           }
         }}
         style={{
-          minHeight: 44,
+          minHeight: shape.controlHeight,
           padding: `0 ${Spacing.three}px`,
-          border: 'none',
-          borderRadius: Spacing.two,
+          border: shape.border ? `${shape.border}px solid ${theme.backgroundSelected}` : 'none',
+          borderRadius: shape.fieldRadius,
           backgroundColor: theme.backgroundElement,
           color: theme.text,
-          font: 'inherit',
-          fontSize: 16,
+          font: `16px ${SYSTEM_FONT_STACK}`,
           colorScheme: 'light dark',
         }}
       />

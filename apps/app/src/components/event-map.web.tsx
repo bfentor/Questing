@@ -2,9 +2,10 @@ import type { Event, LatLng } from '@sidequest/api';
 // Metro warns about the image URLs inside; they're for default icons and controls this map doesn't use.
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 type EventMapProps = {
   center: LatLng;
@@ -17,19 +18,18 @@ type LoadedMap = {
   L: typeof import('leaflet');
   map: import('leaflet').Map;
   markers: import('leaflet').LayerGroup;
+  /** Where the viewer is and how far the search reaches. */
+  area: import('leaflet').LayerGroup;
 };
 
-/** Roughly fits a circle of `radiusKm` around the center on a phone-sized map. */
-export function zoomFor(radiusKm: number) {
-  return Math.round(14 - Math.log2(radiusKm));
-}
-
 /**
- * Events with a location as markers on an OpenStreetMap map (Leaflet).
- * Clicking a marker selects its event.
+ * Events with a location as markers on an OpenStreetMap map (Leaflet), around the viewer's
+ * position and the search radius. Clicking a marker selects its event.
  */
 export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) {
   const theme = useTheme();
+  const shape = useShape();
+  const { t } = useTranslation();
   const container = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState<LoadedMap | null>(null);
 
@@ -44,7 +44,10 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }).addTo(map);
-      created = { L, map, markers: L.layerGroup().addTo(map) };
+      // The viewer and the radius get a pane under the markers' (overlayPane, z-index 400), so
+      // an event right next to you is never hidden under the "you are here" dot.
+      map.createPane(AREA_PANE).style.zIndex = '350';
+      created = { L, map, area: L.layerGroup().addTo(map), markers: L.layerGroup().addTo(map) };
       setLoaded(created);
     });
     return () => {
@@ -54,8 +57,33 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
   }, []);
 
   useEffect(() => {
-    loaded?.map.setView([center.lat, center.lng], zoomFor(radiusKm));
-  }, [loaded, center.lat, center.lng, radiusKm]);
+    if (!loaded) return;
+    const { L, map, area } = loaded;
+    // Exactly the searched area, whatever the map's size. Set before drawing: a new map has no
+    // view yet, and Leaflet can't measure shapes on it until it has one.
+    const position = L.latLng(center.lat, center.lng);
+    map.fitBounds(position.toBounds(radiusKm * 2000), { padding: [8, 8] });
+    area.clearLayers();
+    L.circle(position, {
+      radius: radiusKm * 1000,
+      color: theme.tint,
+      weight: 1.5,
+      fillColor: theme.tint,
+      fillOpacity: 0.08,
+      interactive: false,
+      pane: AREA_PANE,
+    }).addTo(area);
+    L.circleMarker(position, {
+      radius: 7,
+      color: theme.background,
+      weight: 3,
+      fillColor: theme.text,
+      fillOpacity: 1,
+      pane: AREA_PANE,
+    })
+      .bindTooltip(t('nearby.youAreHere'))
+      .addTo(area);
+  }, [loaded, center.lat, center.lng, radiusKm, theme, t]);
 
   useEffect(() => {
     if (!loaded) return;
@@ -77,12 +105,22 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
   }, [loaded, events, theme, onSelect]);
 
   // Leaflet draws into a DOM element of its own.
-  return <div ref={container} style={{ ...MAP_STYLE, backgroundColor: theme.backgroundElement }} />;
+  return (
+    <div
+      ref={container}
+      style={{
+        ...MAP_STYLE,
+        borderRadius: shape.boxRadius,
+        backgroundColor: theme.backgroundElement,
+      }}
+    />
+  );
 }
+
+const AREA_PANE = 'area';
 
 const MAP_STYLE = {
   height: 360,
-  borderRadius: Spacing.three,
   overflow: 'hidden',
   // Keeps Leaflet's panes below the app's navigation and dialogs.
   zIndex: 0,

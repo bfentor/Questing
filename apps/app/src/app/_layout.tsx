@@ -7,11 +7,13 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { AuthProvider, useAuth } from '@/auth/auth-provider';
-import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useTheme } from '@/hooks/use-theme';
 import { restoreAppearance } from '@/lib/appearance';
 import { createPersistOptions, createQueryClient } from '@/lib/query-cache';
+import { restoreThemeLab } from '@/lib/theme-lab';
 import { applyPreferredLanguage, type Language } from '@/i18n';
+import { HeaderActions } from '@/components/home-button';
 import { OnboardingGate } from '@/components/onboarding-gate';
 import { TermsGate } from '@/components/terms-gate';
 import { ThemeReady } from '@/components/theme-ready';
@@ -23,6 +25,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const scheme = useColorScheme() === 'dark' ? 'dark' : 'light';
+  const colors = useTheme();
   const [queryClient] = useState(createQueryClient);
   const [persistOptions] = useState(createPersistOptions);
 
@@ -31,10 +34,10 @@ export default function RootLayout() {
     ...base,
     colors: {
       ...base.colors,
-      primary: Colors[scheme].tint,
-      background: Colors[scheme].background,
-      card: Colors[scheme].background,
-      text: Colors[scheme].text,
+      primary: colors.tint,
+      background: colors.background,
+      card: colors.background,
+      text: colors.text,
     },
   };
 
@@ -58,7 +61,8 @@ function RootStack() {
   const { t } = useTranslation();
 
   return (
-    <Stack>
+    // Every screen with a header gets a way home; screens with their own buttons use HeaderActions.
+    <Stack screenOptions={{ headerRight: () => <HeaderActions /> }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="embed/[handle]" options={{ headerShown: false }} />
       <Stack.Screen name="events/[id]/index" options={{ title: t('event.title') }} />
@@ -83,6 +87,7 @@ function RootStack() {
         options={{ title: t('calendarSync.title') }}
       />
       <Stack.Screen name="sign-in" options={{ title: t('common.signIn'), presentation: 'modal' }} />
+      <Stack.Screen name="sign-up" options={{ title: t('auth.signUp'), presentation: 'modal' }} />
       <Stack.Screen name="settings" options={{ title: t('common.settings') }} />
       <Stack.Screen name="edit-profile" options={{ title: t('profile.edit') }} />
       <Stack.Screen name="follow-requests" options={{ title: t('followRequests.title') }} />
@@ -90,10 +95,17 @@ function RootStack() {
       <Stack.Screen
         name="onboarding"
         // Leaving goes through the steps' own buttons, which mark onboarding as done.
-        options={{ title: t('onboarding.title'), headerLeft: () => null, gestureEnabled: false }}
+        options={{
+          title: t('onboarding.title'),
+          headerLeft: () => null,
+          headerRight: () => null,
+          gestureEnabled: false,
+        }}
       />
       <Stack.Screen name="organizations/index" options={{ title: t('organizations.title') }} />
       <Stack.Screen name="organizations/new" options={{ title: t('organizations.create') }} />
+      {/* Development only: the screen redirects home in production builds. */}
+      <Stack.Screen name="theme-lab" options={{ title: 'Theme lab' }} />
       <Stack.Screen
         name="report"
         options={{ title: t('moderation.report'), presentation: 'modal' }}
@@ -119,7 +131,7 @@ function LanguageSync() {
 
   useEffect(() => {
     applyPreferredLanguage();
-    restoreAppearance().finally(() => SplashScreen.hideAsync());
+    Promise.all([restoreAppearance(), restoreThemeLab()]).finally(() => SplashScreen.hideAsync());
   }, []);
 
   useEffect(() => {

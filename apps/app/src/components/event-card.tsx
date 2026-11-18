@@ -5,6 +5,7 @@ import { Pressable, StyleSheet } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { useFormat } from '@/lib/format';
 
 import { useEventPanel } from './event-panel';
@@ -27,12 +28,24 @@ export function EventCard({ event, distanceM }: EventCardProps) {
   const going = event.attendance.going;
   const panel = useEventPanel();
   const theme = useTheme();
+  const shape = useShape();
   const selected = panel?.selected === event.id;
 
   const card = (
     <ThemedView
       type="backgroundElement"
-      style={[styles.card, { borderColor: selected ? theme.tint : 'transparent' }]}>
+      style={[
+        styles.card,
+        shape.box,
+        {
+          borderWidth: Math.max(2, shape.border),
+          borderColor: selected
+            ? theme.tint
+            : shape.border
+              ? theme.backgroundSelected
+              : 'transparent',
+        },
+      ]}>
       <ThemedText type="smallBold" themeColor={event.status === 'active' ? 'tint' : 'danger'}>
         {event.status === 'active'
           ? format.eventTime(event.starts_at, event.ends_at)
@@ -86,9 +99,6 @@ const styles = StyleSheet.create({
   card: {
     gap: Spacing.one,
     padding: Spacing.three,
-    borderRadius: Spacing.three,
-    // Coloured when the card's event is open in the side panel.
-    borderWidth: 2,
   },
   pressed: {
     opacity: 0.7,

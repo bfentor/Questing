@@ -32,7 +32,7 @@ export default function EditPostScreen() {
               return (error ?? {}) as PostFieldErrors;
             }
             queryClient.invalidateQueries();
-            goBack('/following');
+            goBack('/');
             return null;
           }}
         />
