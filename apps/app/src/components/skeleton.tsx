@@ -11,18 +11,20 @@ import Animated, {
 import { Spacing } from '@/constants/theme';
 import { useReducedMotion } from '@/hooks/use-reduced-motion';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { ThemedView } from './themed-view';
 
 /** A grey shape where content is still loading. */
 function Bone({ width = '100%', height = 16 }: { width?: DimensionValue; height?: number }) {
   const theme = useTheme();
+  const shape = useShape();
   return (
     <View
       style={{
         width,
         height,
-        borderRadius: Spacing.two,
+        borderRadius: shape.boxRadius / 2,
         backgroundColor: theme.backgroundSelected,
       }}
     />
@@ -54,10 +56,11 @@ function Pulse({ children }: { children: ReactNode }) {
 
 /** A few card-shaped placeholders, for feeds and lists. */
 export function SkeletonList({ count = 3 }: { count?: number }) {
+  const shape = useShape();
   return (
     <Pulse>
       {Array.from({ length: count }, (_, index) => (
-        <ThemedView key={index} type="backgroundElement" style={styles.card}>
+        <ThemedView key={index} type="backgroundElement" style={[styles.card, shape.box]}>
           <Bone width="40%" height={14} />
           <Bone width="75%" height={24} />
           <Bone width="55%" height={14} />
@@ -89,6 +92,5 @@ const styles = StyleSheet.create({
   card: {
     gap: Spacing.two,
     padding: Spacing.three,
-    borderRadius: Spacing.three,
   },
 });

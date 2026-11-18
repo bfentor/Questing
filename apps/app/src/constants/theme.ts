@@ -32,6 +32,30 @@ export const Colors = {
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
+/**
+ * The app's shape: how round, outlined and raised things are. Components read it through
+ * useShape(); in development the Theme lab (Settings → Theme lab) edits it live.
+ */
+export const Shape = {
+  /** Cards, panels and pictures (dialogs are 1.5×, small pictures ½×). */
+  boxRadius: 16,
+  /** Buttons and segmented controls. */
+  buttonRadius: 16,
+  /** Text inputs and date fields. */
+  fieldRadius: 8,
+  /** Chips, pills and progress bars (checkboxes stop at 6). 999 is fully round. */
+  selectorRadius: 999,
+  /** Outline width around cards, dialogs and inputs; 0 for none. */
+  border: 0,
+  /** Shadow under cards, dialogs and filled buttons: 0 flat, 1 subtle, 2 raised. */
+  depth: 0,
+  /** Height of buttons and single-line inputs; 44 is the smallest comfortable touch target. */
+  controlHeight: 44,
+} as const;
+
+export type ShapeToken = keyof typeof Shape;
+export type ShapeValues = Record<ShapeToken, number>;
+
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */

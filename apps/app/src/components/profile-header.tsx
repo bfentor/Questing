@@ -7,6 +7,7 @@ import { Linking, Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { Avatar } from './avatar';
 import { RemoteImage } from './remote-image';
@@ -25,6 +26,7 @@ export function ProfileAction({ children }: { children: ReactNode }) {
 }
 
 export function ProfileHeader({ profile, actions }: ProfileHeaderProps) {
+  const shape = useShape();
   const { t } = useTranslation();
   const theme = useTheme();
   const details = [
@@ -38,9 +40,16 @@ export function ProfileHeader({ profile, actions }: ProfileHeaderProps) {
   return (
     <View style={styles.header}>
       {profile.cover ? (
-        <RemoteImage image={profile.cover} style={styles.cover} contentFit="cover" />
+        <RemoteImage
+          image={profile.cover}
+          style={[styles.cover, shape.picture]}
+          contentFit="cover"
+        />
       ) : (
-        <ThemedView type="backgroundElement" style={[styles.cover, styles.coverEmpty]} />
+        <ThemedView
+          type="backgroundElement"
+          style={[styles.cover, shape.picture, styles.coverEmpty]}
+        />
       )}
       <View style={styles.avatar}>
         <Avatar name={profile.display_name} image={profile.avatar} size={88} />
@@ -121,7 +130,6 @@ const styles = StyleSheet.create({
   cover: {
     width: '100%',
     aspectRatio: 3,
-    borderRadius: Spacing.three,
   },
   coverEmpty: {
     aspectRatio: 4,

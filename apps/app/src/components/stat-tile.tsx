@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { useFormat } from '@/lib/format';
 
 import { ThemedText } from './themed-text';
@@ -30,6 +31,7 @@ type StatTileProps = {
  * over) a column shows that day's value.
  */
 export function StatTile({ title, value, caption, daily, days }: StatTileProps) {
+  const shape = useShape();
   const { t } = useTranslation();
   const theme = useTheme();
   const format = useFormat();
@@ -41,7 +43,7 @@ export function StatTile({ title, value, caption, daily, days }: StatTileProps) 
   const radius = Math.min(4, column / 2);
 
   return (
-    <ThemedView type="backgroundElement" style={styles.tile}>
+    <ThemedView type="backgroundElement" style={[styles.tile, shape.box]}>
       <ThemedText type="smallBold">{title}</ThemedText>
       <ThemedText type="title">{value}</ThemedText>
       <ThemedText type="small" themeColor="textSecondary">
@@ -95,7 +97,6 @@ const styles = StyleSheet.create({
     flexBasis: 220,
     gap: Spacing.one,
     padding: Spacing.three,
-    borderRadius: Spacing.three,
   },
   chart: {
     flexDirection: 'row',

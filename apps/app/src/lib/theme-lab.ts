@@ -1,49 +1,77 @@
 import { useSyncExternalStore } from 'react';
 
-import { Colors, type ThemeColor } from '@/constants/theme';
+import {
+  Colors,
+  Shape,
+  type ShapeToken,
+  type ShapeValues,
+  type ThemeColor,
+} from '@/constants/theme';
 
 import { preferences } from './preferences';
 
 /**
- * Development-only colour overrides for the Theme lab screen. useTheme() reads the palettes from
- * here, so an edit shows up on every screen at once. In production builds nothing is ever
- * overridden and the palettes are exactly `Colors`.
+ * Development-only overrides for the Theme lab screen. useTheme() and useShape() read from here,
+ * so an edit shows up on every screen at once. In production builds nothing is ever overridden
+ * and the values are exactly `Colors` and `Shape` from constants/theme.ts.
  */
 
 export type Scheme = 'light' | 'dark';
-type Palette = Record<ThemeColor, string>;
-type Overrides = Record<Scheme, Partial<Palette>>;
+export type Palette = Record<ThemeColor, string>;
+/** A complete look: both palettes and the shape. */
+export type Look = { light: Palette; dark: Palette; shape: ShapeValues };
 
 export const THEME_TOKENS = Object.keys(Colors.light) as ThemeColor[];
+export const SHAPE_TOKENS = Object.keys(Shape) as ShapeToken[];
 
 const PREFERENCE_KEY = 'themeLab';
-const DEFAULTS: Record<Scheme, Palette> = Colors;
+export const DEFAULT_LOOK: Look = { light: Colors.light, dark: Colors.dark, shape: Shape };
 const listeners = new Set<() => void>();
 
-let overrides: Overrides = { light: {}, dark: {} };
-let palettes: Record<Scheme, Palette> = DEFAULTS;
+let look: Look = DEFAULT_LOOK;
 
-function parse(stored: string | null | undefined): Overrides {
+function parse(stored: string | null | undefined): Look {
   try {
     const parsed = stored ? JSON.parse(stored) : null;
-    return { light: parsed?.light ?? {}, dark: parsed?.dark ?? {} };
+    return {
+      light: { ...DEFAULT_LOOK.light, ...parsed?.light },
+      dark: { ...DEFAULT_LOOK.dark, ...parsed?.dark },
+      shape: { ...DEFAULT_LOOK.shape, ...parsed?.shape },
+    };
   } catch {
-    return { light: {}, dark: {} };
+    return DEFAULT_LOOK;
   }
 }
 
-function apply(next: Overrides) {
-  overrides = next;
-  // New objects only when something changed, so components that depend on the theme don't re-run.
-  palettes = {
-    light: { ...DEFAULTS.light, ...next.light },
-    dark: { ...DEFAULTS.dark, ...next.dark },
-  };
+/** Only the parts that differ from the defaults are kept on the device. */
+function diff<T extends Record<string, string | number>>(values: T, defaults: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(values).filter(([key, value]) => !sameValue(value, defaults[key])),
+  ) as Partial<T>;
+}
+
+function sameValue(a: string | number, b: string | number) {
+  return typeof a === 'string' && typeof b === 'string'
+    ? a.toLowerCase() === b.toLowerCase()
+    : a === b;
+}
+
+function apply(next: Look) {
+  look = next;
   listeners.forEach((listener) => listener());
 }
 
-function save() {
-  void preferences.set(PREFERENCE_KEY, JSON.stringify(overrides));
+function applyAndSave(next: Look) {
+  if (!__DEV__) return;
+  apply(next);
+  void preferences.set(
+    PREFERENCE_KEY,
+    JSON.stringify({
+      light: diff(next.light, DEFAULT_LOOK.light),
+      dark: diff(next.dark, DEFAULT_LOOK.dark),
+      shape: diff(next.shape, DEFAULT_LOOK.shape),
+    }),
+  );
 }
 
 if (__DEV__) {
@@ -64,43 +92,48 @@ export async function restoreThemeLab() {
 }
 
 export function setThemeColor(scheme: Scheme, token: ThemeColor, value: string) {
-  if (!__DEV__) return;
-  const forScheme = { ...overrides[scheme] };
-  if (!isChanged(scheme, token, value)) {
-    delete forScheme[token];
-  } else {
-    forScheme[token] = value;
-  }
-  apply({ ...overrides, [scheme]: forScheme });
-  save();
+  applyAndSave({ ...look, [scheme]: { ...look[scheme], [token]: value } });
 }
 
-/** Back to the colours in constants/theme.ts. */
-export function resetThemeColors() {
-  apply({ light: {}, dark: {} });
+export function setShape(token: ShapeToken, value: number) {
+  applyAndSave({ ...look, shape: { ...look.shape, [token]: value } });
+}
+
+/** Replaces everything at once, e.g. with a preset. */
+export function setLook(next: Look) {
+  applyAndSave(next);
+}
+
+/** Back to the values in constants/theme.ts. */
+export function resetLook() {
+  apply(DEFAULT_LOOK);
   void preferences.remove(PREFERENCE_KEY);
 }
 
 /** Whether a colour differs from the one in constants/theme.ts. */
-export function isChanged(scheme: Scheme, token: ThemeColor, value: string) {
-  return value.toLowerCase() !== DEFAULTS[scheme][token].toLowerCase();
+export function isColorChanged(scheme: Scheme, token: ThemeColor, value: string) {
+  return !sameValue(value, DEFAULT_LOOK[scheme][token]);
 }
 
 /**
- * The palettes as a `Colors` block to paste into constants/theme.ts. Takes them as arguments
- * (from usePalette) so the React Compiler re-runs it when they change.
+ * The look as `Colors` and `Shape` blocks to paste into constants/theme.ts. Takes the look as an
+ * argument (from useLook) so the React Compiler re-runs it when it changes.
  */
-export function themeAsCode(light: Palette, dark: Palette) {
-  const block = (palette: Palette) =>
+export function lookAsCode({ light, dark, shape }: Look) {
+  const colors = (palette: Palette) =>
     THEME_TOKENS.map((token) => `    ${token}: '${palette[token]}',`).join('\n');
   return [
     'export const Colors = {',
     '  light: {',
-    block(light),
+    colors(light),
     '  },',
     '  dark: {',
-    block(dark),
+    colors(dark),
     '  },',
+    '} as const;',
+    '',
+    'export const Shape = {',
+    ...SHAPE_TOKENS.map((token) => `  ${token}: ${shape[token]},`),
     '} as const;',
   ].join('\n');
 }
@@ -110,11 +143,21 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener);
 }
 
-/** The palette for a scheme: `Colors`, plus any Theme lab tweaks in development. */
-export function usePalette(scheme: Scheme): Palette {
+/** Everything: `Colors` and `Shape`, plus any Theme lab tweaks in development. */
+export function useLook(): Look {
   return useSyncExternalStore(
     subscribe,
-    () => palettes[scheme],
-    () => DEFAULTS[scheme],
+    () => look,
+    () => DEFAULT_LOOK,
   );
+}
+
+/** The palette for a scheme. */
+export function usePalette(scheme: Scheme): Palette {
+  return useLook()[scheme];
+}
+
+/** The shape tokens. */
+export function useShapeValues(): ShapeValues {
+  return useLook().shape;
 }

@@ -8,6 +8,7 @@ import { Button } from '@/components/button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-shape';
 import { useReducedMotion } from '@/hooks/use-reduced-motion';
 
 import { TABS } from './tabs';
@@ -29,6 +30,7 @@ function isTyping(event: KeyboardEvent) {
  * Esc closes the side panel, ? lists them all.
  */
 export function KeyboardShortcuts({ onEscape }: { onEscape: () => void }) {
+  const shape = useShape();
   const reducedMotion = useReducedMotion();
   const { t } = useTranslation();
   const { status } = useAuth();
@@ -73,11 +75,14 @@ export function KeyboardShortcuts({ onEscape }: { onEscape: () => void }) {
       animationType={reducedMotion ? 'none' : 'fade'}
       onRequestClose={() => setHelpOpen(false)}>
       <Pressable style={styles.backdrop} onPress={() => setHelpOpen(false)}>
-        <ThemedView style={styles.dialog} role="dialog" aria-label={t('shortcuts.title')}>
+        <ThemedView
+          style={[styles.dialog, shape.dialog]}
+          role="dialog"
+          aria-label={t('shortcuts.title')}>
           <ThemedText type="heading">{t('shortcuts.title')}</ThemedText>
           {shortcuts.map(([key, label]) => (
             <View key={key} style={styles.row}>
-              <ThemedView type="backgroundElement" style={styles.key}>
+              <ThemedView type="backgroundElement" style={[styles.key, shape.inner]}>
                 <ThemedText type="code">{key}</ThemedText>
               </ThemedView>
               <ThemedText>{label}</ThemedText>
@@ -103,7 +108,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     gap: Spacing.three,
     padding: Spacing.four,
-    borderRadius: Spacing.four,
   },
   row: {
     flexDirection: 'row',
@@ -115,6 +119,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.one,
     paddingHorizontal: Spacing.two,
-    borderRadius: Spacing.two,
   },
 });

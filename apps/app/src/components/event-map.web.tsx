@@ -3,8 +3,8 @@ import type { Event, LatLng } from '@sidequest/api';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef, useState } from 'react';
 
-import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 type EventMapProps = {
   center: LatLng;
@@ -30,6 +30,7 @@ export function zoomFor(radiusKm: number) {
  */
 export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) {
   const theme = useTheme();
+  const shape = useShape();
   const container = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState<LoadedMap | null>(null);
 
@@ -77,12 +78,20 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
   }, [loaded, events, theme, onSelect]);
 
   // Leaflet draws into a DOM element of its own.
-  return <div ref={container} style={{ ...MAP_STYLE, backgroundColor: theme.backgroundElement }} />;
+  return (
+    <div
+      ref={container}
+      style={{
+        ...MAP_STYLE,
+        borderRadius: shape.boxRadius,
+        backgroundColor: theme.backgroundElement,
+      }}
+    />
+  );
 }
 
 const MAP_STYLE = {
   height: 360,
-  borderRadius: Spacing.three,
   overflow: 'hidden',
   // Keeps Leaflet's panes below the app's navigation and dialogs.
   zIndex: 0,

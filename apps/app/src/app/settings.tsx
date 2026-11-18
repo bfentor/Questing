@@ -28,6 +28,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { chooseLanguage, LANGUAGES, storedLanguage, type Language } from '@/i18n';
 import { setAppearance, useAppearance, type Appearance } from '@/lib/appearance';
 import { goBack } from '@/lib/navigation';
@@ -234,6 +235,7 @@ function ProfileSection({
 }
 
 function LanguagePicker() {
+  const shape = useShape();
   const { t } = useTranslation();
   const theme = useTheme();
   // undefined while loading, null when following the device
@@ -251,7 +253,7 @@ function LanguagePicker() {
   return (
     <View style={styles.section}>
       <ThemedText type="heading">{t('settings.language')}</ThemedText>
-      <ThemedView type="backgroundElement" style={styles.group}>
+      <ThemedView type="backgroundElement" style={[styles.group, shape.box]}>
         {options.map((option) => {
           const selected = choice !== undefined && option.code === choice;
           return (
@@ -275,6 +277,7 @@ function LanguagePicker() {
 }
 
 function AppearancePicker() {
+  const shape = useShape();
   const { t } = useTranslation();
   const theme = useTheme();
   const appearance = useAppearance();
@@ -287,7 +290,7 @@ function AppearancePicker() {
   return (
     <View style={styles.section}>
       <ThemedText type="heading">{t('settings.appearance')}</ThemedText>
-      <ThemedView type="backgroundElement" style={styles.group}>
+      <ThemedView type="backgroundElement" style={[styles.group, shape.box]}>
         {options.map((option) => {
           const selected = option.value === appearance;
           return (
@@ -312,7 +315,6 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   group: {
-    borderRadius: Spacing.three,
     overflow: 'hidden',
   },
   option: {

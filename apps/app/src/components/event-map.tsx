@@ -2,7 +2,7 @@ import type { Event, LatLng } from '@sidequest/api';
 import { AppleMaps, GoogleMaps } from 'expo-maps';
 import { Platform, StyleSheet } from 'react-native';
 
-import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-shape';
 
 type EventMapProps = {
   center: LatLng;
@@ -22,6 +22,7 @@ export function zoomFor(radiusKm: number) {
  * older versions show the title only.
  */
 export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) {
+  const shape = useShape();
   const markers = events.flatMap((event) =>
     event.location
       ? [
@@ -44,7 +45,7 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
 
   return Platform.OS === 'ios' ? (
     <AppleMaps.View
-      style={styles.map}
+      style={[styles.map, shape.picture]}
       cameraPosition={cameraPosition}
       markers={markers}
       properties={{ isMyLocationEnabled: true }}
@@ -52,7 +53,7 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
     />
   ) : (
     <GoogleMaps.View
-      style={styles.map}
+      style={[styles.map, shape.picture]}
       cameraPosition={cameraPosition}
       markers={markers}
       properties={{ isMyLocationEnabled: true }}
@@ -64,7 +65,6 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
 const styles = StyleSheet.create({
   map: {
     height: 360,
-    borderRadius: Spacing.three,
     overflow: 'hidden',
   },
 });

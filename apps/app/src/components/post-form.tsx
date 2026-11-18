@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-shape';
 import { useImageUpload } from '@/hooks/use-image-upload';
 
 import { ActingAsPicker } from './acting-as-picker';
@@ -31,6 +32,7 @@ type PostFormProps = {
 
 /** Text, up to four pictures and an optional shared event; posting as yourself or an organization. */
 export function PostForm({ mode, initial, submitLabel, onSubmit }: PostFormProps) {
+  const shape = useShape();
   const { t } = useTranslation();
   const upload = useImageUpload();
   const [body, setBody] = useState(initial?.body ?? '');
@@ -86,7 +88,11 @@ export function PostForm({ mode, initial, submitLabel, onSubmit }: PostFormProps
         <View style={styles.images}>
           {images.map((image) => (
             <View key={image.id} style={styles.thumbnail}>
-              <RemoteImage image={image} style={styles.thumbnailImage} contentFit="cover" />
+              <RemoteImage
+                image={image}
+                style={[styles.thumbnailImage, shape.inner]}
+                contentFit="cover"
+              />
               <View style={styles.remove}>
                 <IconButton
                   icon={{ ios: 'xmark.circle.fill', material: 'cancel' }}
@@ -147,7 +153,6 @@ const styles = StyleSheet.create({
   thumbnailImage: {
     width: 96,
     height: 96,
-    borderRadius: Spacing.two,
   },
   remove: {
     position: 'absolute',

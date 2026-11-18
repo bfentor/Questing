@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { ThemedText } from './themed-text';
 
@@ -15,6 +16,7 @@ type CheckboxProps = {
 };
 
 export function Checkbox({ checked, onChange, label, accessibilityLabel }: CheckboxProps) {
+  const shape = useShape();
   const theme = useTheme();
   // A plain-text label names the checkbox and toggles it when tapped.
   const text = typeof label === 'string' ? label : undefined;
@@ -28,6 +30,7 @@ export function Checkbox({ checked, onChange, label, accessibilityLabel }: Check
         onPress={() => onChange(!checked)}
         style={[
           styles.box,
+          shape.checkbox,
           {
             borderColor: checked ? theme.tint : theme.textSecondary,
             backgroundColor: checked ? theme.tint : 'transparent',
@@ -56,7 +59,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderRadius: 6,
   },
   label: {
     flex: 1,

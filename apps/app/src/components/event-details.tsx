@@ -19,6 +19,7 @@ import { Linking, Pressable, StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
 import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-shape';
 import { useFormat } from '@/lib/format';
 import { saveTextFile } from '@/lib/save-file';
 
@@ -162,6 +163,7 @@ export function EventMenu({ event, onDeleted }: EventMenuProps) {
 
 /** Everything about an event: the event page's content, also shown in the desktop side panel. */
 export function EventDetails({ id }: { id: number }) {
+  const shape = useShape();
   const { t } = useTranslation();
   const format = useFormat();
   const { data: event, isPending, isError } = useQuery(eventsRetrieveOptions({ path: { id } }));
@@ -179,7 +181,11 @@ export function EventDetails({ id }: { id: number }) {
       ) : (
         <>
           {event.cover ? (
-            <RemoteImage image={event.cover} style={styles.cover} contentFit="cover" />
+            <RemoteImage
+              image={event.cover}
+              style={[styles.cover, shape.picture]}
+              contentFit="cover"
+            />
           ) : null}
           <EventBanners event={event} />
           <CoHostInvitation eventId={event.id} />
@@ -254,6 +260,7 @@ export function EventDetails({ id }: { id: number }) {
 
 /** Cancelled, postponed, draft, scheduled and recurring notes at the top of an event. */
 function EventBanners({ event }: { event: Event }) {
+  const shape = useShape();
   const { t } = useTranslation();
   const format = useFormat();
   const notes = [
@@ -267,7 +274,7 @@ function EventBanners({ event }: { event: Event }) {
   ].filter((note) => note !== null);
 
   return notes.map((note) => (
-    <ThemedView key={note} type="backgroundElement" style={styles.banner}>
+    <ThemedView key={note} type="backgroundElement" style={[styles.banner, shape.box]}>
       <ThemedText type="smallBold">{note}</ThemedText>
     </ThemedView>
   ));
@@ -275,6 +282,7 @@ function EventBanners({ event }: { event: Event }) {
 
 /** Lets an invited co-host (a profile you manage) accept or decline. */
 function CoHostInvitation({ eventId }: { eventId: number }) {
+  const shape = useShape();
   const { t } = useTranslation();
   const { status } = useAuth();
   const queryClient = useQueryClient();
@@ -291,7 +299,7 @@ function CoHostInvitation({ eventId }: { eventId: number }) {
   });
 
   return (pending.data ?? []).map((profile) => (
-    <ThemedView key={profile.handle} type="backgroundElement" style={styles.banner}>
+    <ThemedView key={profile.handle} type="backgroundElement" style={[styles.banner, shape.box]}>
       <ThemedText>{t('event.coHostInvite', { name: profile.display_name })}</ThemedText>
       <View style={styles.price}>
         <Button
@@ -317,12 +325,10 @@ const styles = StyleSheet.create({
   banner: {
     gap: Spacing.two,
     padding: Spacing.three,
-    borderRadius: Spacing.three,
   },
   cover: {
     width: '100%',
     aspectRatio: 16 / 9,
-    borderRadius: Spacing.three,
   },
   price: {
     flexDirection: 'row',

@@ -7,6 +7,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { useFormat } from '@/lib/format';
 
 import { Avatar } from './avatar';
@@ -19,6 +20,7 @@ import { RichText } from './rich-text';
 import { ThemedText } from './themed-text';
 
 export function PostCard({ post }: { post: Post }) {
+  const shape = useShape();
   const format = useFormat();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -79,7 +81,7 @@ export function PostCard({ post }: { post: Post }) {
                 name: post.author.display_name,
               })}
               contentFit="cover"
-              style={[styles.image, post.images.length === 1 && styles.onlyImage]}
+              style={[styles.image, shape.inner, post.images.length === 1 && styles.onlyImage]}
             />
           ))}
         </View>
@@ -150,7 +152,6 @@ const styles = StyleSheet.create({
     flexBasis: '48%',
     flexGrow: 1,
     aspectRatio: 1,
-    borderRadius: Spacing.two,
   },
   onlyImage: {
     aspectRatio: 4 / 3,

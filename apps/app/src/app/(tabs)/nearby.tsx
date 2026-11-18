@@ -15,6 +15,7 @@ import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { useCurrentPosition } from '@/hooks/use-current-position';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { useBooleanPreference } from '@/lib/preferences';
 
 function Header() {
@@ -58,6 +59,7 @@ export default function NearbyScreen() {
 const RADII_KM = [2, 5, 10, 25];
 
 function NearbyFeed({ position }: { position: LatLng }) {
+  const shape = useShape();
   const { t } = useTranslation();
   const theme = useTheme();
   const [radius, setRadius] = useState(10);
@@ -81,6 +83,7 @@ function NearbyFeed({ position }: { position: LatLng }) {
                 onPress={() => setRadius(km)}
                 style={[
                   styles.radius,
+                  shape.selector,
                   { backgroundColor: radius === km ? theme.backgroundSelected : 'transparent' },
                 ]}>
                 <ThemedText type="small">{t('nearby.within', { km })}</ThemedText>
@@ -119,6 +122,5 @@ const styles = StyleSheet.create({
   radius: {
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one,
-    borderRadius: 999,
   },
 });

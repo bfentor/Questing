@@ -6,6 +6,7 @@ import { Linking, StyleSheet, View } from 'react-native';
 import { useAuth } from '@/auth/auth-provider';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { APP_STORE_URL, PLAY_STORE_URL } from '@/lib/config';
 
 import { Button } from './button';
@@ -19,6 +20,7 @@ export function Welcome() {
   const { t } = useTranslation();
   const { status } = useAuth();
   const theme = useTheme();
+  const shape = useShape();
 
   if (status !== 'signed-out') {
     return null;
@@ -29,7 +31,11 @@ export function Welcome() {
   ].filter((store) => store.url);
 
   return (
-    <View style={[styles.hero, { borderColor: theme.backgroundElement }]}>
+    <View
+      style={[
+        styles.hero,
+        { borderRadius: shape.boxRadius * 1.5, borderColor: theme.backgroundElement },
+      ]}>
       <Image
         source={require('@/assets/images/icon.png')}
         style={styles.icon}
@@ -69,7 +75,6 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
     borderWidth: 2,
     padding: Spacing.four,
-    borderRadius: Spacing.four,
   },
   icon: {
     width: 56,

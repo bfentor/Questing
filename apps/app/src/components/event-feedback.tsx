@@ -14,6 +14,7 @@ import { StyleSheet, View } from 'react-native';
 import { useAuth } from '@/auth/auth-provider';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { Button } from './button';
 import { IconButton } from './icon-button';
@@ -94,6 +95,7 @@ export function EventFeedback({ event }: { event: Event }) {
 }
 
 function FeedbackForm({ eventId, saved }: { eventId: number; saved: MyFeedback }) {
+  const shape = useShape();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [rating, setRating] = useState(saved.rating);
@@ -113,7 +115,7 @@ function FeedbackForm({ eventId, saved }: { eventId: number; saved: MyFeedback }
   const unchanged = saved.rating !== null && rating === saved.rating && comment === saved.comment;
 
   return (
-    <ThemedView type="backgroundElement" style={styles.card}>
+    <ThemedView type="backgroundElement" style={[styles.card, shape.box]}>
       <ThemedText type="smallBold">{t('feedback.title')}</ThemedText>
       <ThemedText type="small" themeColor="textSecondary">
         {t('feedback.hint')}
@@ -148,7 +150,6 @@ const styles = StyleSheet.create({
   card: {
     gap: Spacing.two,
     padding: Spacing.three,
-    borderRadius: Spacing.three,
   },
   stars: {
     flexDirection: 'row',

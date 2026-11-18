@@ -2,6 +2,7 @@ import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { ThemedText } from './themed-text';
 
@@ -15,6 +16,7 @@ type ButtonProps = {
 
 export function Button({ title, onPress, variant = 'primary', disabled, loading }: ButtonProps) {
   const theme = useTheme();
+  const shape = useShape();
   const background = {
     primary: theme.tint,
     secondary: theme.backgroundElement,
@@ -29,6 +31,8 @@ export function Button({ title, onPress, variant = 'primary', disabled, loading 
       disabled={disabled || loading}
       style={({ pressed }) => [
         styles.button,
+        shape.button,
+        variant !== 'secondary' && shape.raised,
         { backgroundColor: background },
         (pressed || disabled) && styles.dimmed,
       ]}>
@@ -47,11 +51,9 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 44,
     paddingHorizontal: Spacing.four,
     // Room around labels that wrap onto two lines on narrow screens.
     paddingVertical: Spacing.two,
-    borderRadius: Spacing.three,
   },
   dimmed: {
     opacity: 0.6,

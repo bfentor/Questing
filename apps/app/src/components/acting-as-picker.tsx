@@ -3,6 +3,7 @@ import { StyleSheet, View, Pressable } from 'react-native';
 import { Spacing } from '@/constants/theme';
 import { useActingProfiles } from '@/hooks/use-acting-profiles';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { Avatar } from './avatar';
 import { ThemedText } from './themed-text';
@@ -16,6 +17,7 @@ type ActingAsPickerProps = {
 
 /** Choose to publish as yourself or an organization you belong to. Hidden if there's no choice. */
 export function ActingAsPicker({ label, value, onChange }: ActingAsPickerProps) {
+  const shape = useShape();
   const theme = useTheme();
   const acting = useActingProfiles();
   if (acting.length < 2) {
@@ -36,6 +38,7 @@ export function ActingAsPicker({ label, value, onChange }: ActingAsPickerProps) 
               onPress={() => onChange(profile.handle)}
               style={[
                 styles.profile,
+                shape.selector,
                 { backgroundColor: selected ? theme.backgroundSelected : theme.backgroundElement },
               ]}>
               <Avatar name={profile.display_name} image={profile.avatar} size={24} />
@@ -63,6 +66,5 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one,
-    borderRadius: 999,
   },
 });

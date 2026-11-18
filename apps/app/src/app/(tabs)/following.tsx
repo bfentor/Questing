@@ -14,6 +14,7 @@ import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-shape';
 import { useBooleanPreference } from '@/lib/preferences';
 
 function Header({ canPost = false }: { canPost?: boolean }) {
@@ -57,6 +58,7 @@ export default function FollowingScreen() {
 }
 
 function FollowingFeed() {
+  const shape = useShape();
   const [hidePast, setHidePast] = useBooleanPreference('following.hidePast', false);
   const [hideSuggestions, setHideSuggestions] = useBooleanPreference(
     'following.hideSuggestions',
@@ -72,7 +74,7 @@ function FollowingFeed() {
         <View style={styles.header}>
           <Header canPost />
           {hideSuggestions ? null : (
-            <ThemedView type="backgroundElement" style={styles.suggestions}>
+            <ThemedView type="backgroundElement" style={[styles.suggestions, shape.box]}>
               <FollowSuggestions
                 limit={3}
                 title={
@@ -118,7 +120,6 @@ const styles = StyleSheet.create({
   suggestions: {
     gap: Spacing.three,
     padding: Spacing.three,
-    borderRadius: Spacing.three,
   },
   suggestionsTitle: {
     flexDirection: 'row',

@@ -6,6 +6,7 @@ import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { Button } from './button';
 import { LocationPin } from './location-pin';
@@ -24,6 +25,7 @@ type LocationSearchProps = {
  * coordinates, with a map to place or adjust the pin by hand.
  */
 export function LocationSearch({ value, onChange }: LocationSearchProps) {
+  const shape = useShape();
   const { t } = useTranslation();
   const theme = useTheme();
   const [query, setQuery] = useState(value.address);
@@ -68,7 +70,12 @@ export function LocationSearch({ value, onChange }: LocationSearchProps) {
       ) : null}
       {open && results.isFetching ? <ActivityIndicator /> : null}
       {open && results.data?.length ? (
-        <View style={[styles.results, { backgroundColor: theme.backgroundElement }]}>
+        <View
+          style={[
+            styles.results,
+            { borderRadius: shape.fieldRadius },
+            { backgroundColor: theme.backgroundElement },
+          ]}>
           {results.data.map((place) => (
             <Pressable
               key={`${place.lat},${place.lng}`}
@@ -114,7 +121,6 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   results: {
-    borderRadius: Spacing.two,
     overflow: 'hidden',
   },
   result: {

@@ -2,8 +2,8 @@
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef, useState } from 'react';
 
-import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { cameraFor, type LocationPinProps } from './location-pin.shared';
 
@@ -16,6 +16,7 @@ type LoadedMap = {
 /** A map with the event's pin (OpenStreetMap via Leaflet); clicking the map moves the pin there. */
 export function LocationPin({ value, center, onChange }: LocationPinProps) {
   const theme = useTheme();
+  const shape = useShape();
   const container = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState<LoadedMap | null>(null);
   // The latest callback, for the click handler registered once.
@@ -66,12 +67,20 @@ export function LocationPin({ value, center, onChange }: LocationPinProps) {
   }, [loaded, value, theme]);
 
   // Leaflet draws into a DOM element of its own.
-  return <div ref={container} style={{ ...MAP_STYLE, backgroundColor: theme.backgroundElement }} />;
+  return (
+    <div
+      ref={container}
+      style={{
+        ...MAP_STYLE,
+        borderRadius: shape.boxRadius,
+        backgroundColor: theme.backgroundElement,
+      }}
+    />
+  );
 }
 
 const MAP_STYLE = {
   height: 240,
-  borderRadius: Spacing.three,
   overflow: 'hidden',
   cursor: 'crosshair',
   // Keeps Leaflet's panes below the app's navigation and dialogs.

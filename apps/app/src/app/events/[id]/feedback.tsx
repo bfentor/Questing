@@ -10,10 +10,12 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 import { useFormat } from '@/lib/format';
 
 /** What people who went thought of the event, without names (hosts only). */
 export default function FeedbackScreen() {
+  const shape = useShape();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t } = useTranslation();
   const theme = useTheme();
@@ -53,7 +55,7 @@ export default function FeedbackScreen() {
                 <ThemedText type="small" style={styles.rowLabel}>
                   {rating}
                 </ThemedText>
-                <ThemedView type="backgroundElement" style={styles.track}>
+                <ThemedView type="backgroundElement" style={[styles.track, shape.selector]}>
                   <View
                     style={[
                       styles.bar,
@@ -71,7 +73,7 @@ export default function FeedbackScreen() {
             <ThemedText type="smallBold">{t('feedback.comments')}</ThemedText>
           ) : null}
           {data.comments.map((comment, index) => (
-            <ThemedView key={index} type="backgroundElement" style={styles.comment}>
+            <ThemedView key={index} type="backgroundElement" style={[styles.comment, shape.box]}>
               <Stars value={comment.rating} size={14} />
               <ThemedText>{comment.comment}</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
@@ -105,7 +107,6 @@ const styles = StyleSheet.create({
   track: {
     flex: 1,
     height: 8,
-    borderRadius: 999,
     overflow: 'hidden',
   },
   bar: {
@@ -118,6 +119,5 @@ const styles = StyleSheet.create({
   comment: {
     gap: Spacing.one,
     padding: Spacing.three,
-    borderRadius: Spacing.three,
   },
 });

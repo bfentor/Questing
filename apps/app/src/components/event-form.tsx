@@ -14,6 +14,7 @@ import { Spacing } from '@/constants/theme';
 import { useImageUpload } from '@/hooks/use-image-upload';
 import { useUniversities } from '@/hooks/use-universities';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { CategoryPicker } from './category-chips';
 import { ActingAsPicker } from './acting-as-picker';
@@ -49,6 +50,7 @@ function tomorrowEvening() {
 }
 
 export function EventForm({ initial, mode, submitLabel, onSubmit }: EventFormProps) {
+  const shape = useShape();
   const { t } = useTranslation();
   const theme = useTheme();
   const upload = useImageUpload();
@@ -175,9 +177,11 @@ export function EventForm({ initial, mode, submitLabel, onSubmit }: EventFormPro
 
       <Pressable onPress={pickCover} accessibilityLabel={t('eventForm.cover')}>
         {cover ? (
-          <RemoteImage image={cover} style={styles.cover} contentFit="cover" />
+          <RemoteImage image={cover} style={[styles.cover, shape.picture]} contentFit="cover" />
         ) : (
-          <ThemedView type="backgroundElement" style={[styles.cover, styles.coverEmpty]}>
+          <ThemedView
+            type="backgroundElement"
+            style={[styles.cover, shape.picture, styles.coverEmpty]}>
             <ThemedText themeColor="textSecondary">
               {upload.uploading ? t('eventForm.uploading') : t('eventForm.cover')}
             </ThemedText>
@@ -298,6 +302,7 @@ export function EventForm({ initial, mode, submitLabel, onSubmit }: EventFormPro
                 onPress={() => setStudentsOf(option.id)}
                 style={[
                   styles.chip,
+                  shape.selector,
                   { backgroundColor: selected ? theme.tint : theme.backgroundElement },
                 ]}>
                 <ThemedText type="small" style={selected && { color: theme.onTint }}>
@@ -359,7 +364,7 @@ export function EventForm({ initial, mode, submitLabel, onSubmit }: EventFormPro
               key={handle}
               accessibilityLabel={t('eventForm.removeCoHost', { handle })}
               onPress={() => setCoHosts((current) => current.filter((h) => h !== handle))}
-              style={[styles.chip, { backgroundColor: theme.backgroundElement }]}>
+              style={[styles.chip, shape.selector, { backgroundColor: theme.backgroundElement }]}>
               <ThemedText type="small">@{handle} ✕</ThemedText>
             </Pressable>
           ))}
@@ -443,12 +448,10 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one + 2,
-    borderRadius: 999,
   },
   cover: {
     width: '100%',
     aspectRatio: 16 / 9,
-    borderRadius: Spacing.three,
   },
   coverEmpty: {
     alignItems: 'center',
