@@ -114,20 +114,36 @@
   display: none;
 }
 
-/* Tablets and desktops: sidebar on the left. */
+/*
+ * Tablets and desktops: the sidebar in the gutter left of the page's column, against its
+ * left border (components/column.tsx draws the column's borders). The content area grows from
+ * the column's width as the gutter does, so the column stays in the middle of the window, and
+ * the content area (which scrolls) reaches the window's right edge.
+ */
 @media (min-width: 768px) {
   .shell {
     flex-direction: row;
+  }
+
+  .navArea {
+    display: flex;
+    flex: 1 1 0;
+    justify-content: flex-end;
+    min-width: 240px;
+  }
+
+  .content {
+    flex: 1 1 640px;
   }
 
   .nav {
     flex-direction: column;
     justify-content: flex-start;
     gap: 4px;
+    box-sizing: border-box;
     width: 240px;
     padding: 24px 16px;
     border-top: none;
-    border-right: 1px solid rgba(127, 127, 127, 0.25);
   }
 
   .brand {
@@ -150,17 +166,31 @@
   }
 }
 
-/* Wide desktops: event details in a panel beside the feed. */
-.panel {
+/*
+ * Wide desktops: event details in a panel against the column's right border. The gutters on
+ * either side grow alike, so the sidebar, column and panel stay together in the middle.
+ */
+.panelArea {
   display: none;
 }
 
 @media (min-width: 1200px) {
+  .withPanel .content {
+    flex: 0 1 640px;
+  }
+
+  .panelArea {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 440px;
+    min-height: 0;
+  }
+
   .panel {
     display: flex;
     flex-direction: column;
     width: 440px;
     min-height: 0;
-    border-left: 1px solid rgba(127, 127, 127, 0.25);
+    border-right: 1px solid rgba(127, 127, 127, 0.25);
   }
 }

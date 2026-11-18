@@ -7,6 +7,7 @@ import { BottomTabInset, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 import { Button } from './button';
+import { useColumnStyle } from './column';
 import { screenStyles } from './screen';
 import { SkeletonList } from './skeleton';
 import { ThemedText } from './themed-text';
@@ -48,6 +49,7 @@ export function FeedList<T>({
   const theme = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const column = useColumnStyle();
   const items = query.data?.pages.flatMap((page) => page.results) ?? [];
 
   return (
@@ -101,6 +103,7 @@ export function FeedList<T>({
           paddingTop: (hasHeader ? 0 : insets.top) + Spacing.four,
           paddingBottom: insets.bottom + BottomTabInset + Spacing.four,
         },
+        column,
       ]}
     />
   );

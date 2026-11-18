@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
+import { BesideSidebar } from '@/components/column';
 import { EventDetails, EventMenu } from '@/components/event-details';
 import { EventPanelProvider } from '@/components/event-panel';
 import { IconButton } from '@/components/icon-button';
@@ -38,6 +39,7 @@ export default function AppTabs() {
   const close = useCallback(() => setSelected(null), []);
   const wide = width >= PANEL_MIN_WIDTH;
   const panel = useMemo(() => ({ selected, open: setSelected, close }), [selected, close]);
+  const panelOpen = wide && selected !== null;
 
   // Another page, another context: the panel closes.
   const [panelPath, setPanelPath] = useState(pathname);
@@ -50,7 +52,7 @@ export default function AppTabs() {
     <EventPanelProvider value={wide ? panel : null}>
       <KeyboardShortcuts onEscape={close} />
       <Tabs asChild>
-        <div className={classes.shell}>
+        <div className={panelOpen ? `${classes.shell} ${classes.withPanel}` : classes.shell}>
           <TabList asChild>
             <NavBar>
               {TABS.map((tab) => (
@@ -65,29 +67,33 @@ export default function AppTabs() {
             </NavBar>
           </TabList>
           <div className={classes.content}>
-            <TabSlot style={styles.slot} />
+            <BesideSidebar value>
+              <TabSlot style={styles.slot} />
+            </BesideSidebar>
           </div>
-          {wide && selected !== null ? (
-            <aside className={classes.panel} aria-label={t('event.title')}>
-              <View style={styles.panelBar}>
-                <Link href={{ pathname: '/events/[id]', params: { id: selected } }}>
-                  <ThemedText type="small" themeColor="tint">
-                    {t('event.openPage')}
-                  </ThemedText>
-                </Link>
-                <View style={styles.panelActions}>
-                  <PanelMenu id={selected} onDeleted={close} />
-                  <IconButton
-                    icon={{ ios: 'xmark', material: 'close' }}
-                    label={t('event.closePanel')}
-                    onPress={close}
-                  />
+          {panelOpen && selected !== null ? (
+            <div className={classes.panelArea}>
+              <aside className={classes.panel} aria-label={t('event.title')}>
+                <View style={styles.panelBar}>
+                  <Link href={{ pathname: '/events/[id]', params: { id: selected } }}>
+                    <ThemedText type="small" themeColor="tint">
+                      {t('event.openPage')}
+                    </ThemedText>
+                  </Link>
+                  <View style={styles.panelActions}>
+                    <PanelMenu id={selected} onDeleted={close} />
+                    <IconButton
+                      icon={{ ios: 'xmark', material: 'close' }}
+                      label={t('event.closePanel')}
+                      onPress={close}
+                    />
+                  </View>
                 </View>
-              </View>
-              <ScrollView contentContainerStyle={styles.panelContent}>
-                <EventDetails key={selected} id={selected} />
-              </ScrollView>
-            </aside>
+                <ScrollView contentContainerStyle={styles.panelContent}>
+                  <EventDetails key={selected} id={selected} />
+                </ScrollView>
+              </aside>
+            </div>
           ) : null}
         </div>
       </Tabs>
@@ -101,17 +107,20 @@ function PanelMenu({ id, onDeleted }: { id: number; onDeleted: () => void }) {
   return event ? <EventMenu event={event} onDeleted={onDeleted} /> : null;
 }
 
+/** In the gutter left of the column on wide screens, against its edge (see the CSS). */
 function NavBar({ children }: TabListProps) {
   return (
-    <nav className={classes.nav}>
-      <div className={classes.brand}>
-        <ThemedText type="subtitle" themeColor="tint" style={styles.brand}>
-          Sidequest
-        </ThemedText>
-      </div>
-      {children}
-      <SidebarLinks />
-    </nav>
+    <div className={classes.navArea}>
+      <nav className={classes.nav}>
+        <div className={classes.brand}>
+          <ThemedText type="subtitle" themeColor="tint" style={styles.brand}>
+            Sidequest
+          </ThemedText>
+        </div>
+        {children}
+        <SidebarLinks />
+      </nav>
+    </div>
   );
 }
 
