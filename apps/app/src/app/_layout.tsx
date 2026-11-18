@@ -7,10 +7,11 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { AuthProvider, useAuth } from '@/auth/auth-provider';
-import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useTheme } from '@/hooks/use-theme';
 import { restoreAppearance } from '@/lib/appearance';
 import { createPersistOptions, createQueryClient } from '@/lib/query-cache';
+import { restoreThemeLab } from '@/lib/theme-lab';
 import { applyPreferredLanguage, type Language } from '@/i18n';
 import { HeaderActions } from '@/components/home-button';
 import { OnboardingGate } from '@/components/onboarding-gate';
@@ -24,6 +25,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const scheme = useColorScheme() === 'dark' ? 'dark' : 'light';
+  const colors = useTheme();
   const [queryClient] = useState(createQueryClient);
   const [persistOptions] = useState(createPersistOptions);
 
@@ -32,10 +34,10 @@ export default function RootLayout() {
     ...base,
     colors: {
       ...base.colors,
-      primary: Colors[scheme].tint,
-      background: Colors[scheme].background,
-      card: Colors[scheme].background,
-      text: Colors[scheme].text,
+      primary: colors.tint,
+      background: colors.background,
+      card: colors.background,
+      text: colors.text,
     },
   };
 
@@ -102,6 +104,8 @@ function RootStack() {
       />
       <Stack.Screen name="organizations/index" options={{ title: t('organizations.title') }} />
       <Stack.Screen name="organizations/new" options={{ title: t('organizations.create') }} />
+      {/* Development only: the screen redirects home in production builds. */}
+      <Stack.Screen name="theme-lab" options={{ title: 'Theme lab' }} />
       <Stack.Screen
         name="report"
         options={{ title: t('moderation.report'), presentation: 'modal' }}
@@ -127,7 +131,7 @@ function LanguageSync() {
 
   useEffect(() => {
     applyPreferredLanguage();
-    restoreAppearance().finally(() => SplashScreen.hideAsync());
+    Promise.all([restoreAppearance(), restoreThemeLab()]).finally(() => SplashScreen.hideAsync());
   }, []);
 
   useEffect(() => {

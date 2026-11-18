@@ -49,6 +49,12 @@ export default function SettingsScreen() {
           <ThemedText themeColor="tint">{t('legal.privacy')}</ThemedText>
         </Link>
         <BuildInfo />
+        {__DEV__ ? (
+          // Development builds only, so English only.
+          <Link href="/theme-lab">
+            <ThemedText themeColor="tint">Theme lab</ThemedText>
+          </Link>
+        ) : null}
       </View>
       {status === 'signed-in' ? (
         <>

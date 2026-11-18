@@ -37,7 +37,11 @@ export function ThemedText({ style, type = 'default', themeColor, ...rest }: The
       role={level ? 'heading' : undefined}
       aria-level={level}
       maxFontSizeMultiplier={MAX_SCALE[type]}
-      style={[{ color: theme[themeColor ?? 'text'] }, styles[type], style]}
+      style={[
+        { color: theme[themeColor ?? (type === 'linkPrimary' ? 'tint' : 'text')] },
+        styles[type],
+        style,
+      ]}
       {...rest}
     />
   );
@@ -81,7 +85,6 @@ const styles = StyleSheet.create({
   linkPrimary: {
     lineHeight: 30,
     fontSize: 14,
-    color: '#3c87f7',
   },
   code: {
     fontFamily: Fonts.mono,
