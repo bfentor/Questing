@@ -9,24 +9,24 @@ import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
-    tint: '#208AEF',
+    text: '#0f172a',
+    background: '#f8fafc',
+    backgroundElement: '#eef2f7',
+    backgroundSelected: '#dbe3ee',
+    textSecondary: '#526079',
+    tint: '#4f46e5',
     onTint: '#ffffff',
-    danger: '#D93036',
+    danger: '#dc2626',
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
-    tint: '#3C9FFE',
-    onTint: '#ffffff',
-    danger: '#FF6369',
+    text: '#e2e8f0',
+    background: '#0b1020',
+    backgroundElement: '#151b2e',
+    backgroundSelected: '#2a3350',
+    textSecondary: '#94a3b8',
+    tint: '#818cf8',
+    onTint: '#0b1020',
+    danger: '#f87171',
   },
 } as const;
 
@@ -40,17 +40,17 @@ export const Shape = {
   /** Cards, panels and pictures (dialogs are 1.5×, small pictures ½×). */
   boxRadius: 16,
   /** Buttons and segmented controls. */
-  buttonRadius: 16,
+  buttonRadius: 8,
   /** Text inputs and date fields. */
   fieldRadius: 8,
   /** Chips, pills and progress bars (checkboxes stop at 6). 999 is fully round. */
   selectorRadius: 999,
   /** Outline width around cards, dialogs and inputs; 0 for none. */
-  border: 0,
+  border: 3,
   /** Shadow under cards, dialogs and filled buttons: 0 flat, 1 subtle, 2 raised. */
-  depth: 0,
+  depth: 1,
   /** Height of buttons and single-line inputs; 44 is the smallest comfortable touch target. */
-  controlHeight: 44,
+  controlHeight: 56,
 } as const;
 
 export type ShapeToken = keyof typeof Shape;
