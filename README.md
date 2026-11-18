@@ -72,6 +72,7 @@ cp .env.example .env
 uv sync
 uv run python manage.py migrate
 uv run python manage.py seed_demo           # optional: demo@sidequest.test / sidequest-demo
+uv run python manage.py seed_showcase       # optional: lots more, to try every feature as demo
 uv run python manage.py createsuperuser     # optional: for /admin/
 uv run python manage.py runserver
 cd ..
