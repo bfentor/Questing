@@ -22,7 +22,7 @@ function stateOf(profile: Profile): FollowState {
  * Follow / Requested / Following toggle. Private profiles get a request; the
  * button updates instantly and rolls back if the request fails.
  */
-export function FollowButton({ profile }: { profile: Profile }) {
+export function FollowButton({ profile, size }: { profile: Profile; size?: 'regular' | 'small' }) {
   const { t } = useTranslation();
   const { status } = useAuth();
   const queryClient = useQueryClient();
@@ -69,6 +69,7 @@ export function FollowButton({ profile }: { profile: Profile }) {
     <Button
       title={title}
       variant={state === 'none' ? 'primary' : 'secondary'}
+      size={size}
       onPress={() =>
         status === 'signed-in' ? toggle.mutate(state === 'none') : router.push('/sign-in')
       }

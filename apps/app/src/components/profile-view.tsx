@@ -31,10 +31,12 @@ type ProfileViewProps = {
   actions?: (profile: Profile) => ReactNode;
   /** Set when a navigation header already handles the top inset. */
   hasHeader?: boolean;
+  /** Above the header, e.g. the profile tab's title row. */
+  top?: ReactNode;
 };
 
 /** A profile's header with its posts, upcoming events and past events below. */
-export function ProfileView({ handle, actions, hasHeader }: ProfileViewProps) {
+export function ProfileView({ handle, actions, hasHeader, top }: ProfileViewProps) {
   const { t } = useTranslation();
   const profile = useQuery(profilesRetrieveOptions({ path: { handle } }));
   const [tab, setTab] = useState<Tab>('posts');
@@ -43,6 +45,7 @@ export function ProfileView({ handle, actions, hasHeader }: ProfileViewProps) {
   if (!profile.data) {
     return (
       <Screen hasHeader={hasHeader}>
+        {top}
         {profile.isError ? (
           <ThemedText themeColor="textSecondary">{t('profile.notFound')}</ThemedText>
         ) : (
@@ -58,6 +61,7 @@ export function ProfileView({ handle, actions, hasHeader }: ProfileViewProps) {
   if (locked) {
     return (
       <Screen hasHeader={hasHeader}>
+        {top}
         <ProfileHeader profile={profile.data} actions={actions?.(profile.data)} />
         <ThemedText type="heading">{t('profile.privateAccount')}</ThemedText>
         <ThemedText themeColor="textSecondary">{t('profile.privateHint')}</ThemedText>
@@ -67,6 +71,7 @@ export function ProfileView({ handle, actions, hasHeader }: ProfileViewProps) {
 
   const header = (
     <View style={{ gap: Spacing.three, paddingBottom: Spacing.two }}>
+      {top}
       <ProfileHeader profile={profile.data} actions={actions?.(profile.data)} />
       <SegmentedControl
         value={tab}

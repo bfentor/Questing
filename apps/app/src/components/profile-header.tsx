@@ -16,14 +16,9 @@ import { ThemedView } from './themed-view';
 
 type ProfileHeaderProps = {
   profile: Profile;
-  /** Buttons under the name: follow, edit, … */
+  /** Small buttons beside the profile picture: Follow or Edit profile, then a "…" menu. */
   actions?: ReactNode;
 };
-
-/** One of the buttons under a profile's header (Follow, Edit profile…), sized to share the row. */
-export function ProfileAction({ children }: { children: ReactNode }) {
-  return <View style={styles.action}>{children}</View>;
-}
 
 export function ProfileHeader({ profile, actions }: ProfileHeaderProps) {
   const shape = useShape();
@@ -51,8 +46,12 @@ export function ProfileHeader({ profile, actions }: ProfileHeaderProps) {
           style={[styles.cover, shape.picture, styles.coverEmpty]}
         />
       )}
-      <View style={styles.avatar}>
-        <Avatar name={profile.display_name} image={profile.avatar} size={88} />
+      <View style={styles.avatarRow}>
+        {/* A ring in the page colour, so the picture stands out where it overlaps the cover. */}
+        <View style={[styles.avatarRing, { backgroundColor: theme.background }]}>
+          <Avatar name={profile.display_name} image={profile.avatar} size={88} />
+        </View>
+        {actions ? <View style={styles.actions}>{actions}</View> : null}
       </View>
       <View>
         <View style={styles.nameRow}>
@@ -89,7 +88,6 @@ export function ProfileHeader({ profile, actions }: ProfileHeaderProps) {
           </ThemedText>
         </Link>
       </View>
-      {actions ? <View style={styles.actions}>{actions}</View> : null}
     </View>
   );
 }
@@ -134,9 +132,18 @@ const styles = StyleSheet.create({
   coverEmpty: {
     aspectRatio: 4,
   },
-  avatar: {
-    marginTop: -44 - Spacing.two,
-    marginLeft: Spacing.three,
+  avatarRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    gap: Spacing.two,
+    // Half the picture (and its ring) overlaps the cover.
+    marginTop: -48 - Spacing.two,
+    paddingLeft: Spacing.two,
+  },
+  avatarRing: {
+    padding: 4,
+    borderRadius: 999,
   },
   nameRow: {
     flexDirection: 'row',
@@ -154,12 +161,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    alignItems: 'center',
     gap: Spacing.two,
-  },
-  action: {
-    flexGrow: 1,
-    // Two to a row on phones, all in one row on wider screens.
-    flexBasis: 140,
   },
 });

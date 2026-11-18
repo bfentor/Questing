@@ -4,7 +4,7 @@ import { openEvent, signIn } from './helpers';
 
 test('RSVPs update right away and stick', async ({ page }) => {
   await signIn(page);
-  await page.goto('/');
+  await page.goto('/upcoming');
   await openEvent(page, 'Morning run by the lake');
 
   const interested = page.getByRole('button', { name: 'Interested', exact: true });
@@ -32,7 +32,8 @@ test('posts with hashtags and mentions', async ({ page }) => {
   await page.goto('/posts/new');
   await page.getByLabel("What's happening?").fill(`Sauna tonight with @sam #${tag}`);
   await page.getByRole('button', { name: 'Post', exact: true }).click();
-  await expect(page).toHaveURL(/following/);
+  // Back on the home page, whose feed has the new post.
+  await expect(page).toHaveURL(/\/$/);
 
   await page
     .getByRole('link', { name: `#${tag}` })

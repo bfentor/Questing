@@ -11,6 +11,7 @@ import { EventMap } from '@/components/event-map';
 import { FeedFilterBar, useFeedFilters } from '@/components/feed-filter-bar';
 import { FeedList } from '@/components/feed-list';
 import { Screen } from '@/components/screen';
+import { TabTitle } from '@/components/tab-title';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { useCurrentPosition } from '@/hooks/use-current-position';
@@ -20,7 +21,7 @@ import { useBooleanPreference } from '@/lib/preferences';
 
 function Header() {
   const { t } = useTranslation();
-  return <ThemedText type="subtitle">{t('tabs.nearby')}</ThemedText>;
+  return <TabTitle title={t('tabs.nearby')} />;
 }
 
 export default function NearbyScreen() {

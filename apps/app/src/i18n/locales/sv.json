@@ -1,5 +1,6 @@
 {
   "tabs": {
+    "home": "Hem",
     "upcoming": "Kommande",
     "nearby": "I närheten",
     "following": "Följer",
@@ -78,7 +79,8 @@
     "noFollowing": "Följer ingen än.",
     "requested": "Förfrågan skickad",
     "privateAccount": "Kontot är privat",
-    "privateHint": "Följ det för att se dess inlägg och evenemang."
+    "privateHint": "Följ det för att se dess inlägg och evenemang.",
+    "share": "Dela profilen"
   },
   "event": {
     "title": "Evenemang",
@@ -608,5 +610,17 @@
     "tabs": "Gå till en flik, från Kommande till Profil",
     "close": "Stäng sidopanelen eller en dialog",
     "help": "Visa de här kortkommandona"
+  },
+  "home": {
+    "nextEvent": "Ditt nästa evenemang",
+    "comingUp": "På gång",
+    "nearYou": "Nära dig",
+    "fromFollowing": "Från dem du följer",
+    "seeAll": "Visa alla"
+  },
+  "drawer": {
+    "open": "Öppna menyn",
+    "close": "Stäng menyn",
+    "title": "Meny"
   }
 }

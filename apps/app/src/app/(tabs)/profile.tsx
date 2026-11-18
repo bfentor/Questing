@@ -4,9 +4,10 @@ import { ActivityIndicator } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
 import { Button } from '@/components/button';
-import { ProfileAction } from '@/components/profile-header';
+import { ProfileMenu } from '@/components/profile-menu';
 import { ProfileView } from '@/components/profile-view';
 import { Screen } from '@/components/screen';
+import { TabTitle } from '@/components/tab-title';
 import { ThemedText } from '@/components/themed-text';
 import { useMe } from '@/hooks/use-me';
 
@@ -19,32 +20,16 @@ export default function ProfileTab() {
     return (
       <ProfileView
         handle={me.handle}
-        actions={() => (
+        top={<TabTitle title={t('tabs.profile')} />}
+        actions={(profile) => (
           <>
-            <ProfileAction>
-              <Button title={t('profile.edit')} onPress={() => router.push('/edit-profile')} />
-            </ProfileAction>
-            <ProfileAction>
-              <Button
-                title={t('myEvents.title')}
-                variant="secondary"
-                onPress={() => router.push('/my-events')}
-              />
-            </ProfileAction>
-            <ProfileAction>
-              <Button
-                title={t('organizations.title')}
-                variant="secondary"
-                onPress={() => router.push('/organizations')}
-              />
-            </ProfileAction>
-            <ProfileAction>
-              <Button
-                title={t('common.settings')}
-                variant="secondary"
-                onPress={() => router.push('/settings')}
-              />
-            </ProfileAction>
+            <Button
+              title={t('profile.edit')}
+              variant="secondary"
+              size="small"
+              onPress={() => router.push('/edit-profile')}
+            />
+            <ProfileMenu profile={profile} />
           </>
         )}
       />
@@ -53,16 +38,11 @@ export default function ProfileTab() {
 
   return (
     <Screen>
-      <ThemedText type="subtitle">{t('tabs.profile')}</ThemedText>
+      <TabTitle title={t('tabs.profile')} />
       {status === 'signed-out' ? (
         <>
           <ThemedText themeColor="textSecondary">{t('profile.signInPrompt')}</ThemedText>
           <Button title={t('common.signIn')} onPress={() => router.push('/sign-in')} />
-          <Button
-            title={t('common.settings')}
-            variant="secondary"
-            onPress={() => router.push('/settings')}
-          />
         </>
       ) : (
         <ActivityIndicator />

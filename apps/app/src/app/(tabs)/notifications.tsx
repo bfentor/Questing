@@ -14,6 +14,7 @@ import { Button } from '@/components/button';
 import { FeedList } from '@/components/feed-list';
 import { NotificationItem } from '@/components/notification-item';
 import { Screen } from '@/components/screen';
+import { TabTitle } from '@/components/tab-title';
 import { ThemedText } from '@/components/themed-text';
 import { useMe } from '@/hooks/use-me';
 import { enablePush, pushSupport, type PushSupport } from '@/notifications/push';
@@ -28,7 +29,7 @@ export default function NotificationsScreen() {
 
   return (
     <Screen>
-      <ThemedText type="subtitle">{t('tabs.notifications')}</ThemedText>
+      <TabTitle title={t('tabs.notifications')} />
       {status === 'loading' ? (
         <ActivityIndicator />
       ) : (
@@ -63,7 +64,7 @@ function Inbox() {
       query={notifications}
       header={
         <View>
-          <ThemedText type="subtitle">{t('tabs.notifications')}</ThemedText>
+          <TabTitle title={t('tabs.notifications')} />
           <PushPrompt />
           {me?.is_private ? (
             <Button

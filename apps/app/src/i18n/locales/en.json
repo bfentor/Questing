@@ -1,5 +1,6 @@
 {
   "tabs": {
+    "home": "Home",
     "upcoming": "Upcoming",
     "nearby": "Nearby",
     "following": "Following",
@@ -78,7 +79,8 @@
     "noFollowing": "Not following anyone yet.",
     "requested": "Requested",
     "privateAccount": "This account is private",
-    "privateHint": "Follow it to see its posts and events."
+    "privateHint": "Follow it to see its posts and events.",
+    "share": "Share profile"
   },
   "event": {
     "title": "Event",
@@ -608,5 +610,17 @@
     "tabs": "Go to a tab, from Upcoming to Profile",
     "close": "Close the side panel or a dialog",
     "help": "Show these shortcuts"
+  },
+  "home": {
+    "nextEvent": "Your next event",
+    "comingUp": "Coming up",
+    "nearYou": "Near you",
+    "fromFollowing": "From people you follow",
+    "seeAll": "See all"
+  },
+  "drawer": {
+    "open": "Open menu",
+    "close": "Close menu",
+    "title": "Menu"
   }
 }

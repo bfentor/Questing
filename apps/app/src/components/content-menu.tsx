@@ -12,7 +12,7 @@ import { useAuth } from '@/auth/auth-provider';
 import { useActingProfiles } from '@/hooks/use-acting-profiles';
 
 import { ActionMenu, type MenuAction } from './action-menu';
-import { IconButton } from './icon-button';
+import { IconButton, RoundIconButton } from './icon-button';
 
 export type ReportTarget = { type: TargetTypeEnum; id: string };
 
@@ -25,6 +25,8 @@ type ContentMenuProps = {
   ownActions?: MenuAction[];
   /** Shown first when it isn't, e.g. deleting someone's comment on your post. */
   extraActions?: MenuAction[];
+  /** `round` is a filled circle, to sit beside pill buttons such as Follow. */
+  appearance?: 'plain' | 'round';
 };
 
 /** The "…" menu on posts, events and profiles: report, mute and block, or the owner's actions. */
@@ -33,6 +35,7 @@ export function ContentMenu({
   owner,
   ownActions = [],
   extraActions = [],
+  appearance = 'plain',
 }: ContentMenuProps) {
   const { t } = useTranslation();
   const { status } = useAuth();
@@ -83,11 +86,19 @@ export function ContentMenu({
 
   return (
     <>
-      <IconButton
-        icon={{ ios: 'ellipsis', material: 'more_horiz' }}
-        label={t('common.moreActions')}
-        onPress={() => setOpen(true)}
-      />
+      {appearance === 'round' ? (
+        <RoundIconButton
+          icon={{ ios: 'ellipsis', material: 'more_horiz' }}
+          label={t('common.moreActions')}
+          onPress={() => setOpen(true)}
+        />
+      ) : (
+        <IconButton
+          icon={{ ios: 'ellipsis', material: 'more_horiz' }}
+          label={t('common.moreActions')}
+          onPress={() => setOpen(true)}
+        />
+      )}
       <ActionMenu visible={open} onClose={() => setOpen(false)} actions={actions} />
     </>
   );

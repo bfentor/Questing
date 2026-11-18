@@ -34,7 +34,7 @@ export default function NewPostScreen() {
             return (error ?? {}) as PostFieldErrors;
           }
           queryClient.invalidateQueries();
-          goBack('/following');
+          goBack('/');
           return null;
         }}
       />

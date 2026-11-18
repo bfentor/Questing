@@ -1,0 +1,10 @@
+/* The same breakpoint as the sidebar in navigation/app-tabs.module.css. */
+.phoneOnly {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .phoneOnly {
+    display: none;
+  }
+}

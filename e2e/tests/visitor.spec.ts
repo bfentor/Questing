@@ -2,12 +2,13 @@ import { expect, test } from '@playwright/test';
 
 import { DEMO, openEvent } from './helpers';
 
-test('visitors see what Sidequest is, and upcoming events', async ({ page }) => {
+test('visitors see what Sidequest is, and what is coming up', async ({ page }) => {
   await page.goto('/');
   await expect(
     page.getByRole('heading', { name: 'Every student event, in one place' }),
   ).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Upcoming', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Home', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Coming up' })).toBeVisible();
   await expect(page.getByText('Board game night').first()).toBeVisible();
 });
 
