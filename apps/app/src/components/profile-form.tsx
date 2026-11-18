@@ -2,7 +2,7 @@ import type { Image, PatchedProfileRequestWritable, Profile } from '@sidequest/a
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useShape } from '@/hooks/use-shape';
@@ -12,6 +12,7 @@ import { CategoryPicker } from './category-chips';
 import { Avatar } from './avatar';
 import { Button } from './button';
 import { RemoteImage } from './remote-image';
+import { Switch } from './switch';
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 import { TextField } from './text-field';

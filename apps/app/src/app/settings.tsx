@@ -13,7 +13,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
 import { AccountSection } from '@/components/account-section';
@@ -22,6 +22,7 @@ import { Button } from '@/components/button';
 import { CredentialsSection } from '@/components/credentials-section';
 import { SecuritySection } from '@/components/security-section';
 import { StudentSection } from '@/components/student-section';
+import { Switch } from '@/components/switch';
 import { ProfileRow } from '@/components/profile-row';
 import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';

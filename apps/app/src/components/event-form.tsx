@@ -8,7 +8,7 @@ import type {
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useImageUpload } from '@/hooks/use-image-upload';
@@ -23,6 +23,7 @@ import { DateTimeField } from './date-time-field';
 import { LocationSearch, type Place } from './location-search';
 import { RemoteImage } from './remote-image';
 import { SegmentedControl } from './segmented-control';
+import { Switch } from './switch';
 import { TextField } from './text-field';
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
