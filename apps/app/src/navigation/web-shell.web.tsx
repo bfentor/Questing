@@ -5,6 +5,7 @@ import { SymbolView, type AndroidSymbol } from 'expo-symbols';
 import { useCallback, useMemo, useState, type ComponentProps, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { SafeAreaInsetsContext, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/auth/auth-provider';
 import { BesideSidebar } from '@/components/column';
@@ -51,6 +52,13 @@ export function WebShell({ children }: { children: ReactNode }) {
   const wide = width >= PANEL_MIN_WIDTH;
   const panel = useMemo(() => ({ selected, open: setSelected, close }), [selected, close]);
   const panelOpen = wide && selected !== null;
+  // The shell keeps clear of the notch (sides) and the home indicator (the bottom bar pads by
+  // it), so the pages inside only need to mind the top; otherwise they'd pad twice.
+  const insets = useSafeAreaInsets();
+  const insetsInside = useMemo(
+    () => ({ top: insets.top, bottom: 0, left: 0, right: 0 }),
+    [insets.top],
+  );
 
   // Another page, another context: the panel closes.
   const [panelPath, setPanelPath] = useState(pathname);
@@ -83,7 +91,9 @@ export function WebShell({ children }: { children: ReactNode }) {
           ))}
         </NavBar>
         <div className={classes.content}>
-          <BesideSidebar value>{children}</BesideSidebar>
+          <SafeAreaInsetsContext.Provider value={insetsInside}>
+            <BesideSidebar value>{children}</BesideSidebar>
+          </SafeAreaInsetsContext.Provider>
         </div>
         {panelOpen && selected !== null ? (
           <div className={classes.panelArea}>

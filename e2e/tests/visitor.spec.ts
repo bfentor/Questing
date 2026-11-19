@@ -64,3 +64,19 @@ test('every page has a way back to the home page', async ({ page }) => {
     await expect(page).toHaveURL(/\/$/);
   }
 });
+
+test('the toolbar colour follows the appearance chosen in Settings', async ({ page }) => {
+  // An installed iPhone app colours its status bar with theme-color.
+  const themeColor = page.locator('meta[name="theme-color"]');
+  await page.goto('/settings');
+  await expect(themeColor).toHaveAttribute('content', '#f8fafc');
+
+  await page.getByText('Dark', { exact: true }).click();
+  await expect(themeColor).toHaveAttribute('content', '#0b1020');
+  // Already dark before the app starts, on the next visit.
+  await page.reload();
+  await expect(themeColor).toHaveAttribute('content', '#0b1020');
+
+  await page.getByText('Light', { exact: true }).click();
+  await expect(themeColor).toHaveAttribute('content', '#f8fafc');
+});
