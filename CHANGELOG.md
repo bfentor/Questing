@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.3.0](https://github.com/bfentor/Sidequest/compare/v0.2.0...v0.3.0) (2026-11-19)
+
+
+### Features
+
+* **events:** a colour-coded calendar of the events you're going to ([f6eae64](https://github.com/bfentor/Sidequest/commit/f6eae6426238ee38b875bfac6b3313280742e51c))
+* **events:** a map on event pages showing where the event is ([007dc6b](https://github.com/bfentor/Sidequest/commit/007dc6bb6b098bdf579f92cc69109c0905c27c14))
+* **events:** New event button on the home page, and your RSVP on every event card ([168742a](https://github.com/bfentor/Sidequest/commit/168742a4526be63eb983f6844287bfebecc0de55))
+* **events:** Upcoming's add button is the New event button from Home ([85daff0](https://github.com/bfentor/Sidequest/commit/85daff06feee4c8fd8e39ef0527b71fbb8e60b03))
+* **notifications:** "5 new events near you" and "for your interests" ([ad728c2](https://github.com/bfentor/Sidequest/commit/ad728c2d78d7e5874b7034b8d2e6c19a8e362f6b))
+* **notifications:** choose what you hear about from each profile you follow ([30ba847](https://github.com/bfentor/Sidequest/commit/30ba847b111a85d27a7b8a342aac140733face41))
+* **posts:** paste pictures and GIFs into posts, with previews while they upload ([4249cde](https://github.com/bfentor/Sidequest/commit/4249cdeae01d58fcfa6d2de47c17685b5f448acc))
+* **posts:** quick post box on the home page, and a stand-out New post button ([f622866](https://github.com/bfentor/Sidequest/commit/f622866dbd53261b2d9049284f0401bf2dfc2e5e))
+* **privacy:** choose who sees the events you go to, and past ones stay private ([0696851](https://github.com/bfentor/Sidequest/commit/0696851099acd314973d3932fd8e00d94e76df82))
+* **profiles:** gender, private unless you show it ([f1ba297](https://github.com/bfentor/Sidequest/commit/f1ba2975803fc58e7488c77dced9907b8ba7012a))
+* staging moves to staging.questing.fi ([4571079](https://github.com/bfentor/Sidequest/commit/4571079f20af4724d852902dba65f6f23f7c4513))
+* staging moves to staging.questing.fi, now that it's set up ([4bf2260](https://github.com/bfentor/Sidequest/commit/4bf2260b058624a04ce58998c6cb1834ba5282ae))
+* **web:** the sidebar stays on every page ([d438050](https://github.com/bfentor/Sidequest/commit/d43805044e2ec196f89b8d1e3cf6d6c834f3ca0a))
+
+
+### Bug Fixes
+
+* API schema at 0.2.0, and releases keep it in step ([6820fd0](https://github.com/bfentor/Sidequest/commit/6820fd0f363b1e11eb854cb8e379487a83885372))
+* lockfiles at 0.2.0 so the API builds, and releases keep them in step ([#10](https://github.com/bfentor/Sidequest/issues/10)) ([4a4090c](https://github.com/bfentor/Sidequest/commit/4a4090cc86a37b47f05c370f5c4c824ff320336c))
+* lockfiles at 0.2.0, so the API builds ([b1f4ec3](https://github.com/bfentor/Sidequest/commit/b1f4ec31cbcc1449077d798893e9c3e8be906a98))
+* **posts:** plainer prompt in the home page's post box ([903d5e3](https://github.com/bfentor/Sidequest/commit/903d5e3e67b5e59d15da23b7ce938ada9ccb4a8a))
+* **privacy:** keep hide_attendance for one more release ([98c0c89](https://github.com/bfentor/Sidequest/commit/98c0c8938e01bcb544257c1e03338813b722471a))
+* staging stays at sidequest.fentorweb.hu until questing.fi is set up ([49740a4](https://github.com/bfentor/Sidequest/commit/49740a406e23b6fd7e969495f1219ed5c077c618))
+* **web:** installed app's status bar matches the theme, and the bottom bar clears the home indicator ([f6e67a4](https://github.com/bfentor/Sidequest/commit/f6e67a4844556306fbf1cf447a581539fd181123))
+
 ## [0.2.0](https://github.com/bfentor/Sidequest/compare/v0.1.0...v0.2.0) (2026-11-19)
 
 
