@@ -351,3 +351,7 @@ msgstr "Käytä enintään 30 merkkiä."
 #: accounts/signup.py:45
 msgid "That username is taken. Try another one."
 msgstr "Käyttäjänimi on jo käytössä. Kokeile toista."
+
+#: images/serializers.py
+msgid "The crop has to stay inside the picture."
+msgstr "Rajauksen täytyy pysyä kuvan sisällä."

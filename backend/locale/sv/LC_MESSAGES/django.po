@@ -351,3 +351,7 @@ msgstr "Använd högst 30 tecken."
 #: accounts/signup.py:45
 msgid "That username is taken. Try another one."
 msgstr "Användarnamnet är upptaget. Prova ett annat."
+
+#: images/serializers.py
+msgid "The crop has to stay inside the picture."
+msgstr "Beskärningen måste hålla sig inom bilden."

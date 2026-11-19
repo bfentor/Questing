@@ -20,6 +20,12 @@ class Image(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="images"
     )
     file = models.ImageField(upload_to=image_path, width_field="width", height_field="height")
+    # A crop of another (uploaded) image, so it can be reframed later from the whole picture:
+    # x, y, width and height as fractions of the original's size.
+    source = models.ForeignKey(
+        "self", on_delete=models.SET_NULL, null=True, blank=True, related_name="crops"
+    )
+    crop = models.JSONField(null=True, blank=True)
     width = models.PositiveIntegerField()
     height = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
