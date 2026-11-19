@@ -2683,6 +2683,9 @@ components:
       - is_full
       - mine
       - waitlisted
+    BlankEnum:
+      enum:
+      - ''
     CalendarSource:
       type: object
       properties:
@@ -3220,6 +3223,20 @@ components:
         * `weekly` - weekly
         * `biweekly` - biweekly
         * `monthly` - monthly
+    GenderEnum:
+      enum:
+      - woman
+      - man
+      - nonbinary
+      - other
+      - prefer_not_to_say
+      type: string
+      description: |-
+        * `woman` - Woman/female
+        * `man` - Man/male
+        * `nonbinary` - Non-binary
+        * `other` - Other
+        * `prefer_not_to_say` - Prefer not to say
     GeocodeResult:
       type: object
       properties:
@@ -4096,6 +4113,24 @@ components:
         pronouns:
           type: string
           maxLength: 30
+        gender:
+          description: |-
+            People only. Left out unless show_gender, or it's your own profile.
+
+            * `woman` - Woman/female
+            * `man` - Man/male
+            * `nonbinary` - Non-binary
+            * `other` - Other
+            * `prefer_not_to_say` - Prefer not to say
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        gender_other:
+          type: string
+          description: Their own words, when gender is other; else empty.
+          maxLength: 50
+        show_gender:
+          type: boolean
         university:
           type: string
           maxLength: 100
@@ -4248,6 +4283,24 @@ components:
         pronouns:
           type: string
           maxLength: 30
+        gender:
+          description: |-
+            People only. Left out unless show_gender, or it's your own profile.
+
+            * `woman` - Woman/female
+            * `man` - Man/male
+            * `nonbinary` - Non-binary
+            * `other` - Other
+            * `prefer_not_to_say` - Prefer not to say
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        gender_other:
+          type: string
+          description: Their own words, when gender is other; else empty.
+          maxLength: 50
+        show_gender:
+          type: boolean
         university:
           type: string
           maxLength: 100

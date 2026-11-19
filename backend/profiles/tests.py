@@ -176,3 +176,61 @@ def test_hidden_followers(api_client, user, make_user):
     assert api_client.get(f"/api/profiles/{user.profile.handle}/followers/").status_code == 403
     api_client.force_authenticate(user)
     assert api_client.get(f"/api/profiles/{user.profile.handle}/followers/").status_code == 200
+
+
+def test_gender_is_private_unless_shown(api_client, make_user):
+    owner, other = make_user(), make_user()
+    handle = owner.profile.handle
+
+    api_client.force_authenticate(owner)
+    body = api_client.patch(
+        "/api/me/", {"gender": "other", "gender_other": "Genderfluid"}, format="json"
+    ).json()
+    assert (body["gender"], body["gender_other"], body["show_gender"]) == (
+        "other",
+        "Genderfluid",
+        False,
+    )
+    # You always see your own.
+    assert api_client.get(f"/api/profiles/{handle}/").json()["gender"] == "other"
+
+    # Everyone else sees nothing, signed in or not, until it's shown.
+    api_client.force_authenticate(other)
+    hidden = api_client.get(f"/api/profiles/{handle}/").json()
+    assert (hidden["gender"], hidden["gender_other"]) == ("", "")
+    api_client.force_authenticate(None)
+    assert api_client.get(f"/api/profiles/{handle}/").json()["gender"] == ""
+
+    Profile.objects.filter(pk=owner.profile.pk).update(show_gender=True)
+    shown = api_client.get(f"/api/profiles/{handle}/").json()
+    assert (shown["gender"], shown["gender_other"]) == ("other", "Genderfluid")
+
+
+def test_gender_other_text_only_goes_with_other(auth_client, user):
+    auth_client.patch("/api/me/", {"gender": "other", "gender_other": "Agender"}, format="json")
+    body = auth_client.patch("/api/me/", {"gender": "woman"}, format="json").json()
+    assert (body["gender"], body["gender_other"]) == ("woman", "")
+    body = auth_client.patch("/api/me/", {"gender_other": "Ignored"}, format="json").json()
+    assert body["gender_other"] == ""
+
+    assert auth_client.patch("/api/me/", {"gender": "robot"}, format="json").status_code == 400
+    body = auth_client.patch("/api/me/", {"gender": ""}, format="json").json()
+    assert body["gender"] == ""
+
+
+def test_organizations_have_no_gender(auth_client, user, make_organization):
+    from profiles.models import Membership
+
+    org = make_organization("club", members=[user])
+    Membership.objects.filter(organization=org).update(role=Membership.Role.ADMIN)
+    url = f"/api/organizations/{org.handle}/"
+    assert auth_client.patch(url, {"bio": "Hi"}, format="json").status_code == 200
+    assert auth_client.patch(url, {"gender": "man"}, format="json").status_code == 400
+
+
+def test_gender_is_in_the_data_export(user):
+    from accounts.services import export_data
+
+    user.profile.gender = "nonbinary"
+    user.profile.save()
+    assert export_data(user)["profile"]["gender"] == "nonbinary"

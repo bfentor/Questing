@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sidequest\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 09:30+0200\n"
+"POT-Creation-Date: 2026-11-19 15:45+0200\n"
 "PO-Revision-Date: 2026-11-02 20:52+0200\n"
 "Last-Translator: Sidequest <dev@sidequest.invalid>\n"
 "Language-Team: Swedish\n"
@@ -20,6 +20,15 @@ msgstr ""
 
 msgid "Accept the terms of service and privacy policy to continue."
 msgstr "Godkänn användarvillkoren och integritetspolicyn för att fortsätta."
+
+msgid "Enter your name."
+msgstr "Skriv ditt namn."
+
+msgid "Use at most 30 characters."
+msgstr "Använd högst 30 tecken."
+
+msgid "That username is taken. Try another one."
+msgstr "Användarnamnet är upptaget. Prova ett annat."
 
 #, python-format
 msgid "You need to be at least %(age)s years old to use Sidequest."
@@ -84,6 +93,9 @@ msgstr "Den här kalendern synkroniseras redan."
 
 msgid "This profile wasn't invited to co-host."
 msgstr "Den här profilen bjöds inte in som medarrangör."
+
+msgid "The crop has to stay inside the picture."
+msgstr "Beskärningen måste hålla sig inom bilden."
 
 msgid "The picture is too large (at most 10 MB)."
 msgstr "Bilden är för stor (högst 10 MB)."
@@ -282,6 +294,21 @@ msgstr "Använd bara små bokstäver, siffror och understreck."
 msgid "Enter an Instagram username without the @."
 msgstr "Ange ett Instagram-användarnamn utan @."
 
+msgid "Woman/female"
+msgstr "Kvinna"
+
+msgid "Man/male"
+msgstr "Man"
+
+msgid "Non-binary"
+msgstr "Icke-binär"
+
+msgid "Other"
+msgstr "Annat"
+
+msgid "Prefer not to say"
+msgstr "Vill inte säga"
+
 msgid "Pending"
 msgstr "Väntar"
 
@@ -305,6 +332,9 @@ msgstr "Organisationen är redan verifierad."
 
 msgid "An organization needs at least one admin."
 msgstr "En organisation behöver minst en administratör."
+
+msgid "Only people have a gender."
+msgstr "Bara personer har ett kön."
 
 msgid "You cannot follow yourself."
 msgstr "Du kan inte följa dig själv."
@@ -339,19 +369,3 @@ msgstr "Koden är fel."
 
 #~ msgid "Choose admin or editor."
 #~ msgstr "Välj administratör eller redaktör."
-
-#: accounts/signup.py:35
-msgid "Enter your name."
-msgstr "Skriv ditt namn."
-
-#: accounts/signup.py:42
-msgid "Use at most 30 characters."
-msgstr "Använd högst 30 tecken."
-
-#: accounts/signup.py:45
-msgid "That username is taken. Try another one."
-msgstr "Användarnamnet är upptaget. Prova ett annat."
-
-#: images/serializers.py
-msgid "The crop has to stay inside the picture."
-msgstr "Beskärningen måste hålla sig inom bilden."

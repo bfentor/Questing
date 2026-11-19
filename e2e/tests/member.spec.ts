@@ -96,3 +96,25 @@ test('event cards show your answer at a glance', async ({ page }) => {
   await toggleInterested('DELETE');
   await expect(card).not.toContainText('Interested');
 });
+
+test('gender is private until you show it on your profile', async ({ page }) => {
+  const words = `Genderfluid ${Date.now() % 1000}`;
+  await signIn(page);
+  await page.goto('/edit-profile');
+  await page.getByRole('radio', { name: 'Other' }).click();
+  await page.getByLabel('In your own words (optional)').fill(words);
+  const show = page.getByRole('switch', { name: 'Show my gender on my profile' });
+  await expect(show).toHaveAttribute('aria-checked', 'false');
+  await show.click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page).not.toHaveURL(/edit-profile/);
+
+  await page.goto('/profile');
+  await expect(page.getByText(words)).toBeVisible();
+
+  // Back to not set, so the test can run again.
+  await page.goto('/edit-profile');
+  await page.getByRole('radio', { name: 'Not set' }).click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page).not.toHaveURL(/edit-profile/);
+});

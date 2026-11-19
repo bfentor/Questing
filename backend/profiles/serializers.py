@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
@@ -78,6 +79,9 @@ class ProfileSerializer(serializers.ModelSerializer):
             "cover",
             "cover_id",
             "pronouns",
+            "gender",
+            "gender_other",
+            "show_gender",
             "university",
             "faculty",
             "study_year",
@@ -98,6 +102,30 @@ class ProfileSerializer(serializers.ModelSerializer):
             "is_muted",
         ]
         read_only_fields = ["kind", "created_at", "verified"]
+        extra_kwargs = {
+            "gender": {
+                "help_text": "People only. Left out unless show_gender, or it's your own profile."
+            },
+            "gender_other": {"help_text": "Their own words, when gender is other; else empty."},
+        }
+
+    def validate(self, attrs):
+        gender = attrs.get("gender", self.instance.gender if self.instance else "")
+        if gender and self.instance and self.instance.kind != Profile.Kind.PERSON:
+            raise serializers.ValidationError({"gender": _("Only people have a gender.")})
+        # Their own words only go with Other.
+        if gender != Profile.Gender.OTHER and ("gender" in attrs or "gender_other" in attrs):
+            attrs["gender_other"] = ""
+        return attrs
+
+    def to_representation(self, profile):
+        data = super().to_representation(profile)
+        request = self.context.get("request")
+        own = bool(request and profile.user_id and profile.user_id == request.user.id)
+        if not (own or profile.show_gender):
+            data["gender"] = ""
+            data["gender_other"] = ""
+        return data
 
 
 class FollowStatusSerializer(serializers.Serializer):

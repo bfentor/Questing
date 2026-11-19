@@ -93,6 +93,8 @@ export type AttendanceSummary = {
     friends_going_count: number;
 };
 
+export type BlankEnum = '';
+
 export type CalendarSource = {
     readonly id: number;
     /**
@@ -313,6 +315,15 @@ export type FollowStatusStatusEnum = 'following' | 'requested' | 'none';
  * * `monthly` - monthly
  */
 export type FrequencyEnum = 'weekly' | 'biweekly' | 'monthly';
+
+/**
+ * * `woman` - Woman/female
+ * * `man` - Man/male
+ * * `nonbinary` - Non-binary
+ * * `other` - Other
+ * * `prefer_not_to_say` - Prefer not to say
+ */
+export type GenderEnum = 'woman' | 'man' | 'nonbinary' | 'other' | 'prefer_not_to_say';
 
 export type GeocodeResult = {
     label: string;
@@ -647,6 +658,21 @@ export type PatchedProfileRequest = {
     display_name?: string;
     bio?: string;
     pronouns?: string;
+    /**
+     * People only. Left out unless show_gender, or it's your own profile.
+     *
+     * * `woman` - Woman/female
+     * * `man` - Man/male
+     * * `nonbinary` - Non-binary
+     * * `other` - Other
+     * * `prefer_not_to_say` - Prefer not to say
+     */
+    gender?: GenderEnum | BlankEnum;
+    /**
+     * Their own words, when gender is other; else empty.
+     */
+    gender_other?: string;
+    show_gender?: boolean;
     university?: string;
     faculty?: string;
     study_year?: number | null;
@@ -696,6 +722,21 @@ export type Profile = {
     avatar: Image | null;
     cover: Image | null;
     pronouns?: string;
+    /**
+     * People only. Left out unless show_gender, or it's your own profile.
+     *
+     * * `woman` - Woman/female
+     * * `man` - Man/male
+     * * `nonbinary` - Non-binary
+     * * `other` - Other
+     * * `prefer_not_to_say` - Prefer not to say
+     */
+    gender?: GenderEnum | BlankEnum;
+    /**
+     * Their own words, when gender is other; else empty.
+     */
+    gender_other?: string;
+    show_gender?: boolean;
     university?: string;
     faculty?: string;
     study_year?: number | null;
@@ -1174,6 +1215,21 @@ export type PatchedProfileRequestWritable = {
      */
     cover_id?: number | null;
     pronouns?: string;
+    /**
+     * People only. Left out unless show_gender, or it's your own profile.
+     *
+     * * `woman` - Woman/female
+     * * `man` - Man/male
+     * * `nonbinary` - Non-binary
+     * * `other` - Other
+     * * `prefer_not_to_say` - Prefer not to say
+     */
+    gender?: GenderEnum | BlankEnum;
+    /**
+     * Their own words, when gender is other; else empty.
+     */
+    gender_other?: string;
+    show_gender?: boolean;
     university?: string;
     faculty?: string;
     study_year?: number | null;
@@ -1216,6 +1272,21 @@ export type ProfileWritable = {
     display_name: string;
     bio?: string;
     pronouns?: string;
+    /**
+     * People only. Left out unless show_gender, or it's your own profile.
+     *
+     * * `woman` - Woman/female
+     * * `man` - Man/male
+     * * `nonbinary` - Non-binary
+     * * `other` - Other
+     * * `prefer_not_to_say` - Prefer not to say
+     */
+    gender?: GenderEnum | BlankEnum;
+    /**
+     * Their own words, when gender is other; else empty.
+     */
+    gender_other?: string;
+    show_gender?: boolean;
     university?: string;
     faculty?: string;
     study_year?: number | null;

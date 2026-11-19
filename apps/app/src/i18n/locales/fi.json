@@ -268,7 +268,19 @@
     "uploading": "Ladataan…",
     "pronounsNone": "Ei mitään",
     "pronounsCustom": "Oma",
-    "pronounsCustomLabel": "Pronominisi"
+    "pronounsCustomLabel": "Pronominisi",
+    "gender": "Sukupuoli",
+    "genderNone": "Ei valittu",
+    "genderWoman": "Nainen",
+    "genderMan": "Mies",
+    "genderNonbinary": "Muunsukupuolinen",
+    "genderPreferNotToSay": "En halua kertoa",
+    "genderOther": "Muu",
+    "genderOtherLabel": "Omin sanoin (valinnainen)",
+    "showGender": "Näytä sukupuoleni profiilissani",
+    "showGenderHint": "Muuten vain sinä näet sen.",
+    "genderShortWoman": "Nainen",
+    "genderShortMan": "Mies"
   },
   "followRequests": {
     "title": "Seuraamispyynnöt",

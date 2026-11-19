@@ -268,7 +268,19 @@
     "uploading": "Laddar upp…",
     "pronounsNone": "Inga",
     "pronounsCustom": "Egna",
-    "pronounsCustomLabel": "Dina pronomen"
+    "pronounsCustomLabel": "Dina pronomen",
+    "gender": "Kön",
+    "genderNone": "Inte angivet",
+    "genderWoman": "Kvinna",
+    "genderMan": "Man",
+    "genderNonbinary": "Icke-binär",
+    "genderPreferNotToSay": "Vill inte säga",
+    "genderOther": "Annat",
+    "genderOtherLabel": "Med egna ord (valfritt)",
+    "showGender": "Visa mitt kön på min profil",
+    "showGenderHint": "Annars ser bara du det.",
+    "genderShortWoman": "Kvinna",
+    "genderShortMan": "Man"
   },
   "followRequests": {
     "title": "Följarförfrågningar",

@@ -268,7 +268,19 @@
     "uploading": "Uploading…",
     "pronounsNone": "None",
     "pronounsCustom": "Custom",
-    "pronounsCustomLabel": "Your pronouns"
+    "pronounsCustomLabel": "Your pronouns",
+    "gender": "Gender",
+    "genderNone": "Not set",
+    "genderWoman": "Woman/female",
+    "genderMan": "Man/male",
+    "genderNonbinary": "Non-binary",
+    "genderPreferNotToSay": "Prefer not to say",
+    "genderOther": "Other",
+    "genderOtherLabel": "In your own words (optional)",
+    "showGender": "Show my gender on my profile",
+    "showGenderHint": "Otherwise only you can see it.",
+    "genderShortWoman": "Woman",
+    "genderShortMan": "Man"
   },
   "followRequests": {
     "title": "Follow requests",

@@ -75,6 +75,13 @@ class Profile(models.Model):
         PERSON = "person"
         ORGANIZATION = "organization"
 
+    class Gender(models.TextChoices):
+        WOMAN = "woman", _("Woman/female")
+        MAN = "man", _("Man/male")
+        NONBINARY = "nonbinary", _("Non-binary")
+        OTHER = "other", _("Other")
+        PREFER_NOT_TO_SAY = "prefer_not_to_say", _("Prefer not to say")
+
     kind = models.CharField(max_length=20, choices=Kind.choices)
     handle = models.CharField(max_length=30, unique=True, validators=[handle_validator])
     display_name = models.CharField(max_length=80)
@@ -89,6 +96,12 @@ class Profile(models.Model):
     interests = models.ManyToManyField("events.Category", blank=True, related_name="interested")
     # Optional details people can show on their profile.
     pronouns = models.CharField(max_length=30, blank=True)
+    # People only. Private unless `show_gender`: only its owner sees it otherwise.
+    gender = models.CharField(max_length=20, choices=Gender.choices, blank=True)
+    gender_other = models.CharField(
+        max_length=50, blank=True, help_text="Their own words, when gender is Other."
+    )
+    show_gender = models.BooleanField(default=False)
     university = models.CharField(max_length=100, blank=True)
     faculty = models.CharField(max_length=100, blank=True)
     study_year = models.PositiveSmallIntegerField(null=True, blank=True)

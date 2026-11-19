@@ -1,6 +1,7 @@
 import {
   imagesCropCreate,
   imagesRetrieve,
+  type GenderEnum,
   type Image,
   type PatchedProfileRequestWritable,
   type Profile,
@@ -44,6 +45,21 @@ const ASPECT: Record<PictureKind, number> = { avatar: 1, cover: 3 };
 const AVATAR_SIZE = 88;
 // The same in every language: they're shown to everyone as written.
 const PRONOUNS = ['she/her', 'he/him', 'they/them', 'she/they', 'he/they'];
+const GENDERS = [
+  { value: 'woman', label: 'editProfile.genderWoman' },
+  { value: 'man', label: 'editProfile.genderMan' },
+  { value: 'nonbinary', label: 'editProfile.genderNonbinary' },
+  { value: 'prefer_not_to_say', label: 'editProfile.genderPreferNotToSay' },
+  { value: 'other', label: 'editProfile.genderOther' },
+] as const;
+
+/** Whether there's anything to show on the profile: not for no answer or "prefer not to say". */
+function isShowable(gender: GenderEnum | '') {
+  return gender !== '' && gender !== 'prefer_not_to_say';
+}
+
+/** A person's gender: private unless `show`, with their own words for Other. */
+type GenderAnswer = { gender: GenderEnum | ''; other: string; show: boolean };
 
 /** A picture being framed: the whole one, which image to crop, and where it was framed. */
 type Cropping = {
@@ -68,6 +84,11 @@ export function ProfileForm({ profile, showPrivacy, onSave, onSaved }: ProfileFo
     website: profile.website ?? '',
     instagram: profile.instagram ?? '',
   });
+  const [gender, setGender] = useState<GenderAnswer>({
+    gender: profile.gender ?? '',
+    other: profile.gender_other ?? '',
+    show: profile.show_gender ?? false,
+  });
   const [interests, setInterests] = useState<string[]>(profile.interests ?? []);
   const [privacy, setPrivacy] = useState({
     is_private: profile.is_private ?? false,
@@ -85,7 +106,14 @@ export function ProfileForm({ profile, showPrivacy, onSave, onSaved }: ProfileFo
       const body: PatchedProfileRequestWritable = {
         ...common,
         // People have pronouns; organizations have links.
-        ...(person ? { pronouns: pronouns.trim() } : { website, instagram }),
+        ...(person
+          ? {
+              pronouns: pronouns.trim(),
+              gender: gender.gender,
+              gender_other: gender.gender === 'other' ? gender.other.trim() : '',
+              show_gender: gender.show && isShowable(gender.gender),
+            }
+          : { website, instagram }),
         avatar_id: avatar?.id ?? null,
         cover_id: cover?.id ?? null,
         interests,
@@ -135,6 +163,13 @@ export function ProfileForm({ profile, showPrivacy, onSave, onSaved }: ProfileFo
         <View style={styles.group}>
           <PronounPicker value={form.pronouns} onChange={set('pronouns')} />
           {fieldErrors('pronouns')}
+        </View>
+      ) : null}
+      {person ? (
+        <View style={styles.group}>
+          <GenderPicker value={gender} onChange={setGender} />
+          {fieldErrors('gender')}
+          {fieldErrors('gender_other')}
         </View>
       ) : (
         <>
@@ -411,6 +446,68 @@ function PronounPicker({ value, onChange }: { value: string; onChange: (value: s
           autoCapitalize="none"
           maxLength={30}
         />
+      ) : null}
+    </>
+  );
+}
+
+/**
+ * Gender, if they want to give it: the options, their own words for Other, and whether it's
+ * on their profile (it's private otherwise).
+ */
+function GenderPicker({
+  value,
+  onChange,
+}: {
+  value: GenderAnswer;
+  onChange: (value: GenderAnswer) => void;
+}) {
+  const { t } = useTranslation();
+  const choose = (gender: GenderAnswer['gender']) => onChange({ ...value, gender });
+  const showable = isShowable(value.gender);
+
+  return (
+    <>
+      <ThemedText type="smallBold">{t('editProfile.gender')}</ThemedText>
+      <View style={styles.chips} role="radiogroup" aria-label={t('editProfile.gender')}>
+        <Chip
+          radio
+          label={t('editProfile.genderNone')}
+          selected={value.gender === ''}
+          onPress={() => choose('')}
+        />
+        {GENDERS.map((option) => (
+          <Chip
+            key={option.value}
+            radio
+            label={t(option.label)}
+            selected={value.gender === option.value}
+            onPress={() => choose(option.value)}
+          />
+        ))}
+      </View>
+      {value.gender === 'other' ? (
+        <TextField
+          label={t('editProfile.genderOtherLabel')}
+          value={value.other}
+          onChangeText={(other) => onChange({ ...value, other })}
+          maxLength={50}
+        />
+      ) : null}
+      {showable ? (
+        <View style={styles.switchRow}>
+          <View style={styles.switchText}>
+            <ThemedText>{t('editProfile.showGender')}</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              {t('editProfile.showGenderHint')}
+            </ThemedText>
+          </View>
+          <Switch
+            value={value.show}
+            accessibilityLabel={t('editProfile.showGender')}
+            onValueChange={(show) => onChange({ ...value, show })}
+          />
+        </View>
       ) : null}
     </>
   );
