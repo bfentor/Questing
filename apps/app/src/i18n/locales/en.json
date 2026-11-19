@@ -174,7 +174,11 @@
     "like": "Like",
     "unlike": "Unlike",
     "title": "Post",
-    "picture": "Picture {{number}} of {{count}} in {{name}}'s post"
+    "picture": "Picture {{number}} of {{count}} in {{name}}'s post",
+    "quickLabel": "Quick post",
+    "quickPlaceholder": "A quick thought or an event idea?",
+    "moreOptions": "Add pictures and more",
+    "posted": "Posted"
   },
   "moderation": {
     "report": "Report",

@@ -1,3 +1,4 @@
+import { SymbolView, type AndroidSymbol, type SFSymbol } from 'expo-symbols';
 import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
@@ -14,6 +15,8 @@ type ButtonProps = {
   size?: 'regular' | 'small';
   disabled?: boolean;
   loading?: boolean;
+  /** Before the title: SF Symbol on iOS; Material Symbol on Android and web. */
+  icon?: { ios: SFSymbol; material: AndroidSymbol };
 };
 
 export function Button({
@@ -23,6 +26,7 @@ export function Button({
   size = 'regular',
   disabled,
   loading,
+  icon,
 }: ButtonProps) {
   const theme = useTheme();
   const shape = useShape();
@@ -42,6 +46,7 @@ export function Button({
         styles.button,
         shape.button,
         size === 'small' && styles.small,
+        icon && styles.withIcon,
         variant !== 'secondary' && shape.raised,
         { backgroundColor: background },
         (pressed || disabled) && styles.dimmed,
@@ -49,9 +54,18 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={foreground} />
       ) : (
-        <ThemedText type="smallBold" style={{ color: foreground, textAlign: 'center' }}>
-          {title}
-        </ThemedText>
+        <>
+          {icon ? (
+            <SymbolView
+              name={{ ios: icon.ios, android: icon.material, web: icon.material }}
+              size={size === 'small' ? 16 : 18}
+              tintColor={foreground}
+            />
+          ) : null}
+          <ThemedText type="smallBold" style={{ color: foreground, textAlign: 'center' }}>
+            {title}
+          </ThemedText>
+        </>
       )}
     </Pressable>
   );
@@ -70,6 +84,10 @@ const styles = StyleSheet.create({
     minHeight: 34,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one,
+  },
+  withIcon: {
+    flexDirection: 'row',
+    gap: Spacing.one,
   },
   dimmed: {
     opacity: 0.6,

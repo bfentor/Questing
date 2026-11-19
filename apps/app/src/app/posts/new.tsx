@@ -8,9 +8,9 @@ import { PostForm, type PostFieldErrors } from '@/components/post-form';
 import { Screen } from '@/components/screen';
 import { goBack } from '@/lib/navigation';
 
-/** Write a post; `?event=<id>` shares that event in it. */
+/** Write a post; `?event=<id>` shares that event in it, and `?body=` starts it with that text. */
 export default function NewPostScreen() {
-  const { event: eventId } = useLocalSearchParams<{ event?: string }>();
+  const { event: eventId, body = '' } = useLocalSearchParams<{ event?: string; body?: string }>();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const event = useQuery({
@@ -26,7 +26,7 @@ export default function NewPostScreen() {
     <Screen hasHeader keyboardShouldPersistTaps="handled">
       <PostForm
         mode="create"
-        initial={{ body: '', images: [], event: event.data ?? null }}
+        initial={{ body, images: [], event: event.data ?? null }}
         submitLabel={t('posts.publish')}
         onSubmit={async (body) => {
           const { data, error } = await postsCreate({ body });

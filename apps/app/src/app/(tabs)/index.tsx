@@ -19,7 +19,9 @@ import { EventCard } from '@/components/event-card';
 import { FeedList } from '@/components/feed-list';
 import { FollowSuggestions } from '@/components/follow-suggestions';
 import { IconButton } from '@/components/icon-button';
+import { NewPostButton } from '@/components/new-post-button';
 import { PostCard } from '@/components/post-card';
+import { QuickPost } from '@/components/quick-post';
 import { Screen } from '@/components/screen';
 import { TabTitle } from '@/components/tab-title';
 import { ThemedText } from '@/components/themed-text';
@@ -80,13 +82,9 @@ function SignedInHome() {
       header={
         <View style={styles.header}>
           <TabTitle title={t('tabs.home')}>
-            <IconButton
-              icon={{ ios: 'square.and.pencil', material: 'edit_square' }}
-              label={t('posts.new')}
-              size={28}
-              onPress={() => router.push('/posts/new')}
-            />
+            <NewPostButton />
           </TabTitle>
+          <QuickPost />
           <NextEvent event={next} />
           <Highlights exclude={next ? [next.id] : []} />
           {hideSuggestions ? null : (
