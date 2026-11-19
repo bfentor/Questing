@@ -36,9 +36,10 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
-      # The lockfiles record the version too, and release-please doesn't update them: without
-      # this, the release's uv sync --locked (the API's image, CI) refuses to build. Runs
-      # whenever release-please (re)writes its pull request's branch.
+      # The lockfiles and the API schema record the version too, and release-please doesn't
+      # update them: without this, the release's uv sync --locked (the API's image, CI) refuses
+      # to build, and CI finds the schema out of date. Runs whenever release-please (re)writes
+      # its pull request's branch.
       - if: steps.release.outputs.prs_created == 'true'
         uses: actions/checkout@v5
         with:
@@ -49,16 +50,19 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 24
-      - name: Update the lockfiles to the new version
+      - name: Update the lockfiles and the API schema to the new version
         if: steps.release.outputs.prs_created == 'true'
         run: |
           (cd backend && uv lock)
           npm install --package-lock-only --ignore-scripts
+          version=$(jq -r '."."' .release-please-manifest.json)
+          # The schema's first "version:" is its info.version, the API's (manage.py spectacular).
+          sed -i "0,/^  version: .*/s//  version: $version/" backend/openapi.yaml
           if git diff --quiet; then
-            echo "The lockfiles already match."
+            echo "The lockfiles and the API schema already match."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit --all --message "chore: lockfiles at the release's version"
+          git commit --all --message "chore: lockfiles and API schema at the release's version"
           git push
