@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.gis.db import models as gis_models
 from django.db import models
 from django.utils import timezone
 
@@ -50,6 +51,12 @@ class User(AbstractUser):
     # The weekly email of upcoming events: opt-in, and when it last went out.
     email_digest = models.BooleanField(default=False)
     digest_sent_at = models.DateTimeField(null=True, blank=True)
+    # Where to look for new events near them, rounded to about a kilometre: opt-in, and
+    # cleared when they turn it off. Daily notifications count events published since
+    # suggestions_sent_at, so each event is counted once.
+    nearby_location = gis_models.PointField(srid=4326, null=True, blank=True)
+    nearby_radius_km = models.PositiveSmallIntegerField(default=10)
+    suggestions_sent_at = models.DateTimeField(null=True, blank=True)
 
     @property
     def age(self):

@@ -1,11 +1,15 @@
 import type { Event } from '@sidequest/api';
 import { Link } from 'expo-router';
+import { SymbolView, type AndroidSymbol, type SFSymbol } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
+import { useAnswerColors } from '@/hooks/use-answer-colors';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useTheme } from '@/hooks/use-theme';
 import { useShape } from '@/hooks/use-shape';
+import { mix, withAlpha } from '@/lib/color';
 import { useFormat } from '@/lib/format';
 
 import { useEventPanel } from './event-panel';
@@ -32,6 +36,9 @@ export function EventCard({ event, distanceM, fill }: EventCardProps) {
   const theme = useTheme();
   const shape = useShape();
   const selected = panel?.selected === event.id;
+  const mine = event.attendance.mine;
+  const isGoing = mine === 'going';
+  const dark = useColorScheme() === 'dark';
 
   const card = (
     <ThemedView
@@ -42,18 +49,31 @@ export function EventCard({ event, distanceM, fill }: EventCardProps) {
         shape.box,
         {
           borderWidth: Math.max(2, shape.border),
+          // The open event is outlined in the accent; one you're going to, in a paler accent.
           borderColor: selected
             ? theme.tint
-            : shape.border
-              ? theme.backgroundSelected
-              : 'transparent',
+            : isGoing
+              ? withAlpha(theme.tint, 0.5)
+              : shape.border
+                ? theme.backgroundSelected
+                : 'transparent',
+        },
+        // A hint of the accent behind events you're going to, to spot them at a glance.
+        isGoing && {
+          backgroundColor: mix(theme.backgroundElement, theme.tint, dark ? 0.14 : 0.08),
         },
       ]}>
-      <ThemedText type="smallBold" themeColor={event.status === 'active' ? 'tint' : 'danger'}>
-        {event.status === 'active'
-          ? format.eventTime(event.starts_at, event.ends_at)
-          : `${t(`eventStatus.${event.status ?? 'active'}`)} · ${format.eventTime(event.starts_at, event.ends_at)}`}
-      </ThemedText>
+      <View style={styles.top}>
+        <ThemedText
+          type="smallBold"
+          themeColor={event.status === 'active' ? 'tint' : 'danger'}
+          style={styles.time}>
+          {event.status === 'active'
+            ? format.eventTime(event.starts_at, event.ends_at)
+            : `${t(`eventStatus.${event.status ?? 'active'}`)} · ${format.eventTime(event.starts_at, event.ends_at)}`}
+        </ThemedText>
+        {mine ? <MyAnswer answer={mine} /> : null}
+      </View>
       {!event.published_at ? (
         <ThemedText type="small" themeColor="textSecondary">
           {t('eventStatus.draft')}
@@ -104,7 +124,65 @@ export function EventCard({ event, distanceM, fill }: EventCardProps) {
   );
 }
 
+const ANSWER_ICONS: Record<
+  'going' | 'interested' | 'waitlisted',
+  { ios: SFSymbol; material: AndroidSymbol }
+> = {
+  going: { ios: 'checkmark.circle.fill', material: 'check_circle' },
+  interested: { ios: 'star.fill', material: 'star' },
+  waitlisted: { ios: 'hourglass', material: 'hourglass_top' },
+};
+
+/**
+ * Your answer to the event, as a small label in its corner: filled with the accent if you're
+ * going, pale amber if you're interested, pale grey on the waitlist (as on the calendar).
+ */
+function MyAnswer({ answer }: { answer: 'going' | 'interested' | 'waitlisted' }) {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const shape = useShape();
+  const colors = useAnswerColors();
+  const going = answer === 'going';
+  const color = going ? theme.onTint : colors[answer];
+  return (
+    <View
+      style={[
+        styles.answer,
+        shape.selector,
+        { backgroundColor: going ? theme.tint : withAlpha(colors[answer], 0.16) },
+      ]}>
+      <SymbolView
+        name={{
+          ios: ANSWER_ICONS[answer].ios,
+          android: ANSWER_ICONS[answer].material,
+          web: ANSWER_ICONS[answer].material,
+        }}
+        size={14}
+        tintColor={color}
+      />
+      <ThemedText type="smallBold" style={{ color }}>
+        {t(`rsvp.${answer}`)}
+      </ThemedText>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
+  top: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.two,
+  },
+  time: {
+    flex: 1,
+  },
+  answer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.one,
+    paddingHorizontal: Spacing.two,
+    paddingVertical: Spacing.half,
+  },
   card: {
     gap: Spacing.one,
     padding: Spacing.three,

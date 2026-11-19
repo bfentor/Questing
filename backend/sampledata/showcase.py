@@ -981,6 +981,16 @@ class Showcase:
         notify(me, Kind.EVENT_REMINDER, event=self.bouldering)
         notify(me, Kind.FEEDBACK_REQUEST, event=self.quiz)
         notify(me, Kind.WAITLIST_PROMOTED, event=self.sauna)
+        # The demo account gets everything from Aino, posts too.
+        Follow.objects.filter(follower=self.viewer.profile, followee=p["aino"]).update(
+            notify=Follow.Notify.ALL
+        )
+        aino_post = Post.objects.filter(author=p["aino"]).order_by("-created_at").first()
+        if aino_post:
+            notify(me, Kind.NEW_POST, actor=p["aino"], post=aino_post)
+        # The daily suggestions carry their count in the message.
+        notify(me, Kind.INTEREST_EVENTS, message="3")
+        notify(me, Kind.NEARBY_EVENTS, message="4")
         notify(
             attendees_of(self.gala),
             Kind.ANNOUNCEMENT,

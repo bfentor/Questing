@@ -1,6 +1,6 @@
 from events.models import Attendance
 from moderation.models import Block, Mute
-from profiles.models import Membership, Profile
+from profiles.models import Follow, Membership, Profile
 
 from .models import Notification
 
@@ -28,10 +28,11 @@ def notify(recipients, kind, *, actor=None, event=None, post=None, message=""):
     )
 
 
-def followers_of(profile):
-    return Profile.objects.filter(follows__followee=profile, user__isnull=False).select_related(
-        "user"
-    )
+def followers_of(profile, notify=(Follow.Notify.ALL, Follow.Notify.EVENTS)):
+    """People following `profile` who want to hear about it at one of the `notify` levels."""
+    return Profile.objects.filter(
+        follows__followee=profile, follows__notify__in=notify, user__isnull=False
+    ).select_related("user")
 
 
 def managers_of(profile):

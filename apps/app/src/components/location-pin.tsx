@@ -7,7 +7,7 @@ import { useShape } from '@/hooks/use-shape';
 
 import { cameraFor, type LocationPinProps } from './location-pin.shared';
 
-/** A map with the event's pin; tapping the map moves the pin there. */
+/** A map with the event's pin; tapping the map moves the pin there (with `onChange`). */
 export function LocationPin({ value, center, onChange }: LocationPinProps) {
   const shape = useShape();
   const cameraPosition = useMemo(() => {
@@ -18,7 +18,7 @@ export function LocationPin({ value, center, onChange }: LocationPinProps) {
     ? [{ id: 'pin', coordinates: { latitude: value.lat, longitude: value.lng } }]
     : [];
   const pick = ({ coordinates }: { coordinates: { latitude?: number; longitude?: number } }) => {
-    if (coordinates.latitude !== undefined && coordinates.longitude !== undefined) {
+    if (onChange && coordinates.latitude !== undefined && coordinates.longitude !== undefined) {
       onChange({ lat: coordinates.latitude, lng: coordinates.longitude } satisfies LatLng);
     }
   };

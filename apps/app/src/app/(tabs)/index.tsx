@@ -19,11 +19,12 @@ import { EventCard } from '@/components/event-card';
 import { FeedList } from '@/components/feed-list';
 import { FollowSuggestions } from '@/components/follow-suggestions';
 import { IconButton } from '@/components/icon-button';
+import { NewEventButton } from '@/components/new-event-button';
 import { NewPostButton } from '@/components/new-post-button';
 import { PostCard } from '@/components/post-card';
 import { QuickPost } from '@/components/quick-post';
 import { Screen } from '@/components/screen';
-import { TabTitle } from '@/components/tab-title';
+import { LABELLED_ACTIONS_MIN_WIDTH, TabTitle } from '@/components/tab-title';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Welcome } from '@/components/welcome';
@@ -68,6 +69,8 @@ export default function HomeScreen() {
 function SignedInHome() {
   const { t } = useTranslation();
   const shape = useShape();
+  const { width } = useWindowDimensions();
+  const compact = width < LABELLED_ACTIONS_MIN_WIDTH;
   const [hidePast, setHidePast] = useBooleanPreference('following.hidePast', false);
   const [hideSuggestions, setHideSuggestions] = useBooleanPreference(
     'following.hideSuggestions',
@@ -82,7 +85,8 @@ function SignedInHome() {
       header={
         <View style={styles.header}>
           <TabTitle title={t('tabs.home')}>
-            <NewPostButton />
+            <NewEventButton compact={compact} />
+            <NewPostButton compact={compact} />
           </TabTitle>
           <QuickPost />
           <NextEvent event={next} />

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import { openEvent, signIn } from './helpers';
 
@@ -55,4 +55,219 @@ test('posts a quick thought from the home page', async ({ page }) => {
   await expect(page.getByText('Posted', { exact: true })).toBeVisible();
   await expect(page.getByLabel('Quick post')).toHaveValue('');
   await expect(page.getByText(thought)).toBeVisible();
+});
+
+test('Home and Upcoming have a New event button', async ({ page }) => {
+  await signIn(page);
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: 'New post' })).toBeVisible();
+  await page.getByRole('button', { name: 'New event' }).click();
+  await expect(page).toHaveURL(/\/events\/new/);
+
+  // The same button on Upcoming.
+  await page.goto('/upcoming');
+  await page.getByRole('button', { name: 'New event' }).click();
+  await expect(page).toHaveURL(/\/events\/new/);
+});
+
+test('event cards show your answer at a glance', async ({ page }) => {
+  const title = 'Morning run by the lake';
+  await signIn(page);
+  await page.goto('/upcoming');
+  const card = page.getByRole('link').filter({ hasText: title }).first();
+  await expect(card).toBeVisible();
+  await expect(card).not.toContainText('Interested');
+
+  // Answers on the event's page, then goes back to the list without reloading the app, so
+  // its cache stays in step with the server.
+  const toggleInterested = async (method: 'PUT' | 'DELETE') => {
+    await openEvent(page, title);
+    const saved = page.waitForResponse((response) => /\/attendance\/$/.test(response.url()));
+    await page.getByRole('button', { name: 'Interested', exact: true }).click();
+    const response = await saved;
+    expect(response.request().method()).toBe(method);
+    expect(response.ok()).toBe(true);
+    await page.goBack();
+  };
+
+  await toggleInterested('PUT');
+  await expect(card).toContainText('Interested');
+  // Undo, so the test can run again.
+  await toggleInterested('DELETE');
+  await expect(card).not.toContainText('Interested');
+});
+
+test('gender is private until you show it on your profile', async ({ page }) => {
+  const words = `Genderfluid ${Date.now() % 1000}`;
+  await signIn(page);
+  await page.goto('/edit-profile');
+  await page.getByRole('radio', { name: 'Other' }).click();
+  await page.getByLabel('In your own words (optional)').fill(words);
+  const show = page.getByRole('switch', { name: 'Show my gender on my profile' });
+  await expect(show).toHaveAttribute('aria-checked', 'false');
+  await show.click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page).not.toHaveURL(/edit-profile/);
+
+  await page.goto('/profile');
+  await expect(page.getByText(words)).toBeVisible();
+
+  // Back to not set, so the test can run again.
+  await page.goto('/edit-profile');
+  await page.getByRole('radio', { name: 'Not set' }).click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page).not.toHaveURL(/edit-profile/);
+});
+
+test('choose who sees the events you go to, and hide past ones', async ({ page }) => {
+  await signIn(page);
+  await page.goto('/edit-profile');
+  const past = page.getByRole('switch', { name: "Show events I've been to" });
+  // Past events are hidden unless you show them.
+  await expect(past).toHaveAttribute('aria-checked', 'false');
+  await page.getByRole('radio', { name: 'Your followers' }).click();
+  await past.click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page).not.toHaveURL(/edit-profile/);
+
+  await page.goto('/edit-profile');
+  await expect(page.getByRole('radio', { name: 'Your followers' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await expect(past).toHaveAttribute('aria-checked', 'true');
+  // "Only you" leaves nothing to show afterwards either.
+  await page.getByRole('radio', { name: 'Only you' }).click();
+  await expect(past).toBeHidden();
+
+  // Back as it was, so the test can run again.
+  await page.getByRole('radio', { name: 'Everyone' }).click();
+  await past.click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page).not.toHaveURL(/edit-profile/);
+});
+
+test('get all notifications from an organization you follow', async ({ page }) => {
+  await signIn(page);
+  await page.goto('/profiles/student_union');
+  const bell = page.getByRole('button', { name: /^Notifications from / });
+  // New events only, until you choose otherwise.
+  await expect(bell).toHaveAccessibleName(/New events only$/);
+  await bell.click();
+  await page.getByText('New events and posts', { exact: true }).click();
+  await expect(bell).toHaveAccessibleName(/New events and posts$/);
+  await page.reload();
+  await expect(bell).toHaveAccessibleName(/New events and posts$/);
+
+  // Back as it was, so the test can run again.
+  await bell.click();
+  await page.getByText('New events only', { exact: true }).click();
+  await expect(bell).toHaveAccessibleName(/New events only$/);
+  await page.reload();
+  await expect(bell).toHaveAccessibleName(/New events only$/);
+});
+
+test.describe('with location shared', () => {
+  test.use({ geolocation: { latitude: 60.983, longitude: 25.657 }, permissions: ['geolocation'] });
+
+  test('turn on notifications about new events near you', async ({ page }) => {
+    await signIn(page);
+    await page.goto('/settings');
+    const toggle = page.getByRole('switch', { name: 'Tell me about new events near me' });
+    await expect(toggle).toHaveAttribute('aria-checked', 'false');
+    await toggle.click();
+    const ten = page.getByRole('radio', { name: '10 km' });
+    await expect(ten).toHaveAttribute('aria-checked', 'true');
+    await page.getByRole('radio', { name: '25 km' }).click();
+    await expect(page.getByRole('radio', { name: '25 km' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+
+    await page.reload();
+    await expect(toggle).toHaveAttribute('aria-checked', 'true');
+    await expect(page.getByRole('radio', { name: '25 km' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+
+    // Back as it was, so the test can run again.
+    await page.getByRole('radio', { name: '10 km' }).click();
+    await expect(ten).toHaveAttribute('aria-checked', 'true');
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-checked', 'false');
+    await expect(ten).toBeHidden();
+  });
+});
+
+test('see the events you go to on a calendar', async ({ page }) => {
+  await signIn(page);
+  await page.goto('/my-events');
+  await page.getByRole('tab', { name: 'Calendar' }).click();
+
+  const month = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' });
+  const now = new Date();
+  await expect(page.getByText(month.format(now), { exact: true })).toBeVisible();
+  // The demo account is going to (or interested in) something this month.
+  await expect(page.getByRole('button', { name: /, \d+ events?$/ }).first()).toBeVisible();
+
+  await page.getByRole('button', { name: 'Next month' }).click();
+  const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  await expect(page.getByText(month.format(next), { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Today' }).click();
+  await expect(page.getByText(month.format(now), { exact: true })).toBeVisible();
+
+  // Remembered, and back to the list for the other tests.
+  await page.reload();
+  await expect(page.getByText(month.format(now), { exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: 'List' }).click();
+});
+
+/** Pastes a small picture, as Ctrl/⌘+V would after copying one. */
+async function pastePicture(page: Page) {
+  await page.evaluate(async () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 48;
+    const context = canvas.getContext('2d');
+    if (context) {
+      context.fillStyle = 'teal';
+      context.fillRect(0, 0, 64, 48);
+    }
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+    const transfer = new DataTransfer();
+    transfer.items.add(new File([blob ?? new Blob()], 'copied.png', { type: 'image/png' }));
+    document.dispatchEvent(new ClipboardEvent('paste', { clipboardData: transfer }));
+  });
+}
+
+test('paste a picture into a post', async ({ page }) => {
+  const text = `Look at this ${Date.now()}`;
+  await signIn(page);
+  await page.goto('/posts/new');
+  await page.getByLabel("What's happening?").fill(text);
+  await pastePicture(page);
+  // Shown straight away, and removable.
+  await expect(page.getByRole('button', { name: 'Remove picture' })).toHaveCount(1);
+  await pastePicture(page);
+  await expect(page.getByRole('button', { name: 'Remove picture' })).toHaveCount(2);
+  await page.getByRole('button', { name: 'Remove picture' }).last().click();
+  await expect(page.getByRole('button', { name: 'Remove picture' })).toHaveCount(1);
+
+  const post = page.getByRole('button', { name: 'Post', exact: true });
+  await expect(post).toBeEnabled();
+  await post.click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByText(text)).toBeVisible();
+});
+
+test('paste a picture into the home page post box', async ({ page }) => {
+  await signIn(page);
+  await page.goto('/');
+  await page.getByLabel('Quick post').fill('With a picture');
+  await pastePicture(page);
+  // The full composer opens with the text and the picture.
+  await expect(page).toHaveURL(/\/posts\/new\?.*images=\d+/);
+  await expect(page.getByLabel("What's happening?")).toHaveValue('With a picture');
+  await expect(page.getByRole('button', { name: 'Remove picture' })).toHaveCount(1);
 });

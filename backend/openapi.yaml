@@ -233,8 +233,9 @@ paths:
       description: |-
         Who's going (or interested): people you follow first, then the latest RSVPs.
 
-        Leaves out people who hide their attendance (except yourself), blocked
-        profiles and private profiles you don't follow.
+        Leaves out people who don't share their RSVPs with you (you always see yourself) or,
+        once the event is over, who went; blocked profiles; and private profiles you don't
+        follow.
       parameters:
       - in: path
         name: id
@@ -1131,6 +1132,13 @@ paths:
       description: Events the signed-in user is going to, interested in or waitlisted
         for.
       parameters:
+      - in: query
+        name: ends_after
+        schema:
+          type: string
+          format: date-time
+        description: 'With starts_before: events overlapping that window, soonest
+          first, past or not (e.g. a calendar''s month). Replaces `when`.'
       - name: limit
         required: false
         in: query
@@ -1143,6 +1151,11 @@ paths:
         description: The initial index from which to return the results.
         schema:
           type: integer
+      - in: query
+        name: starts_before
+        schema:
+          type: string
+          format: date-time
       - in: query
         name: when
         schema:
@@ -1185,6 +1198,13 @@ paths:
       description: Events organized by the signed-in user or their organizations,
         drafts included.
       parameters:
+      - in: query
+        name: ends_after
+        schema:
+          type: string
+          format: date-time
+        description: 'With starts_before: events overlapping that window, soonest
+          first, past or not (e.g. a calendar''s month). Replaces `when`.'
       - name: limit
         required: false
         in: query
@@ -1197,6 +1217,11 @@ paths:
         description: The initial index from which to return the results.
         schema:
           type: integer
+      - in: query
+        name: starts_before
+        schema:
+          type: string
+          format: date-time
       - in: query
         name: when
         schema:
@@ -1378,6 +1403,13 @@ paths:
       operationId: me_saved_list
       description: Events the signed-in user saved.
       parameters:
+      - in: query
+        name: ends_after
+        schema:
+          type: string
+          format: date-time
+        description: 'With starts_before: events overlapping that window, soonest
+          first, past or not (e.g. a calendar''s month). Replaces `when`.'
       - name: limit
         required: false
         in: query
@@ -1390,6 +1422,11 @@ paths:
         description: The initial index from which to return the results.
         schema:
           type: integer
+      - in: query
+        name: starts_before
+        schema:
+          type: string
+          format: date-time
       - in: query
         name: when
         schema:
@@ -2376,6 +2413,39 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/profiles/{handle}/notifications/:
+    put:
+      operationId: profiles_notifications_update
+      description: Choose what you get notified about from a profile you follow.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - profiles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotifyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotifyRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notify'
+          description: ''
   /api/profiles/{handle}/posts/:
     get:
       operationId: profiles_posts_list
@@ -2568,6 +2638,16 @@ components:
         onboarded:
           type: boolean
           description: Whether the first-run steps are done; set it once they are.
+        nearby_location:
+          allOf:
+          - $ref: '#/components/schemas/LatLng'
+          nullable: true
+          description: Where to look for new events near you, for a daily notification
+            (stored rounded to about a kilometre); null turns it off.
+        nearby_radius_km:
+          type: integer
+          maximum: 100
+          minimum: 1
         push:
           type: object
           additionalProperties:
@@ -2683,6 +2763,19 @@ components:
       - is_full
       - mine
       - waitlisted
+    AttendanceVisibilityEnum:
+      enum:
+      - everyone
+      - followers
+      - nobody
+      type: string
+      description: |-
+        * `everyone` - Everyone
+        * `followers` - Followers
+        * `nobody` - Nobody
+    BlankEnum:
+      enum:
+      - ''
     CalendarSource:
       type: object
       properties:
@@ -3220,6 +3313,20 @@ components:
         * `weekly` - weekly
         * `biweekly` - biweekly
         * `monthly` - monthly
+    GenderEnum:
+      enum:
+      - woman
+      - man
+      - nonbinary
+      - other
+      - prefer_not_to_say
+      type: string
+      description: |-
+        * `woman` - Woman/female
+        * `man` - Man/male
+        * `nonbinary` - Non-binary
+        * `other` - Other
+        * `prefer_not_to_say` - Prefer not to say
     GeocodeResult:
       type: object
       properties:
@@ -3675,6 +3782,9 @@ components:
       - follow_accepted
       - organization_invite
       - new_event
+      - new_post
+      - nearby_events
+      - interest_events
       - event_changed
       - event_cancelled
       - event_postponed
@@ -3693,6 +3803,9 @@ components:
         * `follow_accepted` - Accepted follow requests
         * `organization_invite` - Invitations to organizations
         * `new_event` - New events from people you follow
+        * `new_post` - New posts from people you get all notifications from
+        * `nearby_events` - New events near you
+        * `interest_events` - New events for your interests
         * `event_changed` - Changes to events you're going to
         * `event_cancelled` - Cancelled events
         * `event_postponed` - Postponed events
@@ -3704,6 +3817,44 @@ components:
         * `mention` - Mentions
         * `comment` - Comments
         * `reaction` - Likes
+    Notify:
+      type: object
+      properties:
+        notify:
+          allOf:
+          - $ref: '#/components/schemas/NotifyEnum'
+          description: |-
+            all: new events and posts; events: new events; none: nothing.
+
+            * `all` - All
+            * `events` - Events
+            * `none` - None
+      required:
+      - notify
+    NotifyEnum:
+      enum:
+      - all
+      - events
+      - none
+      type: string
+      description: |-
+        * `all` - All
+        * `events` - Events
+        * `none` - None
+    NotifyRequest:
+      type: object
+      properties:
+        notify:
+          allOf:
+          - $ref: '#/components/schemas/NotifyEnum'
+          description: |-
+            all: new events and posts; events: new events; none: nothing.
+
+            * `all` - All
+            * `events` - Events
+            * `none` - None
+      required:
+      - notify
     NullEnum:
       enum:
       - null
@@ -3935,6 +4086,16 @@ components:
         onboarded:
           type: boolean
           description: Whether the first-run steps are done; set it once they are.
+        nearby_location:
+          allOf:
+          - $ref: '#/components/schemas/LatLngRequest'
+          nullable: true
+          description: Where to look for new events near you, for a daily notification
+            (stored rounded to about a kilometre); null turns it off.
+        nearby_radius_km:
+          type: integer
+          maximum: 100
+          minimum: 1
         push:
           type: object
           additionalProperties:
@@ -4096,6 +4257,24 @@ components:
         pronouns:
           type: string
           maxLength: 30
+        gender:
+          description: |-
+            People only. Left out unless show_gender, or it's your own profile.
+
+            * `woman` - Woman/female
+            * `man` - Man/male
+            * `nonbinary` - Non-binary
+            * `other` - Other
+            * `prefer_not_to_say` - Prefer not to say
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        gender_other:
+          type: string
+          description: Their own words, when gender is other; else empty.
+          maxLength: 50
+        show_gender:
+          type: boolean
         university:
           type: string
           maxLength: 100
@@ -4125,7 +4304,9 @@ components:
           type: boolean
         hide_followers:
           type: boolean
-        hide_attendance:
+        attendance_visibility:
+          $ref: '#/components/schemas/AttendanceVisibilityEnum'
+        show_past_attendance:
           type: boolean
         interests:
           type: array
@@ -4248,6 +4429,24 @@ components:
         pronouns:
           type: string
           maxLength: 30
+        gender:
+          description: |-
+            People only. Left out unless show_gender, or it's your own profile.
+
+            * `woman` - Woman/female
+            * `man` - Man/male
+            * `nonbinary` - Non-binary
+            * `other` - Other
+            * `prefer_not_to_say` - Prefer not to say
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        gender_other:
+          type: string
+          description: Their own words, when gender is other; else empty.
+          maxLength: 50
+        show_gender:
+          type: boolean
         university:
           type: string
           maxLength: 100
@@ -4280,7 +4479,9 @@ components:
           type: boolean
         hide_followers:
           type: boolean
-        hide_attendance:
+        attendance_visibility:
+          $ref: '#/components/schemas/AttendanceVisibilityEnum'
+        show_past_attendance:
           type: boolean
         interests:
           type: array
@@ -4306,6 +4507,14 @@ components:
         is_followed:
           type: boolean
           readOnly: true
+        notify:
+          description: What you get notified about from a profile you follow; null
+            if you don't.
+          nullable: true
+          readOnly: true
+          oneOf:
+          - $ref: '#/components/schemas/NotifyEnum'
+          - $ref: '#/components/schemas/NullEnum'
         is_requested:
           type: boolean
           readOnly: true
@@ -4329,6 +4538,7 @@ components:
       - is_muted
       - is_requested
       - kind
+      - notify
       - student_of
       - verified
     ProfileKindEnum:

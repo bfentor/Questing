@@ -28,6 +28,11 @@ export type AccountSettings = {
      */
     onboarded?: boolean;
     /**
+     * Where to look for new events near you, for a daily notification (stored rounded to about a kilometre); null turns it off.
+     */
+    nearby_location?: LatLng | null;
+    nearby_radius_km?: number;
+    /**
      * Push on (true) or off (false), by notification kind. Missing kinds are on.
      */
     push?: {
@@ -92,6 +97,15 @@ export type AttendanceSummary = {
      */
     friends_going_count: number;
 };
+
+/**
+ * * `everyone` - Everyone
+ * * `followers` - Followers
+ * * `nobody` - Nobody
+ */
+export type AttendanceVisibilityEnum = 'everyone' | 'followers' | 'nobody';
+
+export type BlankEnum = '';
 
 export type CalendarSource = {
     readonly id: number;
@@ -314,6 +328,15 @@ export type FollowStatusStatusEnum = 'following' | 'requested' | 'none';
  */
 export type FrequencyEnum = 'weekly' | 'biweekly' | 'monthly';
 
+/**
+ * * `woman` - Woman/female
+ * * `man` - Man/male
+ * * `nonbinary` - Non-binary
+ * * `other` - Other
+ * * `prefer_not_to_say` - Prefer not to say
+ */
+export type GenderEnum = 'woman' | 'man' | 'nonbinary' | 'other' | 'prefer_not_to_say';
+
 export type GeocodeResult = {
     label: string;
     lat: number;
@@ -496,6 +519,9 @@ export type NotificationEvent = {
  * * `follow_accepted` - Accepted follow requests
  * * `organization_invite` - Invitations to organizations
  * * `new_event` - New events from people you follow
+ * * `new_post` - New posts from people you get all notifications from
+ * * `nearby_events` - New events near you
+ * * `interest_events` - New events for your interests
  * * `event_changed` - Changes to events you're going to
  * * `event_cancelled` - Cancelled events
  * * `event_postponed` - Postponed events
@@ -508,7 +534,36 @@ export type NotificationEvent = {
  * * `comment` - Comments
  * * `reaction` - Likes
  */
-export type NotificationKindEnum = 'new_follower' | 'follow_request' | 'follow_accepted' | 'organization_invite' | 'new_event' | 'event_changed' | 'event_cancelled' | 'event_postponed' | 'co_host_invite' | 'event_reminder' | 'feedback_request' | 'waitlist_promoted' | 'announcement' | 'mention' | 'comment' | 'reaction';
+export type NotificationKindEnum = 'new_follower' | 'follow_request' | 'follow_accepted' | 'organization_invite' | 'new_event' | 'new_post' | 'nearby_events' | 'interest_events' | 'event_changed' | 'event_cancelled' | 'event_postponed' | 'co_host_invite' | 'event_reminder' | 'feedback_request' | 'waitlist_promoted' | 'announcement' | 'mention' | 'comment' | 'reaction';
+
+export type Notify = {
+    /**
+     * all: new events and posts; events: new events; none: nothing.
+     *
+     * * `all` - All
+     * * `events` - Events
+     * * `none` - None
+     */
+    notify: NotifyEnum;
+};
+
+/**
+ * * `all` - All
+ * * `events` - Events
+ * * `none` - None
+ */
+export type NotifyEnum = 'all' | 'events' | 'none';
+
+export type NotifyRequest = {
+    /**
+     * all: new events and posts; events: new events; none: nothing.
+     *
+     * * `all` - All
+     * * `events` - Events
+     * * `none` - None
+     */
+    notify: NotifyEnum;
+};
 
 export type NullEnum = never;
 
@@ -599,6 +654,11 @@ export type PatchedAccountSettingsRequest = {
      */
     onboarded?: boolean;
     /**
+     * Where to look for new events near you, for a daily notification (stored rounded to about a kilometre); null turns it off.
+     */
+    nearby_location?: LatLngRequest | null;
+    nearby_radius_km?: number;
+    /**
      * Push on (true) or off (false), by notification kind. Missing kinds are on.
      */
     push?: {
@@ -647,6 +707,21 @@ export type PatchedProfileRequest = {
     display_name?: string;
     bio?: string;
     pronouns?: string;
+    /**
+     * People only. Left out unless show_gender, or it's your own profile.
+     *
+     * * `woman` - Woman/female
+     * * `man` - Man/male
+     * * `nonbinary` - Non-binary
+     * * `other` - Other
+     * * `prefer_not_to_say` - Prefer not to say
+     */
+    gender?: GenderEnum | BlankEnum;
+    /**
+     * Their own words, when gender is other; else empty.
+     */
+    gender_other?: string;
+    show_gender?: boolean;
     university?: string;
     faculty?: string;
     study_year?: number | null;
@@ -654,7 +729,8 @@ export type PatchedProfileRequest = {
     instagram?: string | string;
     is_private?: boolean;
     hide_followers?: boolean;
-    hide_attendance?: boolean;
+    attendance_visibility?: AttendanceVisibilityEnum;
+    show_past_attendance?: boolean;
     /**
      * Category slugs (GET /api/categories/).
      */
@@ -696,6 +772,21 @@ export type Profile = {
     avatar: Image | null;
     cover: Image | null;
     pronouns?: string;
+    /**
+     * People only. Left out unless show_gender, or it's your own profile.
+     *
+     * * `woman` - Woman/female
+     * * `man` - Man/male
+     * * `nonbinary` - Non-binary
+     * * `other` - Other
+     * * `prefer_not_to_say` - Prefer not to say
+     */
+    gender?: GenderEnum | BlankEnum;
+    /**
+     * Their own words, when gender is other; else empty.
+     */
+    gender_other?: string;
+    show_gender?: boolean;
     university?: string;
     faculty?: string;
     study_year?: number | null;
@@ -704,7 +795,8 @@ export type Profile = {
     readonly verified: boolean;
     is_private?: boolean;
     hide_followers?: boolean;
-    hide_attendance?: boolean;
+    attendance_visibility?: AttendanceVisibilityEnum;
+    show_past_attendance?: boolean;
     /**
      * Category slugs (GET /api/categories/).
      */
@@ -717,6 +809,10 @@ export type Profile = {
      */
     student_of: University | null;
     readonly is_followed: boolean;
+    /**
+     * What you get notified about from a profile you follow; null if you don't.
+     */
+    notify: NotifyEnum | NullEnum | null;
     /**
      * The viewer asked to follow this private profile.
      */
@@ -901,6 +997,11 @@ export type AccountSettingsWritable = {
      * Whether the first-run steps are done; set it once they are.
      */
     onboarded?: boolean;
+    /**
+     * Where to look for new events near you, for a daily notification (stored rounded to about a kilometre); null turns it off.
+     */
+    nearby_location?: LatLng | null;
+    nearby_radius_km?: number;
     /**
      * Push on (true) or off (false), by notification kind. Missing kinds are on.
      */
@@ -1174,6 +1275,21 @@ export type PatchedProfileRequestWritable = {
      */
     cover_id?: number | null;
     pronouns?: string;
+    /**
+     * People only. Left out unless show_gender, or it's your own profile.
+     *
+     * * `woman` - Woman/female
+     * * `man` - Man/male
+     * * `nonbinary` - Non-binary
+     * * `other` - Other
+     * * `prefer_not_to_say` - Prefer not to say
+     */
+    gender?: GenderEnum | BlankEnum;
+    /**
+     * Their own words, when gender is other; else empty.
+     */
+    gender_other?: string;
+    show_gender?: boolean;
     university?: string;
     faculty?: string;
     study_year?: number | null;
@@ -1181,7 +1297,8 @@ export type PatchedProfileRequestWritable = {
     instagram?: string | string;
     is_private?: boolean;
     hide_followers?: boolean;
-    hide_attendance?: boolean;
+    attendance_visibility?: AttendanceVisibilityEnum;
+    show_past_attendance?: boolean;
     /**
      * Category slugs (GET /api/categories/).
      */
@@ -1216,6 +1333,21 @@ export type ProfileWritable = {
     display_name: string;
     bio?: string;
     pronouns?: string;
+    /**
+     * People only. Left out unless show_gender, or it's your own profile.
+     *
+     * * `woman` - Woman/female
+     * * `man` - Man/male
+     * * `nonbinary` - Non-binary
+     * * `other` - Other
+     * * `prefer_not_to_say` - Prefer not to say
+     */
+    gender?: GenderEnum | BlankEnum;
+    /**
+     * Their own words, when gender is other; else empty.
+     */
+    gender_other?: string;
+    show_gender?: boolean;
     university?: string;
     faculty?: string;
     study_year?: number | null;
@@ -1223,7 +1355,8 @@ export type ProfileWritable = {
     instagram?: string | string;
     is_private?: boolean;
     hide_followers?: boolean;
-    hide_attendance?: boolean;
+    attendance_visibility?: AttendanceVisibilityEnum;
+    show_past_attendance?: boolean;
     /**
      * Category slugs (GET /api/categories/).
      */
@@ -2025,6 +2158,10 @@ export type MeAttendingListData = {
     path?: never;
     query?: {
         /**
+         * With starts_before: events overlapping that window, soonest first, past or not (e.g. a calendar's month). Replaces `when`.
+         */
+        ends_after?: string;
+        /**
          * Number of results to return per page.
          */
         limit?: number;
@@ -2032,6 +2169,7 @@ export type MeAttendingListData = {
          * The initial index from which to return the results.
          */
         offset?: number;
+        starts_before?: string;
         when?: 'past' | 'upcoming';
     };
     url: '/api/me/attending/';
@@ -2061,6 +2199,10 @@ export type MeEventsListData = {
     path?: never;
     query?: {
         /**
+         * With starts_before: events overlapping that window, soonest first, past or not (e.g. a calendar's month). Replaces `when`.
+         */
+        ends_after?: string;
+        /**
          * Number of results to return per page.
          */
         limit?: number;
@@ -2068,6 +2210,7 @@ export type MeEventsListData = {
          * The initial index from which to return the results.
          */
         offset?: number;
+        starts_before?: string;
         when?: 'past' | 'upcoming';
     };
     url: '/api/me/events/';
@@ -2228,6 +2371,10 @@ export type MeSavedListData = {
     path?: never;
     query?: {
         /**
+         * With starts_before: events overlapping that window, soonest first, past or not (e.g. a calendar's month). Replaces `when`.
+         */
+        ends_after?: string;
+        /**
          * Number of results to return per page.
          */
         limit?: number;
@@ -2235,6 +2382,7 @@ export type MeSavedListData = {
          * The initial index from which to return the results.
          */
         offset?: number;
+        starts_before?: string;
         when?: 'past' | 'upcoming';
     };
     url: '/api/me/saved/';
@@ -2898,6 +3046,21 @@ export type ProfilesMuteCreateResponses = {
 };
 
 export type ProfilesMuteCreateResponse = ProfilesMuteCreateResponses[keyof ProfilesMuteCreateResponses];
+
+export type ProfilesNotificationsUpdateData = {
+    body: NotifyRequest;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/profiles/{handle}/notifications/';
+};
+
+export type ProfilesNotificationsUpdateResponses = {
+    200: Notify;
+};
+
+export type ProfilesNotificationsUpdateResponse = ProfilesNotificationsUpdateResponses[keyof ProfilesNotificationsUpdateResponses];
 
 export type ProfilesPostsListData = {
     body?: never;

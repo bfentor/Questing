@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sidequest\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 09:30+0200\n"
+"POT-Creation-Date: 2026-11-19 16:13+0200\n"
 "PO-Revision-Date: 2026-11-02 20:52+0200\n"
 "Last-Translator: Sidequest <dev@sidequest.invalid>\n"
 "Language-Team: Swedish\n"
@@ -20,6 +20,15 @@ msgstr ""
 
 msgid "Accept the terms of service and privacy policy to continue."
 msgstr "Godkänn användarvillkoren och integritetspolicyn för att fortsätta."
+
+msgid "Enter your name."
+msgstr "Skriv ditt namn."
+
+msgid "Use at most 30 characters."
+msgstr "Använd högst 30 tecken."
+
+msgid "That username is taken. Try another one."
+msgstr "Användarnamnet är upptaget. Prova ett annat."
 
 #, python-format
 msgid "You need to be at least %(age)s years old to use Sidequest."
@@ -84,6 +93,15 @@ msgstr "Den här kalendern synkroniseras redan."
 
 msgid "This profile wasn't invited to co-host."
 msgstr "Den här profilen bjöds inte in som medarrangör."
+
+msgid "Give both ends_after and starts_before."
+msgstr "Ange både ends_after och starts_before."
+
+msgid "Ask for at most two months at a time."
+msgstr "Be om högst två månader åt gången."
+
+msgid "The crop has to stay inside the picture."
+msgstr "Beskärningen måste hålla sig inom bilden."
 
 msgid "The picture is too large (at most 10 MB)."
 msgstr "Bilden är för stor (högst 10 MB)."
@@ -179,6 +197,15 @@ msgstr "Inbjudningar till organisationer"
 msgid "New events from people you follow"
 msgstr "Nya evenemang från dem du följer"
 
+msgid "New posts from people you get all notifications from"
+msgstr "Nya inlägg från dem du får alla aviseringar från"
+
+msgid "New events near you"
+msgstr "Nya evenemang nära dig"
+
+msgid "New events for your interests"
+msgstr "Nya evenemang inom dina intressen"
+
 msgid "Changes to events you're going to"
 msgstr "Ändringar i evenemang du ska gå på"
 
@@ -232,6 +259,21 @@ msgstr "%(name)s godkände din följarförfrågan."
 msgid "New event from %(name)s."
 msgstr "Nytt evenemang från %(name)s."
 
+#, python-format
+msgid "%(count)s new event near you"
+msgid_plural "%(count)s new events near you"
+msgstr[0] "%(count)s nytt evenemang nära dig"
+msgstr[1] "%(count)s nya evenemang nära dig"
+
+#, python-format
+msgid "%(count)s new event for your interests"
+msgid_plural "%(count)s new events for your interests"
+msgstr[0] "%(count)s nytt evenemang inom dina intressen"
+msgstr[1] "%(count)s nya evenemang inom dina intressen"
+
+msgid "New post"
+msgstr "Nytt inlägg"
+
 msgid "The time or place of this event changed."
 msgstr "Tiden eller platsen för evenemanget har ändrats."
 
@@ -282,6 +324,21 @@ msgstr "Använd bara små bokstäver, siffror och understreck."
 msgid "Enter an Instagram username without the @."
 msgstr "Ange ett Instagram-användarnamn utan @."
 
+msgid "Woman/female"
+msgstr "Kvinna"
+
+msgid "Man/male"
+msgstr "Man"
+
+msgid "Non-binary"
+msgstr "Icke-binär"
+
+msgid "Other"
+msgstr "Annat"
+
+msgid "Prefer not to say"
+msgstr "Vill inte säga"
+
 msgid "Pending"
 msgstr "Väntar"
 
@@ -306,11 +363,17 @@ msgstr "Organisationen är redan verifierad."
 msgid "An organization needs at least one admin."
 msgstr "En organisation behöver minst en administratör."
 
+msgid "Only people have a gender."
+msgstr "Bara personer har ett kön."
+
 msgid "You cannot follow yourself."
 msgstr "Du kan inte följa dig själv."
 
 msgid "Unblock this profile to follow it."
 msgstr "Häv blockeringen av profilen för att följa den."
+
+msgid "Follow this profile to choose its notifications."
+msgstr "Följ den här profilen för att välja dess aviseringar."
 
 msgid "This profile's followers are hidden."
 msgstr "Den här profilens följare är dolda."
@@ -339,19 +402,3 @@ msgstr "Koden är fel."
 
 #~ msgid "Choose admin or editor."
 #~ msgstr "Välj administratör eller redaktör."
-
-#: accounts/signup.py:35
-msgid "Enter your name."
-msgstr "Skriv ditt namn."
-
-#: accounts/signup.py:42
-msgid "Use at most 30 characters."
-msgstr "Använd högst 30 tecken."
-
-#: accounts/signup.py:45
-msgid "That username is taken. Try another one."
-msgstr "Användarnamnet är upptaget. Prova ett annat."
-
-#: images/serializers.py
-msgid "The crop has to stay inside the picture."
-msgstr "Beskärningen måste hålla sig inom bilden."

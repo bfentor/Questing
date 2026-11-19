@@ -88,7 +88,11 @@
     "requested": "Requested",
     "privateAccount": "This account is private",
     "privateHint": "Follow it to see its posts and events.",
-    "share": "Share profile"
+    "share": "Share profile",
+    "notifyMenu": "Notifications from {{name}}",
+    "notifyAll": "New events and posts",
+    "notifyEvents": "New events only",
+    "notifyNone": "No notifications"
   },
   "event": {
     "title": "Event",
@@ -101,7 +105,9 @@
     "coHostInvite": "{{name}} is invited to co-host this event.",
     "minAge": "{{age}}+",
     "openPage": "Open as a page",
-    "closePanel": "Close"
+    "closePanel": "Close",
+    "directions": "Directions",
+    "mapLabel": "Map of where the event is"
   },
   "auth": {
     "signInTitle": "Welcome back",
@@ -132,6 +138,9 @@
     "pushKinds": {
       "new_follower": "New followers",
       "new_event": "New events from people you follow",
+      "new_post": "New posts from people you get all notifications from",
+      "nearby_events": "New events near you",
+      "interest_events": "New events for your interests",
       "event_changed": "Changes to events you're going to",
       "event_cancelled": "Cancelled events",
       "event_reminder": "Event reminders",
@@ -155,7 +164,14 @@
     "appearanceDark": "Dark",
     "buildApp": "App {{version}}",
     "buildApi": "API {{version}} · {{host}}",
-    "buildUpdate": "Update {{id}} from {{date}}"
+    "buildUpdate": "Update {{id}} from {{date}}",
+    "nearbyTitle": "Events near you",
+    "nearbyToggle": "Tell me about new events near me",
+    "nearbyHint": "At most once a day. Sidequest keeps only roughly where you are (to about a kilometre), until you turn this off.",
+    "nearbyRadius": "How far",
+    "nearbyUpdate": "Use where I am now",
+    "nearbyDenied": "Allow location access to get these.",
+    "nearbyFailed": "Couldn't find where you are. Try again."
   },
   "posts": {
     "delete": "Delete post",
@@ -178,7 +194,9 @@
     "quickLabel": "Quick post",
     "quickPlaceholder": "Write a post…",
     "moreOptions": "Add pictures and more",
-    "posted": "Posted"
+    "posted": "Posted",
+    "pasteImage": "Paste picture",
+    "pasteHint": "You can also paste pictures and GIFs."
   },
   "moderation": {
     "report": "Report",
@@ -243,7 +261,12 @@
     "organizationInvite": "{{name}} invited you to join them.",
     "eventPostponed": "{{title}} was postponed.",
     "coHostInvite": "{{name}} invited you to co-host {{title}}.",
-    "feedbackRequest": "How was {{title}}? Let the organizers know."
+    "feedbackRequest": "How was {{title}}? Let the organizers know.",
+    "newPost": "{{name}} shared a new post.",
+    "nearbyEvents_one": "{{count}} new event near you",
+    "nearbyEvents_other": "{{count}} new events near you",
+    "interestEvents_one": "{{count}} new event for your interests",
+    "interestEvents_other": "{{count}} new events for your interests"
   },
   "editProfile": {
     "changeCover": "Change cover picture",
@@ -260,7 +283,6 @@
     "isPrivate": "Private account",
     "isPrivateHint": "People need your approval to follow you, and only followers see your posts and events.",
     "hideFollowers": "Hide my followers and who I follow",
-    "hideAttendance": "Don't show me in who's going to events",
     "avatarMenu": "Profile picture",
     "coverMenu": "Cover picture",
     "reframe": "Reframe",
@@ -268,7 +290,25 @@
     "uploading": "Uploading…",
     "pronounsNone": "None",
     "pronounsCustom": "Custom",
-    "pronounsCustomLabel": "Your pronouns"
+    "pronounsCustomLabel": "Your pronouns",
+    "gender": "Gender",
+    "genderNone": "Not set",
+    "genderWoman": "Woman/female",
+    "genderMan": "Man/male",
+    "genderNonbinary": "Non-binary",
+    "genderPreferNotToSay": "Prefer not to say",
+    "genderOther": "Other",
+    "genderOtherLabel": "In your own words (optional)",
+    "showGender": "Show my gender on my profile",
+    "showGenderHint": "Otherwise only you can see it.",
+    "genderShortWoman": "Woman",
+    "genderShortMan": "Man",
+    "attendanceVisibility": "Who can see which events you're going to",
+    "attendanceEveryone": "Everyone",
+    "attendanceFollowers": "Your followers",
+    "attendanceNobody": "Only you",
+    "showPastAttendance": "Show events I've been to",
+    "showPastAttendanceHint": "Otherwise, once an event is over, you're left out of who went."
   },
   "followRequests": {
     "title": "Follow requests",
@@ -651,5 +691,15 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
     "done": "Use this"
+  },
+  "calendar": {
+    "list": "List",
+    "calendar": "Calendar",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "today": "Today",
+    "nothing": "Nothing planned on this day.",
+    "dayLabel_one": "{{date}}, {{count}} event",
+    "dayLabel_other": "{{date}}, {{count}} events"
   }
 }

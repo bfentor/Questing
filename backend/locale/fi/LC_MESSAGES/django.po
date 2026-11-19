@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sidequest\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 09:30+0200\n"
+"POT-Creation-Date: 2026-11-19 16:13+0200\n"
 "PO-Revision-Date: 2026-11-02 20:52+0200\n"
 "Last-Translator: Sidequest <dev@sidequest.invalid>\n"
 "Language-Team: Finnish\n"
@@ -20,6 +20,15 @@ msgstr ""
 
 msgid "Accept the terms of service and privacy policy to continue."
 msgstr "Hyväksy käyttöehdot ja tietosuojaseloste jatkaaksesi."
+
+msgid "Enter your name."
+msgstr "Kirjoita nimesi."
+
+msgid "Use at most 30 characters."
+msgstr "Käytä enintään 30 merkkiä."
+
+msgid "That username is taken. Try another one."
+msgstr "Käyttäjänimi on jo käytössä. Kokeile toista."
 
 #, python-format
 msgid "You need to be at least %(age)s years old to use Sidequest."
@@ -84,6 +93,15 @@ msgstr "Tämä kalenteri synkronoidaan jo."
 
 msgid "This profile wasn't invited to co-host."
 msgstr "Tätä profiilia ei kutsuttu yhteisjärjestäjäksi."
+
+msgid "Give both ends_after and starts_before."
+msgstr "Anna sekä ends_after että starts_before."
+
+msgid "Ask for at most two months at a time."
+msgstr "Pyydä enintään kaksi kuukautta kerrallaan."
+
+msgid "The crop has to stay inside the picture."
+msgstr "Rajauksen täytyy pysyä kuvan sisällä."
 
 msgid "The picture is too large (at most 10 MB)."
 msgstr "Kuva on liian suuri (enintään 10 Mt)."
@@ -179,6 +197,15 @@ msgstr "Kutsut järjestöihin"
 msgid "New events from people you follow"
 msgstr "Uudet tapahtumat seuraamiltasi"
 
+msgid "New posts from people you get all notifications from"
+msgstr "Uudet julkaisut niiltä, joista saat kaikki ilmoitukset"
+
+msgid "New events near you"
+msgstr "Uudet tapahtumat lähelläsi"
+
+msgid "New events for your interests"
+msgstr "Uudet tapahtumat kiinnostuksen kohteistasi"
+
 msgid "Changes to events you're going to"
 msgstr "Muutokset tapahtumiin, joihin osallistut"
 
@@ -232,6 +259,21 @@ msgstr "%(name)s hyväksyi seuraamispyyntösi."
 msgid "New event from %(name)s."
 msgstr "Uusi tapahtuma: %(name)s."
 
+#, python-format
+msgid "%(count)s new event near you"
+msgid_plural "%(count)s new events near you"
+msgstr[0] "%(count)s uusi tapahtuma lähelläsi"
+msgstr[1] "%(count)s uutta tapahtumaa lähelläsi"
+
+#, python-format
+msgid "%(count)s new event for your interests"
+msgid_plural "%(count)s new events for your interests"
+msgstr[0] "%(count)s uusi tapahtuma kiinnostuksen kohteistasi"
+msgstr[1] "%(count)s uutta tapahtumaa kiinnostuksen kohteistasi"
+
+msgid "New post"
+msgstr "Uusi julkaisu"
+
 msgid "The time or place of this event changed."
 msgstr "Tapahtuman aika tai paikka muuttui."
 
@@ -282,6 +324,21 @@ msgstr "Käytä vain pieniä kirjaimia, numeroita ja alaviivoja."
 msgid "Enter an Instagram username without the @."
 msgstr "Anna Instagram-käyttäjänimi ilman @-merkkiä."
 
+msgid "Woman/female"
+msgstr "Nainen"
+
+msgid "Man/male"
+msgstr "Mies"
+
+msgid "Non-binary"
+msgstr "Muunsukupuolinen"
+
+msgid "Other"
+msgstr "Muu"
+
+msgid "Prefer not to say"
+msgstr "En halua kertoa"
+
 msgid "Pending"
 msgstr "Odottaa"
 
@@ -306,11 +363,17 @@ msgstr "Järjestö on jo vahvistettu."
 msgid "An organization needs at least one admin."
 msgstr "Järjestöllä täytyy olla vähintään yksi ylläpitäjä."
 
+msgid "Only people have a gender."
+msgstr "Sukupuoli on vain henkilöillä."
+
 msgid "You cannot follow yourself."
 msgstr "Et voi seurata itseäsi."
 
 msgid "Unblock this profile to follow it."
 msgstr "Poista profiilin esto seurataksesi sitä."
+
+msgid "Follow this profile to choose its notifications."
+msgstr "Seuraa tätä profiilia valitaksesi sen ilmoitukset."
 
 msgid "This profile's followers are hidden."
 msgstr "Tämän profiilin seuraajat on piilotettu."
@@ -339,19 +402,3 @@ msgstr "Koodi on väärä."
 
 #~ msgid "Choose admin or editor."
 #~ msgstr "Valitse ylläpitäjä tai muokkaaja."
-
-#: accounts/signup.py:35
-msgid "Enter your name."
-msgstr "Kirjoita nimesi."
-
-#: accounts/signup.py:42
-msgid "Use at most 30 characters."
-msgstr "Käytä enintään 30 merkkiä."
-
-#: accounts/signup.py:45
-msgid "That username is taken. Try another one."
-msgstr "Käyttäjänimi on jo käytössä. Kokeile toista."
-
-#: images/serializers.py
-msgid "The crop has to stay inside the picture."
-msgstr "Rajauksen täytyy pysyä kuvan sisällä."

@@ -5,11 +5,13 @@ import {
   meSettingsRetrieveOptions,
   meSettingsRetrieveQueryKey,
   type AccountSettings,
+  type PatchedAccountSettingsRequest,
   profilesBlockDestroyMutation,
   profilesMuteDestroyMutation,
   type ProfileSummary,
 } from '@sidequest/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import * as Location from 'expo-location';
 import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +21,7 @@ import { useAuth } from '@/auth/auth-provider';
 import { AccountSection } from '@/components/account-section';
 import { BuildInfo } from '@/components/build-info';
 import { Button } from '@/components/button';
+import { Chip } from '@/components/chip';
 import { CredentialsSection } from '@/components/credentials-section';
 import { SecuritySection } from '@/components/security-section';
 import { StudentSection } from '@/components/student-section';
@@ -61,6 +64,7 @@ export default function SettingsScreen() {
       {status === 'signed-in' ? (
         <>
           <PushSettings />
+          <NearbySettings />
           <EmailSettings />
           <BlockedAndMuted />
           <StudentSection />
@@ -87,6 +91,9 @@ const PUSH_KINDS = [
   'follow_accepted',
   'organization_invite',
   'new_event',
+  'new_post',
+  'nearby_events',
+  'interest_events',
   'event_changed',
   'event_cancelled',
   'event_postponed',
@@ -131,6 +138,88 @@ function PushSettings() {
           />
         </View>
       ))}
+    </View>
+  );
+}
+
+const NEARBY_RADII_KM = [5, 10, 25];
+
+/**
+ * Opt-in "N new events near you" notifications: sharing roughly where you are (the API keeps
+ * it to about a kilometre) and how far to look. Turning it off forgets the place.
+ */
+function NearbySettings() {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const { data } = useQuery(meSettingsRetrieveOptions());
+  const [problem, setProblem] = useState<'denied' | 'failed' | null>(null);
+  const update = useMutation({
+    mutationFn: async (body: PatchedAccountSettingsRequest) =>
+      (await meSettingsPartialUpdate({ body, throwOnError: true })).data,
+    onSuccess: (settings) =>
+      queryClient.setQueryData<AccountSettings>(meSettingsRetrieveQueryKey(), settings),
+  });
+  const locate = useMutation({
+    mutationFn: async () => {
+      const { granted } = await Location.requestForegroundPermissionsAsync();
+      if (!granted) throw new Error('denied');
+      const { coords } = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+      return { lat: coords.latitude, lng: coords.longitude };
+    },
+    onMutate: () => setProblem(null),
+    onSuccess: (nearby_location) => update.mutate({ nearby_location }),
+    onError: (error) => setProblem(error.message === 'denied' ? 'denied' : 'failed'),
+  });
+
+  if (!data) {
+    return null;
+  }
+  const on = Boolean(data.nearby_location);
+
+  return (
+    <View style={styles.section}>
+      <ThemedText type="heading">{t('settings.nearbyTitle')}</ThemedText>
+      <View style={styles.switchRow}>
+        <ThemedText style={styles.switchLabel}>{t('settings.nearbyToggle')}</ThemedText>
+        <Switch
+          value={on || locate.isPending}
+          onValueChange={(enabled) =>
+            enabled ? locate.mutate() : update.mutate({ nearby_location: null })
+          }
+          accessibilityLabel={t('settings.nearbyToggle')}
+        />
+      </View>
+      <ThemedText type="small" themeColor="textSecondary">
+        {t('settings.nearbyHint')}
+      </ThemedText>
+      {problem ? (
+        <ThemedText type="small" themeColor="danger">
+          {t(problem === 'denied' ? 'settings.nearbyDenied' : 'settings.nearbyFailed')}
+        </ThemedText>
+      ) : null}
+      {on ? (
+        <>
+          <ThemedText type="smallBold">{t('settings.nearbyRadius')}</ThemedText>
+          <View style={styles.chips} role="radiogroup" aria-label={t('settings.nearbyRadius')}>
+            {NEARBY_RADII_KM.map((km) => (
+              <Chip
+                key={km}
+                radio
+                label={`${km} km`}
+                selected={data.nearby_radius_km === km}
+                onPress={() => update.mutate({ nearby_radius_km: km })}
+              />
+            ))}
+          </View>
+          <Pressable role="button" onPress={() => locate.mutate()} disabled={locate.isPending}>
+            <ThemedText type="small" themeColor="tint">
+              {t('settings.nearbyUpdate')}
+            </ThemedText>
+          </Pressable>
+        </>
+      ) : null}
     </View>
   );
 }
@@ -334,5 +423,10 @@ const styles = StyleSheet.create({
   },
   switchLabel: {
     flex: 1,
+  },
+  chips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.two,
   },
 });

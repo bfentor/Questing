@@ -12,7 +12,9 @@ from itertools import batched
 
 from django.conf import settings
 from django.utils import formats, timezone, translation
+from django.utils.text import Truncator
 from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 
 from .models import Kind, Notification, PushDevice, PushSetting
 
@@ -42,6 +44,21 @@ def render(notification) -> tuple[str, str]:
             return "Sidequest", _("%(name)s accepted your follow request.") % {"name": actor}
         case Kind.NEW_EVENT:
             return title, _("New event from %(name)s.") % {"name": actor}
+        case Kind.NEARBY_EVENTS:
+            count = int(notification.message or 0)
+            return "Sidequest", ngettext(
+                "%(count)s new event near you", "%(count)s new events near you", count
+            ) % {"count": count}
+        case Kind.INTEREST_EVENTS:
+            count = int(notification.message or 0)
+            return "Sidequest", ngettext(
+                "%(count)s new event for your interests",
+                "%(count)s new events for your interests",
+                count,
+            ) % {"count": count}
+        case Kind.NEW_POST:
+            body = notification.post.body if notification.post else ""
+            return actor or "Sidequest", Truncator(body).chars(120) or _("New post")
         case Kind.EVENT_CHANGED:
             return title, _("The time or place of this event changed.")
         case Kind.EVENT_CANCELLED:
@@ -74,6 +91,10 @@ def link(notification) -> str:
         return f"/posts/{notification.post_id}"
     if notification.event_id:
         return f"/events/{notification.event_id}"
+    if notification.kind == Kind.NEARBY_EVENTS:
+        return "/nearby"
+    if notification.kind == Kind.INTEREST_EVENTS:
+        return "/upcoming?order=forYou"
     if notification.kind == Kind.FOLLOW_REQUEST:
         return "/follow-requests"
     if notification.kind == Kind.ORGANIZATION_INVITE:

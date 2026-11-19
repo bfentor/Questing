@@ -88,7 +88,11 @@
     "requested": "Pyydetty",
     "privateAccount": "Tili on yksityinen",
     "privateHint": "Seuraa sitä nähdäksesi sen julkaisut ja tapahtumat.",
-    "share": "Jaa profiili"
+    "share": "Jaa profiili",
+    "notifyMenu": "Ilmoitukset: {{name}}",
+    "notifyAll": "Uudet tapahtumat ja julkaisut",
+    "notifyEvents": "Vain uudet tapahtumat",
+    "notifyNone": "Ei ilmoituksia"
   },
   "event": {
     "title": "Tapahtuma",
@@ -101,7 +105,9 @@
     "coHostInvite": "{{name}} on kutsuttu tapahtuman yhteisjärjestäjäksi.",
     "minAge": "K{{age}}",
     "openPage": "Avaa omana sivunaan",
-    "closePanel": "Sulje"
+    "closePanel": "Sulje",
+    "directions": "Reittiohjeet",
+    "mapLabel": "Kartta tapahtumapaikasta"
   },
   "auth": {
     "signInTitle": "Tervetuloa takaisin",
@@ -132,6 +138,9 @@
     "pushKinds": {
       "new_follower": "Uudet seuraajat",
       "new_event": "Uudet tapahtumat seuraamiltasi",
+      "new_post": "Uudet julkaisut niiltä, joista saat kaikki ilmoitukset",
+      "nearby_events": "Uudet tapahtumat lähelläsi",
+      "interest_events": "Uudet tapahtumat kiinnostuksen kohteistasi",
       "event_changed": "Muutokset tapahtumiin, joihin osallistut",
       "event_cancelled": "Perutut tapahtumat",
       "event_reminder": "Tapahtumamuistutukset",
@@ -155,7 +164,14 @@
     "appearanceDark": "Tumma",
     "buildApp": "Sovellus {{version}}",
     "buildApi": "API {{version}} · {{host}}",
-    "buildUpdate": "Päivitys {{id}}, {{date}}"
+    "buildUpdate": "Päivitys {{id}}, {{date}}",
+    "nearbyTitle": "Tapahtumat lähelläsi",
+    "nearbyToggle": "Kerro uusista tapahtumista lähelläni",
+    "nearbyHint": "Korkeintaan kerran päivässä. Sidequest tallentaa sijaintisi vain karkeasti (noin kilometrin tarkkuudella), kunnes poistat tämän käytöstä.",
+    "nearbyRadius": "Kuinka kaukaa",
+    "nearbyUpdate": "Käytä nykyistä sijaintiani",
+    "nearbyDenied": "Salli sijainnin käyttö saadaksesi nämä.",
+    "nearbyFailed": "Sijaintiasi ei löytynyt. Yritä uudelleen."
   },
   "posts": {
     "delete": "Poista julkaisu",
@@ -178,7 +194,9 @@
     "quickLabel": "Pikajulkaisu",
     "quickPlaceholder": "Kirjoita julkaisu…",
     "moreOptions": "Lisää kuvia ja muuta",
-    "posted": "Julkaistu"
+    "posted": "Julkaistu",
+    "pasteImage": "Liitä kuva",
+    "pasteHint": "Voit myös liittää kuvia ja GIFejä."
   },
   "moderation": {
     "report": "Ilmoita",
@@ -243,7 +261,12 @@
     "organizationInvite": "{{name}} kutsui sinut jäseneksi.",
     "eventPostponed": "{{title}} on siirretty.",
     "coHostInvite": "{{name}} kutsui sinut järjestämään tapahtumaa {{title}}.",
-    "feedbackRequest": "Millainen oli {{title}}? Kerro järjestäjille."
+    "feedbackRequest": "Millainen oli {{title}}? Kerro järjestäjille.",
+    "newPost": "{{name}} jakoi uuden julkaisun.",
+    "nearbyEvents_one": "{{count}} uusi tapahtuma lähelläsi",
+    "nearbyEvents_other": "{{count}} uutta tapahtumaa lähelläsi",
+    "interestEvents_one": "{{count}} uusi tapahtuma kiinnostuksen kohteistasi",
+    "interestEvents_other": "{{count}} uutta tapahtumaa kiinnostuksen kohteistasi"
   },
   "editProfile": {
     "changeCover": "Vaihda kansikuva",
@@ -260,7 +283,6 @@
     "isPrivate": "Yksityinen tili",
     "isPrivateHint": "Seuraajien täytyy saada hyväksyntäsi, ja vain seuraajasi näkevät julkaisusi ja tapahtumasi.",
     "hideFollowers": "Piilota seuraajani ja seurattavani",
-    "hideAttendance": "Älä näytä minua tapahtumien osallistujissa",
     "avatarMenu": "Profiilikuva",
     "coverMenu": "Kansikuva",
     "reframe": "Rajaa uudelleen",
@@ -268,7 +290,25 @@
     "uploading": "Ladataan…",
     "pronounsNone": "Ei mitään",
     "pronounsCustom": "Oma",
-    "pronounsCustomLabel": "Pronominisi"
+    "pronounsCustomLabel": "Pronominisi",
+    "gender": "Sukupuoli",
+    "genderNone": "Ei valittu",
+    "genderWoman": "Nainen",
+    "genderMan": "Mies",
+    "genderNonbinary": "Muunsukupuolinen",
+    "genderPreferNotToSay": "En halua kertoa",
+    "genderOther": "Muu",
+    "genderOtherLabel": "Omin sanoin (valinnainen)",
+    "showGender": "Näytä sukupuoleni profiilissani",
+    "showGenderHint": "Muuten vain sinä näet sen.",
+    "genderShortWoman": "Nainen",
+    "genderShortMan": "Mies",
+    "attendanceVisibility": "Kuka näkee, mihin tapahtumiin olet menossa",
+    "attendanceEveryone": "Kaikki",
+    "attendanceFollowers": "Seuraajasi",
+    "attendanceNobody": "Vain sinä",
+    "showPastAttendance": "Näytä tapahtumat, joissa olen käynyt",
+    "showPastAttendanceHint": "Muuten sinua ei näytetä osallistujissa tapahtuman päätyttyä."
   },
   "followRequests": {
     "title": "Seuraamispyynnöt",
@@ -651,5 +691,15 @@
     "zoomIn": "Lähennä",
     "zoomOut": "Loitonna",
     "done": "Käytä tätä"
+  },
+  "calendar": {
+    "list": "Lista",
+    "calendar": "Kalenteri",
+    "previousMonth": "Edellinen kuukausi",
+    "nextMonth": "Seuraava kuukausi",
+    "today": "Tänään",
+    "nothing": "Ei suunnitelmia tälle päivälle.",
+    "dayLabel_one": "{{date}}, {{count}} tapahtuma",
+    "dayLabel_other": "{{date}}, {{count}} tapahtumaa"
   }
 }

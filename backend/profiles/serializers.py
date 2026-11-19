@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
@@ -6,7 +7,7 @@ from images.serializers import ImageSerializer, OwnImageField
 from students.serializers import UniversitySerializer
 from students.services import current_university
 
-from .models import Profile
+from .models import Follow, Profile
 
 
 class ProfileSummarySerializer(serializers.ModelSerializer):
@@ -55,11 +56,18 @@ class ProfileSerializer(serializers.ModelSerializer):
         help_text="The university this person is a verified student of."
     )
     is_followed = serializers.BooleanField(read_only=True)
+    notify = serializers.SerializerMethodField(
+        help_text="What you get notified about from a profile you follow; null if you don't."
+    )
     is_requested = serializers.BooleanField(
         read_only=True, help_text="The viewer asked to follow this private profile."
     )
     is_blocked = serializers.BooleanField(read_only=True)
     is_muted = serializers.BooleanField(read_only=True)
+
+    @extend_schema_field(serializers.ChoiceField(choices=Follow.Notify.choices, allow_null=True))
+    def get_notify(self, profile):
+        return getattr(profile, "notify", None)
 
     @extend_schema_field(UniversitySerializer(allow_null=True))
     def get_student_of(self, profile):
@@ -78,6 +86,9 @@ class ProfileSerializer(serializers.ModelSerializer):
             "cover",
             "cover_id",
             "pronouns",
+            "gender",
+            "gender_other",
+            "show_gender",
             "university",
             "faculty",
             "study_year",
@@ -86,18 +97,51 @@ class ProfileSerializer(serializers.ModelSerializer):
             "verified",
             "is_private",
             "hide_followers",
-            "hide_attendance",
+            "attendance_visibility",
+            "show_past_attendance",
             "interests",
             "created_at",
             "follower_count",
             "following_count",
             "student_of",
             "is_followed",
+            "notify",
             "is_requested",
             "is_blocked",
             "is_muted",
         ]
         read_only_fields = ["kind", "created_at", "verified"]
+        extra_kwargs = {
+            "gender": {
+                "help_text": "People only. Left out unless show_gender, or it's your own profile."
+            },
+            "gender_other": {"help_text": "Their own words, when gender is other; else empty."},
+        }
+
+    def validate(self, attrs):
+        gender = attrs.get("gender", self.instance.gender if self.instance else "")
+        if gender and self.instance and self.instance.kind != Profile.Kind.PERSON:
+            raise serializers.ValidationError({"gender": _("Only people have a gender.")})
+        # Their own words only go with Other.
+        if gender != Profile.Gender.OTHER and ("gender" in attrs or "gender_other" in attrs):
+            attrs["gender_other"] = ""
+        return attrs
+
+    def to_representation(self, profile):
+        data = super().to_representation(profile)
+        request = self.context.get("request")
+        own = bool(request and profile.user_id and profile.user_id == request.user.id)
+        if not (own or profile.show_gender):
+            data["gender"] = ""
+            data["gender_other"] = ""
+        return data
+
+
+class NotifySerializer(serializers.Serializer):
+    notify = serializers.ChoiceField(
+        choices=Follow.Notify.choices,
+        help_text="all: new events and posts; events: new events; none: nothing.",
+    )
 
 
 class FollowStatusSerializer(serializers.Serializer):

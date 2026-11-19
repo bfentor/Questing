@@ -14,6 +14,26 @@ import { RemoteImage } from './remote-image';
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 
+/**
+ * Their gender, as shown on the profile: the API only sends it when they show it (or it's
+ * your own). Not for "prefer not to say".
+ */
+function useGenderLabel(profile: Profile) {
+  const { t } = useTranslation();
+  switch (profile.gender) {
+    case 'woman':
+      return t('editProfile.genderShortWoman');
+    case 'man':
+      return t('editProfile.genderShortMan');
+    case 'nonbinary':
+      return t('editProfile.genderNonbinary');
+    case 'other':
+      return profile.gender_other || t('editProfile.genderOther');
+    default:
+      return null;
+  }
+}
+
 type ProfileHeaderProps = {
   profile: Profile;
   /** Small buttons beside the profile picture: Follow or Edit profile, then a "…" menu. */
@@ -26,6 +46,7 @@ export function ProfileHeader({ profile, actions }: ProfileHeaderProps) {
   const theme = useTheme();
   const details = [
     profile.student_of ? t('student.badge', { university: profile.student_of.short_name }) : null,
+    useGenderLabel(profile),
     profile.pronouns,
   ].filter(Boolean);
 

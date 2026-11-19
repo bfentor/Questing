@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.gis.geos import Point
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -105,6 +106,12 @@ class AccountSettingsView(APIView):
             "current_terms_version": settings.TERMS_VERSION,
             "onboarded": user.onboarded_at is not None,
             "email_digest": user.email_digest,
+            "nearby_location": (
+                {"lat": user.nearby_location.y, "lng": user.nearby_location.x}
+                if user.nearby_location
+                else None
+            ),
+            "nearby_radius_km": user.nearby_radius_km,
         }
 
     @extend_schema(responses=AccountSettingsSerializer)
@@ -127,6 +134,19 @@ class AccountSettingsView(APIView):
         if "email_digest" in serializer.validated_data:
             user.email_digest = serializer.validated_data["email_digest"]
             user.save(update_fields=["email_digest"])
+        if "nearby_location" in serializer.validated_data:
+            point = serializer.validated_data["nearby_location"]
+            if point is not None:
+                # About a kilometre: enough for "near you", without keeping where they live.
+                point = Point(round(point.x, 2), round(point.y, 2), srid=4326)
+                if user.nearby_location is None:
+                    # Count from now on, not everything published before they turned it on.
+                    user.suggestions_sent_at = timezone.now()
+            user.nearby_location = point
+            user.save(update_fields=["nearby_location", "suggestions_sent_at"])
+        if "nearby_radius_km" in serializer.validated_data:
+            user.nearby_radius_km = serializer.validated_data["nearby_radius_km"]
+            user.save(update_fields=["nearby_radius_km"])
         if "onboarded" in serializer.validated_data:
             user.onboarded_at = timezone.now() if serializer.validated_data["onboarded"] else None
             user.save(update_fields=["onboarded_at"])

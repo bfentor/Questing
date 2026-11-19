@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex, OpClass
 from django.core.validators import RegexValidator
 from django.db import models
-from django.db.models import Count, Exists, OuterRef, Q
+from django.db.models import Count, Exists, OuterRef, Q, Subquery
 from django.db.models.functions import Upper
 from django.utils.translation import gettext_lazy as _
 
@@ -50,10 +50,16 @@ class ProfileQuerySet(models.QuerySet):
         if viewer is None:
             false = models.Value(False)
             return qs.annotate(
-                is_followed=false, is_requested=false, is_blocked=false, is_muted=false
+                is_followed=false,
+                notify=models.Value(None, models.CharField()),
+                is_requested=false,
+                is_blocked=false,
+                is_muted=false,
             )
+        follow = Follow.objects.filter(follower=viewer, followee=OuterRef("pk"))
         return qs.annotate(
-            is_followed=Exists(Follow.objects.filter(follower=viewer, followee=OuterRef("pk"))),
+            is_followed=Exists(follow),
+            notify=Subquery(follow.values("notify")[:1]),
             is_requested=Exists(
                 FollowRequest.objects.filter(requester=viewer, target=OuterRef("pk"))
             ),
@@ -75,6 +81,18 @@ class Profile(models.Model):
         PERSON = "person"
         ORGANIZATION = "organization"
 
+    class AttendanceVisibility(models.TextChoices):
+        EVERYONE = "everyone"
+        FOLLOWERS = "followers"
+        NOBODY = "nobody"
+
+    class Gender(models.TextChoices):
+        WOMAN = "woman", _("Woman/female")
+        MAN = "man", _("Man/male")
+        NONBINARY = "nonbinary", _("Non-binary")
+        OTHER = "other", _("Other")
+        PREFER_NOT_TO_SAY = "prefer_not_to_say", _("Prefer not to say")
+
     kind = models.CharField(max_length=20, choices=Kind.choices)
     handle = models.CharField(max_length=30, unique=True, validators=[handle_validator])
     display_name = models.CharField(max_length=80)
@@ -89,6 +107,12 @@ class Profile(models.Model):
     interests = models.ManyToManyField("events.Category", blank=True, related_name="interested")
     # Optional details people can show on their profile.
     pronouns = models.CharField(max_length=30, blank=True)
+    # People only. Private unless `show_gender`: only its owner sees it otherwise.
+    gender = models.CharField(max_length=20, choices=Gender.choices, blank=True)
+    gender_other = models.CharField(
+        max_length=50, blank=True, help_text="Their own words, when gender is Other."
+    )
+    show_gender = models.BooleanField(default=False)
     university = models.CharField(max_length=100, blank=True)
     faculty = models.CharField(max_length=100, blank=True)
     study_year = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -100,7 +124,15 @@ class Profile(models.Model):
     # posts and events.
     is_private = models.BooleanField(default=False)
     hide_followers = models.BooleanField(default=False)
-    # Leave this profile out of the lists of who's going to events.
+    # Who sees this profile in who's going to events, and among friends going.
+    attendance_visibility = models.CharField(
+        max_length=20, choices=AttendanceVisibility.choices, default=AttendanceVisibility.EVERYONE
+    )
+    # Whether it stays in those lists once an event is over: off, so nobody can look back
+    # through every event someone went to.
+    show_past_attendance = models.BooleanField(default=False)
+    # Unused: replaced by attendance_visibility ("nobody"). Kept for one release so the
+    # previous one works during a deploy; remove it (and this) in the next.
     hide_attendance = models.BooleanField(default=False)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -162,8 +194,16 @@ class Membership(models.Model):
 
 
 class Follow(models.Model):
+    class Notify(models.TextChoices):
+        """What the follower hears about from the followee."""
+
+        ALL = "all"  # New events and new posts.
+        EVENTS = "events"  # New events.
+        NONE = "none"
+
     follower = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="follows")
     followee = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="followed_by")
+    notify = models.CharField(max_length=10, choices=Notify.choices, default=Notify.EVENTS)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

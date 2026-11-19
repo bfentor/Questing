@@ -46,12 +46,24 @@ def export_data(user):
             "last_login": user.last_login.isoformat() if user.last_login else None,
             "language": user.language,
             "email_digest": user.email_digest,
+            "nearby_events": (
+                {
+                    "lat": user.nearby_location.y,
+                    "lng": user.nearby_location.x,
+                    "radius_km": user.nearby_radius_km,
+                }
+                if user.nearby_location
+                else None
+            ),
         },
         "profile": {
             "handle": profile.handle,
             "display_name": profile.display_name,
             "bio": profile.bio,
             "pronouns": profile.pronouns,
+            "gender": profile.gender,
+            "gender_other": profile.gender_other,
+            "show_gender": profile.show_gender,
             "university": profile.university,
             "faculty": profile.faculty,
             "study_year": profile.study_year,
@@ -59,7 +71,8 @@ def export_data(user):
             "instagram": profile.instagram,
             "is_private": profile.is_private,
             "hide_followers": profile.hide_followers,
-            "hide_attendance": profile.hide_attendance,
+            "attendance_visibility": profile.attendance_visibility,
+            "show_past_attendance": profile.show_past_attendance,
             "avatar": profile.avatar.file.url if profile.avatar else None,
             "cover": profile.cover.file.url if profile.cover else None,
             "interests": list(profile.interests.values_list("slug", flat=True)),

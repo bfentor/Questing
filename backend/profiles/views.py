@@ -20,7 +20,12 @@ from posts.models import Post
 from posts.serializers import PostSerializer
 
 from .models import Follow, FollowRequest, Profile
-from .serializers import FollowStatusSerializer, ProfileSerializer, ProfileSummarySerializer
+from .serializers import (
+    FollowStatusSerializer,
+    NotifySerializer,
+    ProfileSerializer,
+    ProfileSummarySerializer,
+)
 from .suggestions import follow_suggestions
 
 
@@ -77,6 +82,26 @@ class ProfileViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         Follow.objects.create(follower=follower, followee=followee)
         notify([followee], Kind.NEW_FOLLOWER, actor=follower)
         return Response({"status": "following"})
+
+    @extend_schema(request=NotifySerializer, responses=NotifySerializer)
+    @action(
+        detail=True,
+        methods=["put"],
+        url_path="notifications",
+        permission_classes=[permissions.IsAuthenticated],
+    )
+    def notifications(self, request, handle=None):
+        """Choose what you get notified about from a profile you follow."""
+        follower = request.user.profile
+        followee = get_object_or_404(Profile.objects.visible_to(follower), handle=handle)
+        serializer = NotifySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        updated = Follow.objects.filter(follower=follower, followee=followee).update(
+            notify=serializer.validated_data["notify"]
+        )
+        if not updated:
+            raise ValidationError(_("Follow this profile to choose its notifications."))
+        return Response(serializer.data)
 
     def _lists_hidden(self, profile):
         viewer = viewer_profile(self.request)

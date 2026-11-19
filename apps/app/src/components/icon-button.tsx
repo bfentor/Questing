@@ -35,14 +35,15 @@ export function IconButton({ icon, label, onPress, size = 20, color }: IconButto
 
 /**
  * An icon in a filled circle, as tall as a small Button, e.g. "…" beside Follow. `primary`
- * fills it with the accent colour, like a primary Button.
+ * fills it with the accent colour, like a primary Button; `outline` rings it with it instead.
  */
 export function RoundIconButton({
   icon,
   label,
   onPress,
   primary,
-}: Omit<IconButtonProps, 'size' | 'color'> & { primary?: boolean }) {
+  outline,
+}: Omit<IconButtonProps, 'size' | 'color'> & { primary?: boolean; outline?: boolean }) {
   const theme = useTheme();
   const shape = useShape();
 
@@ -54,14 +55,17 @@ export function RoundIconButton({
       onPress={onPress}
       style={({ pressed }) => [
         styles.round,
-        { backgroundColor: primary ? theme.tint : theme.backgroundElement },
+        {
+          backgroundColor: primary ? theme.tint : outline ? 'transparent' : theme.backgroundElement,
+        },
+        outline && [styles.outline, { borderColor: theme.tint }],
         primary && shape.raised,
         pressed && styles.pressed,
       ]}>
       <SymbolView
         name={{ ios: icon.ios, android: icon.material, web: icon.material }}
         size={18}
-        tintColor={primary ? theme.onTint : theme.text}
+        tintColor={primary ? theme.onTint : outline ? theme.tint : theme.text}
       />
     </Pressable>
   );
@@ -74,6 +78,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 999,
+  },
+  outline: {
+    borderWidth: 2,
   },
   button: {
     padding: 4,

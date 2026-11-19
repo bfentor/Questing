@@ -13,8 +13,13 @@ type LoadedMap = {
   pin: import('leaflet').LayerGroup;
 };
 
-/** A map with the event's pin (OpenStreetMap via Leaflet); clicking the map moves the pin there. */
-export function LocationPin({ value, center, onChange }: LocationPinProps) {
+/**
+ * A map with the event's pin (OpenStreetMap via Leaflet); clicking the map moves the pin there
+ * (with `onChange`). Without it the map only shows the pin, and leaves the page's scrolling
+ * alone: no zooming with the scroll wheel, nor dragging with a finger.
+ */
+export function LocationPin({ value, center, onChange, label }: LocationPinProps) {
+  const editable = Boolean(onChange);
   const theme = useTheme();
   const shape = useShape();
   const container = useRef<HTMLDivElement>(null);
@@ -31,12 +36,15 @@ export function LocationPin({ value, center, onChange }: LocationPinProps) {
     // Leaflet touches `window` when imported, so it loads in the browser only.
     import('leaflet').then((L) => {
       if (cancelled || !container.current) return;
-      const map = L.map(container.current);
+      const map = L.map(
+        container.current,
+        editable ? {} : { scrollWheelZoom: false, dragging: !L.Browser.mobile },
+      );
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }).addTo(map);
-      map.on('click', ({ latlng }) => onChangeRef.current({ lat: latlng.lat, lng: latlng.lng }));
+      map.on('click', ({ latlng }) => onChangeRef.current?.({ lat: latlng.lat, lng: latlng.lng }));
       created = { L, map, pin: L.layerGroup().addTo(map) };
       setLoaded(created);
     });
@@ -44,6 +52,8 @@ export function LocationPin({ value, center, onChange }: LocationPinProps) {
       cancelled = true;
       created?.map.remove();
     };
+    // Whether it's editable is fixed for a map's life.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -70,8 +80,11 @@ export function LocationPin({ value, center, onChange }: LocationPinProps) {
   return (
     <div
       ref={container}
+      role={label ? 'img' : undefined}
+      aria-label={label}
       style={{
         ...MAP_STYLE,
+        cursor: editable ? 'crosshair' : 'grab',
         borderRadius: shape.boxRadius,
         backgroundColor: theme.backgroundElement,
       }}
@@ -82,7 +95,6 @@ export function LocationPin({ value, center, onChange }: LocationPinProps) {
 const MAP_STYLE = {
   height: 240,
   overflow: 'hidden',
-  cursor: 'crosshair',
   // Keeps Leaflet's panes below the app's navigation and dialogs.
   zIndex: 0,
 } as const;

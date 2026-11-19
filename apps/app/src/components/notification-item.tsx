@@ -28,6 +28,12 @@ function describe(notification: Notification, t: TFunction) {
       return t('notifications.organizationInvite', { name });
     case 'new_event':
       return t('notifications.newEvent', { name, title });
+    case 'new_post':
+      return t('notifications.newPost', { name });
+    case 'nearby_events':
+      return t('notifications.nearbyEvents', { count: Number(notification.message) });
+    case 'interest_events':
+      return t('notifications.interestEvents', { count: Number(notification.message) });
     case 'event_changed':
       return t('notifications.eventChanged', { title });
     case 'event_cancelled':
@@ -54,7 +60,11 @@ function describe(notification: Notification, t: TFunction) {
 }
 
 function open(notification: Notification) {
-  if (notification.kind === 'follow_request') {
+  if (notification.kind === 'nearby_events') {
+    router.push('/nearby');
+  } else if (notification.kind === 'interest_events') {
+    router.push({ pathname: '/upcoming', params: { order: 'forYou' } });
+  } else if (notification.kind === 'follow_request') {
     router.push('/follow-requests');
   } else if (notification.kind === 'organization_invite') {
     router.push('/organizations');

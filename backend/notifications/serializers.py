@@ -1,6 +1,7 @@
 from django.conf import settings
 from rest_framework import serializers
 
+from events.fields import LatLngField
 from events.models import Event
 from profiles.serializers import ProfileSummarySerializer
 
@@ -60,6 +61,13 @@ class AccountSettingsSerializer(serializers.Serializer):
     onboarded = serializers.BooleanField(
         required=False, help_text="Whether the first-run steps are done; set it once they are."
     )
+    nearby_location = LatLngField(
+        allow_null=True,
+        required=False,
+        help_text="Where to look for new events near you, for a daily notification (stored "
+        "rounded to about a kilometre); null turns it off.",
+    )
+    nearby_radius_km = serializers.IntegerField(min_value=1, max_value=100, required=False)
     push = serializers.DictField(
         child=serializers.BooleanField(),
         required=False,

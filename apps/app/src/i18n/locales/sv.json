@@ -88,7 +88,11 @@
     "requested": "Förfrågan skickad",
     "privateAccount": "Kontot är privat",
     "privateHint": "Följ det för att se dess inlägg och evenemang.",
-    "share": "Dela profilen"
+    "share": "Dela profilen",
+    "notifyMenu": "Aviseringar från {{name}}",
+    "notifyAll": "Nya evenemang och inlägg",
+    "notifyEvents": "Bara nya evenemang",
+    "notifyNone": "Inga aviseringar"
   },
   "event": {
     "title": "Evenemang",
@@ -101,7 +105,9 @@
     "coHostInvite": "{{name}} är inbjuden som medarrangör.",
     "minAge": "{{age}}+",
     "openPage": "Öppna som egen sida",
-    "closePanel": "Stäng"
+    "closePanel": "Stäng",
+    "directions": "Vägbeskrivning",
+    "mapLabel": "Karta över var evenemanget är"
   },
   "auth": {
     "signInTitle": "Välkommen tillbaka",
@@ -132,6 +138,9 @@
     "pushKinds": {
       "new_follower": "Nya följare",
       "new_event": "Nya evenemang från dem du följer",
+      "new_post": "Nya inlägg från dem du får alla aviseringar från",
+      "nearby_events": "Nya evenemang nära dig",
+      "interest_events": "Nya evenemang inom dina intressen",
       "event_changed": "Ändringar i evenemang du ska gå på",
       "event_cancelled": "Inställda evenemang",
       "event_reminder": "Påminnelser om evenemang",
@@ -155,7 +164,14 @@
     "appearanceDark": "Mörkt",
     "buildApp": "Appen {{version}}",
     "buildApi": "API {{version}} · {{host}}",
-    "buildUpdate": "Uppdatering {{id}} från {{date}}"
+    "buildUpdate": "Uppdatering {{id}} från {{date}}",
+    "nearbyTitle": "Evenemang nära dig",
+    "nearbyToggle": "Berätta om nya evenemang nära mig",
+    "nearbyHint": "Högst en gång om dagen. Sidequest sparar bara ungefär var du är (på ungefär en kilometer när) tills du stänger av det här.",
+    "nearbyRadius": "Hur långt bort",
+    "nearbyUpdate": "Använd var jag är nu",
+    "nearbyDenied": "Tillåt platsåtkomst för att få dessa.",
+    "nearbyFailed": "Kunde inte hitta var du är. Försök igen."
   },
   "posts": {
     "delete": "Ta bort inlägg",
@@ -178,7 +194,9 @@
     "quickLabel": "Snabbinlägg",
     "quickPlaceholder": "Skriv ett inlägg…",
     "moreOptions": "Lägg till bilder och mer",
-    "posted": "Publicerat"
+    "posted": "Publicerat",
+    "pasteImage": "Klistra in bild",
+    "pasteHint": "Du kan också klistra in bilder och GIF:ar."
   },
   "moderation": {
     "report": "Anmäl",
@@ -243,7 +261,12 @@
     "organizationInvite": "{{name}} bjöd in dig som medlem.",
     "eventPostponed": "{{title}} har skjutits upp.",
     "coHostInvite": "{{name}} bjöd in dig att arrangera {{title}} tillsammans.",
-    "feedbackRequest": "Hur var {{title}}? Berätta för arrangörerna."
+    "feedbackRequest": "Hur var {{title}}? Berätta för arrangörerna.",
+    "newPost": "{{name}} delade ett nytt inlägg.",
+    "nearbyEvents_one": "{{count}} nytt evenemang nära dig",
+    "nearbyEvents_other": "{{count}} nya evenemang nära dig",
+    "interestEvents_one": "{{count}} nytt evenemang inom dina intressen",
+    "interestEvents_other": "{{count}} nya evenemang inom dina intressen"
   },
   "editProfile": {
     "changeCover": "Byt omslagsbild",
@@ -260,7 +283,6 @@
     "isPrivate": "Privat konto",
     "isPrivateHint": "Den som vill följa dig behöver ditt godkännande, och bara dina följare ser dina inlägg och evenemang.",
     "hideFollowers": "Dölj mina följare och vilka jag följer",
-    "hideAttendance": "Visa mig inte bland dem som går på evenemang",
     "avatarMenu": "Profilbild",
     "coverMenu": "Omslagsbild",
     "reframe": "Beskär igen",
@@ -268,7 +290,25 @@
     "uploading": "Laddar upp…",
     "pronounsNone": "Inga",
     "pronounsCustom": "Egna",
-    "pronounsCustomLabel": "Dina pronomen"
+    "pronounsCustomLabel": "Dina pronomen",
+    "gender": "Kön",
+    "genderNone": "Inte angivet",
+    "genderWoman": "Kvinna",
+    "genderMan": "Man",
+    "genderNonbinary": "Icke-binär",
+    "genderPreferNotToSay": "Vill inte säga",
+    "genderOther": "Annat",
+    "genderOtherLabel": "Med egna ord (valfritt)",
+    "showGender": "Visa mitt kön på min profil",
+    "showGenderHint": "Annars ser bara du det.",
+    "genderShortWoman": "Kvinna",
+    "genderShortMan": "Man",
+    "attendanceVisibility": "Vem kan se vilka evenemang du går på",
+    "attendanceEveryone": "Alla",
+    "attendanceFollowers": "Dina följare",
+    "attendanceNobody": "Bara du",
+    "showPastAttendance": "Visa evenemang jag har varit på",
+    "showPastAttendanceHint": "Annars syns du inte bland deltagarna när ett evenemang är över."
   },
   "followRequests": {
     "title": "Följarförfrågningar",
@@ -651,5 +691,15 @@
     "zoomIn": "Zooma in",
     "zoomOut": "Zooma ut",
     "done": "Använd den här"
+  },
+  "calendar": {
+    "list": "Lista",
+    "calendar": "Kalender",
+    "previousMonth": "Föregående månad",
+    "nextMonth": "Nästa månad",
+    "today": "Idag",
+    "nothing": "Inget planerat den här dagen.",
+    "dayLabel_one": "{{date}}, {{count}} evenemang",
+    "dayLabel_other": "{{date}}, {{count}} evenemang"
   }
 }

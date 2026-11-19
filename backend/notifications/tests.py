@@ -142,3 +142,53 @@ def test_unregister_push_device(auth_client, user):
     response = auth_client.delete("/api/push-devices/ExponentPushToken%5Babc%5D/")
     assert response.status_code == 204
     assert not PushDevice.objects.exists()
+
+
+def test_choose_notifications_from_someone_you_follow(api_client, make_user):
+    from events.test_publishing import EVENT
+    from notifications.models import Notification
+    from profiles.models import Follow
+
+    host, fan = make_user(), make_user()
+    handle = host.profile.handle
+    api_client.force_authenticate(fan)
+    url = f"/api/profiles/{handle}/notifications/"
+
+    # Only for profiles you follow.
+    assert api_client.put(url, {"notify": "all"}, format="json").status_code == 400
+    assert api_client.get(f"/api/profiles/{handle}/").json()["notify"] is None
+    Follow.objects.create(follower=fan.profile, followee=host.profile)
+    # New events by default.
+    assert api_client.get(f"/api/profiles/{handle}/").json()["notify"] == "events"
+
+    def kinds_after_posting():
+        Notification.objects.all().delete()
+        api_client.force_authenticate(host)
+        api_client.post("/api/events/", EVENT, format="json")
+        api_client.post("/api/posts/", {"body": "Hello"}, format="json")
+        api_client.force_authenticate(fan)
+        return sorted(Notification.objects.filter(recipient=fan).values_list("kind", flat=True))
+
+    assert kinds_after_posting() == ["new_event"]
+
+    assert api_client.put(url, {"notify": "all"}, format="json").json() == {"notify": "all"}
+    assert api_client.get(f"/api/profiles/{handle}/").json()["notify"] == "all"
+    assert kinds_after_posting() == ["new_event", "new_post"]
+
+    api_client.put(url, {"notify": "none"}, format="json")
+    assert kinds_after_posting() == []
+
+    assert api_client.put(url, {"notify": "loud"}, format="json").status_code == 400
+
+
+def test_new_post_push_message(make_user):
+    from notifications.models import Kind, Notification
+    from notifications.push import render
+    from posts.models import Post
+
+    author, fan = make_user(), make_user()
+    post = Post.objects.create(author=author.profile, body="Sauna tonight at 8")
+    notification = Notification.objects.create(
+        recipient=fan, kind=Kind.NEW_POST, actor=author.profile, post=post
+    )
+    assert render(notification) == (author.profile.display_name, "Sauna tonight at 8")

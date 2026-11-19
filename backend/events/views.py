@@ -1,7 +1,8 @@
 import csv
 import io
+from datetime import timedelta
 
-from django.db.models import Avg, Count, Exists, OuterRef, Q, Subquery
+from django.db.models import Avg, Count, Exists, OuterRef, Subquery
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -17,7 +18,13 @@ from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from moderation import filters
-from moderation.visibility import hidden_profiles, private_profiles, viewer_profile
+from moderation.visibility import (
+    hidden_profiles,
+    private_profiles,
+    shares_attendance,
+    shares_past_attendance,
+    viewer_profile,
+)
 from notifications.models import Kind
 from notifications.services import attendees_of, notify
 from profiles.models import Follow, Profile
@@ -202,8 +209,9 @@ class EventViewSet(
     def attendees(self, request, pk=None):
         """Who's going (or interested): people you follow first, then the latest RSVPs.
 
-        Leaves out people who hide their attendance (except yourself), blocked
-        profiles and private profiles you don't follow.
+        Leaves out people who don't share their RSVPs with you (you always see yourself) or,
+        once the event is over, who went; blocked profiles; and private profiles you don't
+        follow.
         """
         event = get_object_or_404(Event.objects.visible_to(viewer_profile(request)), pk=pk)
         params = AttendeesQuerySerializer(data=request.query_params)
@@ -221,8 +229,10 @@ class EventViewSet(
             .select_related("avatar")
             .order_by("-followed", "-rsvp_at", "pk")
         )
-        shares = Q(hide_attendance=False)
-        profiles = profiles.filter(shares | Q(pk=viewer.pk) if viewer else shares)
+        profiles = profiles.filter(shares_attendance(viewer))
+        # Once it's over, only those who keep showing the events they went to.
+        if event.ends_at < timezone.now():
+            profiles = profiles.filter(shares_past_attendance(viewer))
         page = self.paginate_queryset(profiles)
         context = self.get_serializer_context()
         return self.get_paginated_response(
@@ -502,6 +512,20 @@ class GeocodeView(APIView):
         return Response(GeocodeResultSerializer(results, many=True).data)
 
 
+class WindowQuerySerializer(serializers.Serializer):
+    """A time window for a list: both ends, or neither."""
+
+    ends_after = serializers.DateTimeField(required=False)
+    starts_before = serializers.DateTimeField(required=False)
+
+    def validate(self, attrs):
+        if len(attrs) == 1:
+            raise serializers.ValidationError(_("Give both ends_after and starts_before."))
+        if attrs and attrs["starts_before"] - attrs["ends_after"] > timedelta(days=62):
+            raise serializers.ValidationError(_("Ask for at most two months at a time."))
+        return attrs
+
+
 class MyEventsPagination(LimitOffsetPagination):
     default_limit = 30
     max_limit = 100
@@ -515,7 +539,16 @@ class MyEventListView(generics.ListAPIView):
     pagination_class = MyEventsPagination
 
     @extend_schema(
-        parameters=[OpenApiParameter("when", enum=["upcoming", "past"], default="upcoming")]
+        parameters=[
+            OpenApiParameter("when", enum=["upcoming", "past"], default="upcoming"),
+            OpenApiParameter(
+                "ends_after",
+                OpenApiTypes.DATETIME,
+                description="With starts_before: events overlapping that window, soonest "
+                "first, past or not (e.g. a calendar's month). Replaces `when`.",
+            ),
+            OpenApiParameter("starts_before", OpenApiTypes.DATETIME),
+        ]
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -526,6 +559,13 @@ class MyEventListView(generics.ListAPIView):
     def get_queryset(self):
         viewer = self.request.user.profile
         events = self.events_of(viewer).for_display(viewer)
+        window = WindowQuerySerializer(data=self.request.query_params)
+        window.is_valid(raise_exception=True)
+        if window.validated_data:
+            return events.filter(
+                ends_at__gt=window.validated_data["ends_after"],
+                starts_at__lt=window.validated_data["starts_before"],
+            ).order_by("starts_at", "id")
         now = timezone.now()
         if self.request.query_params.get("when") == "past":
             return events.filter(ends_at__lt=now).order_by("-starts_at", "-id")
