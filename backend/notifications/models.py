@@ -10,6 +10,8 @@ class Kind(models.TextChoices):
     ORGANIZATION_INVITE = "organization_invite", _("Invitations to organizations")
     NEW_EVENT = "new_event", _("New events from people you follow")
     NEW_POST = "new_post", _("New posts from people you get all notifications from")
+    NEARBY_EVENTS = "nearby_events", _("New events near you")
+    INTEREST_EVENTS = "interest_events", _("New events for your interests")
     EVENT_CHANGED = "event_changed", _("Changes to events you're going to")
     EVENT_CANCELLED = "event_cancelled", _("Cancelled events")
     EVENT_POSTPONED = "event_postponed", _("Postponed events")

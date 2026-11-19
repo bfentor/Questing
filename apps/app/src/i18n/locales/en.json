@@ -139,6 +139,8 @@
       "new_follower": "New followers",
       "new_event": "New events from people you follow",
       "new_post": "New posts from people you get all notifications from",
+      "nearby_events": "New events near you",
+      "interest_events": "New events for your interests",
       "event_changed": "Changes to events you're going to",
       "event_cancelled": "Cancelled events",
       "event_reminder": "Event reminders",
@@ -162,7 +164,14 @@
     "appearanceDark": "Dark",
     "buildApp": "App {{version}}",
     "buildApi": "API {{version}} · {{host}}",
-    "buildUpdate": "Update {{id}} from {{date}}"
+    "buildUpdate": "Update {{id}} from {{date}}",
+    "nearbyTitle": "Events near you",
+    "nearbyToggle": "Tell me about new events near me",
+    "nearbyHint": "At most once a day. Sidequest keeps only roughly where you are (to about a kilometre), until you turn this off.",
+    "nearbyRadius": "How far",
+    "nearbyUpdate": "Use where I am now",
+    "nearbyDenied": "Allow location access to get these.",
+    "nearbyFailed": "Couldn't find where you are. Try again."
   },
   "posts": {
     "delete": "Delete post",
@@ -251,7 +260,11 @@
     "eventPostponed": "{{title}} was postponed.",
     "coHostInvite": "{{name}} invited you to co-host {{title}}.",
     "feedbackRequest": "How was {{title}}? Let the organizers know.",
-    "newPost": "{{name}} shared a new post."
+    "newPost": "{{name}} shared a new post.",
+    "nearbyEvents_one": "{{count}} new event near you",
+    "nearbyEvents_other": "{{count}} new events near you",
+    "interestEvents_one": "{{count}} new event for your interests",
+    "interestEvents_other": "{{count}} new events for your interests"
   },
   "editProfile": {
     "changeCover": "Change cover picture",

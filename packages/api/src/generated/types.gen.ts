@@ -28,6 +28,11 @@ export type AccountSettings = {
      */
     onboarded?: boolean;
     /**
+     * Where to look for new events near you, for a daily notification (stored rounded to about a kilometre); null turns it off.
+     */
+    nearby_location?: LatLng | null;
+    nearby_radius_km?: number;
+    /**
      * Push on (true) or off (false), by notification kind. Missing kinds are on.
      */
     push?: {
@@ -515,6 +520,8 @@ export type NotificationEvent = {
  * * `organization_invite` - Invitations to organizations
  * * `new_event` - New events from people you follow
  * * `new_post` - New posts from people you get all notifications from
+ * * `nearby_events` - New events near you
+ * * `interest_events` - New events for your interests
  * * `event_changed` - Changes to events you're going to
  * * `event_cancelled` - Cancelled events
  * * `event_postponed` - Postponed events
@@ -527,7 +534,7 @@ export type NotificationEvent = {
  * * `comment` - Comments
  * * `reaction` - Likes
  */
-export type NotificationKindEnum = 'new_follower' | 'follow_request' | 'follow_accepted' | 'organization_invite' | 'new_event' | 'new_post' | 'event_changed' | 'event_cancelled' | 'event_postponed' | 'co_host_invite' | 'event_reminder' | 'feedback_request' | 'waitlist_promoted' | 'announcement' | 'mention' | 'comment' | 'reaction';
+export type NotificationKindEnum = 'new_follower' | 'follow_request' | 'follow_accepted' | 'organization_invite' | 'new_event' | 'new_post' | 'nearby_events' | 'interest_events' | 'event_changed' | 'event_cancelled' | 'event_postponed' | 'co_host_invite' | 'event_reminder' | 'feedback_request' | 'waitlist_promoted' | 'announcement' | 'mention' | 'comment' | 'reaction';
 
 export type Notify = {
     /**
@@ -646,6 +653,11 @@ export type PatchedAccountSettingsRequest = {
      * Whether the first-run steps are done; set it once they are.
      */
     onboarded?: boolean;
+    /**
+     * Where to look for new events near you, for a daily notification (stored rounded to about a kilometre); null turns it off.
+     */
+    nearby_location?: LatLngRequest | null;
+    nearby_radius_km?: number;
     /**
      * Push on (true) or off (false), by notification kind. Missing kinds are on.
      */
@@ -985,6 +997,11 @@ export type AccountSettingsWritable = {
      * Whether the first-run steps are done; set it once they are.
      */
     onboarded?: boolean;
+    /**
+     * Where to look for new events near you, for a daily notification (stored rounded to about a kilometre); null turns it off.
+     */
+    nearby_location?: LatLng | null;
+    nearby_radius_km?: number;
     /**
      * Push on (true) or off (false), by notification kind. Missing kinds are on.
      */

@@ -166,3 +166,36 @@ test('get all notifications from an organization you follow', async ({ page }) =
   await page.reload();
   await expect(bell).toHaveAccessibleName(/New events only$/);
 });
+
+test.describe('with location shared', () => {
+  test.use({ geolocation: { latitude: 60.983, longitude: 25.657 }, permissions: ['geolocation'] });
+
+  test('turn on notifications about new events near you', async ({ page }) => {
+    await signIn(page);
+    await page.goto('/settings');
+    const toggle = page.getByRole('switch', { name: 'Tell me about new events near me' });
+    await expect(toggle).toHaveAttribute('aria-checked', 'false');
+    await toggle.click();
+    const ten = page.getByRole('radio', { name: '10 km' });
+    await expect(ten).toHaveAttribute('aria-checked', 'true');
+    await page.getByRole('radio', { name: '25 km' }).click();
+    await expect(page.getByRole('radio', { name: '25 km' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+
+    await page.reload();
+    await expect(toggle).toHaveAttribute('aria-checked', 'true');
+    await expect(page.getByRole('radio', { name: '25 km' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+
+    // Back as it was, so the test can run again.
+    await page.getByRole('radio', { name: '10 km' }).click();
+    await expect(ten).toHaveAttribute('aria-checked', 'true');
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-checked', 'false');
+    await expect(ten).toBeHidden();
+  });
+});

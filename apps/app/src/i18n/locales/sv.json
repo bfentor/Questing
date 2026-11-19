@@ -139,6 +139,8 @@
       "new_follower": "Nya följare",
       "new_event": "Nya evenemang från dem du följer",
       "new_post": "Nya inlägg från dem du får alla aviseringar från",
+      "nearby_events": "Nya evenemang nära dig",
+      "interest_events": "Nya evenemang inom dina intressen",
       "event_changed": "Ändringar i evenemang du ska gå på",
       "event_cancelled": "Inställda evenemang",
       "event_reminder": "Påminnelser om evenemang",
@@ -162,7 +164,14 @@
     "appearanceDark": "Mörkt",
     "buildApp": "Appen {{version}}",
     "buildApi": "API {{version}} · {{host}}",
-    "buildUpdate": "Uppdatering {{id}} från {{date}}"
+    "buildUpdate": "Uppdatering {{id}} från {{date}}",
+    "nearbyTitle": "Evenemang nära dig",
+    "nearbyToggle": "Berätta om nya evenemang nära mig",
+    "nearbyHint": "Högst en gång om dagen. Sidequest sparar bara ungefär var du är (på ungefär en kilometer när) tills du stänger av det här.",
+    "nearbyRadius": "Hur långt bort",
+    "nearbyUpdate": "Använd var jag är nu",
+    "nearbyDenied": "Tillåt platsåtkomst för att få dessa.",
+    "nearbyFailed": "Kunde inte hitta var du är. Försök igen."
   },
   "posts": {
     "delete": "Ta bort inlägg",
@@ -251,7 +260,11 @@
     "eventPostponed": "{{title}} har skjutits upp.",
     "coHostInvite": "{{name}} bjöd in dig att arrangera {{title}} tillsammans.",
     "feedbackRequest": "Hur var {{title}}? Berätta för arrangörerna.",
-    "newPost": "{{name}} delade ett nytt inlägg."
+    "newPost": "{{name}} delade ett nytt inlägg.",
+    "nearbyEvents_one": "{{count}} nytt evenemang nära dig",
+    "nearbyEvents_other": "{{count}} nya evenemang nära dig",
+    "interestEvents_one": "{{count}} nytt evenemang inom dina intressen",
+    "interestEvents_other": "{{count}} nya evenemang inom dina intressen"
   },
   "editProfile": {
     "changeCover": "Byt omslagsbild",

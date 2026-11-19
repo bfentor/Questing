@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sidequest\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 16:02+0200\n"
+"POT-Creation-Date: 2026-11-19 16:06+0200\n"
 "PO-Revision-Date: 2026-11-02 20:52+0200\n"
 "Last-Translator: Sidequest <dev@sidequest.invalid>\n"
 "Language-Team: Finnish\n"
@@ -194,6 +194,12 @@ msgstr "Uudet tapahtumat seuraamiltasi"
 msgid "New posts from people you get all notifications from"
 msgstr "Uudet julkaisut niiltä, joista saat kaikki ilmoitukset"
 
+msgid "New events near you"
+msgstr "Uudet tapahtumat lähelläsi"
+
+msgid "New events for your interests"
+msgstr "Uudet tapahtumat kiinnostuksen kohteistasi"
+
 msgid "Changes to events you're going to"
 msgstr "Muutokset tapahtumiin, joihin osallistut"
 
@@ -246,6 +252,18 @@ msgstr "%(name)s hyväksyi seuraamispyyntösi."
 #, python-format
 msgid "New event from %(name)s."
 msgstr "Uusi tapahtuma: %(name)s."
+
+#, python-format
+msgid "%(count)s new event near you"
+msgid_plural "%(count)s new events near you"
+msgstr[0] "%(count)s uusi tapahtuma lähelläsi"
+msgstr[1] "%(count)s uutta tapahtumaa lähelläsi"
+
+#, python-format
+msgid "%(count)s new event for your interests"
+msgid_plural "%(count)s new events for your interests"
+msgstr[0] "%(count)s uusi tapahtuma kiinnostuksen kohteistasi"
+msgstr[1] "%(count)s uutta tapahtumaa kiinnostuksen kohteistasi"
 
 msgid "New post"
 msgstr "Uusi julkaisu"

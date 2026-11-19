@@ -139,6 +139,8 @@
       "new_follower": "Uudet seuraajat",
       "new_event": "Uudet tapahtumat seuraamiltasi",
       "new_post": "Uudet julkaisut niiltä, joista saat kaikki ilmoitukset",
+      "nearby_events": "Uudet tapahtumat lähelläsi",
+      "interest_events": "Uudet tapahtumat kiinnostuksen kohteistasi",
       "event_changed": "Muutokset tapahtumiin, joihin osallistut",
       "event_cancelled": "Perutut tapahtumat",
       "event_reminder": "Tapahtumamuistutukset",
@@ -162,7 +164,14 @@
     "appearanceDark": "Tumma",
     "buildApp": "Sovellus {{version}}",
     "buildApi": "API {{version}} · {{host}}",
-    "buildUpdate": "Päivitys {{id}}, {{date}}"
+    "buildUpdate": "Päivitys {{id}}, {{date}}",
+    "nearbyTitle": "Tapahtumat lähelläsi",
+    "nearbyToggle": "Kerro uusista tapahtumista lähelläni",
+    "nearbyHint": "Korkeintaan kerran päivässä. Sidequest tallentaa sijaintisi vain karkeasti (noin kilometrin tarkkuudella), kunnes poistat tämän käytöstä.",
+    "nearbyRadius": "Kuinka kaukaa",
+    "nearbyUpdate": "Käytä nykyistä sijaintiani",
+    "nearbyDenied": "Salli sijainnin käyttö saadaksesi nämä.",
+    "nearbyFailed": "Sijaintiasi ei löytynyt. Yritä uudelleen."
   },
   "posts": {
     "delete": "Poista julkaisu",
@@ -251,7 +260,11 @@
     "eventPostponed": "{{title}} on siirretty.",
     "coHostInvite": "{{name}} kutsui sinut järjestämään tapahtumaa {{title}}.",
     "feedbackRequest": "Millainen oli {{title}}? Kerro järjestäjille.",
-    "newPost": "{{name}} jakoi uuden julkaisun."
+    "newPost": "{{name}} jakoi uuden julkaisun.",
+    "nearbyEvents_one": "{{count}} uusi tapahtuma lähelläsi",
+    "nearbyEvents_other": "{{count}} uutta tapahtumaa lähelläsi",
+    "interestEvents_one": "{{count}} uusi tapahtuma kiinnostuksen kohteistasi",
+    "interestEvents_other": "{{count}} uutta tapahtumaa kiinnostuksen kohteistasi"
   },
   "editProfile": {
     "changeCover": "Vaihda kansikuva",

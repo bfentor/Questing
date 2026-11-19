@@ -46,6 +46,15 @@ def export_data(user):
             "last_login": user.last_login.isoformat() if user.last_login else None,
             "language": user.language,
             "email_digest": user.email_digest,
+            "nearby_events": (
+                {
+                    "lat": user.nearby_location.y,
+                    "lng": user.nearby_location.x,
+                    "radius_km": user.nearby_radius_km,
+                }
+                if user.nearby_location
+                else None
+            ),
         },
         "profile": {
             "handle": profile.handle,

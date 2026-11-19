@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sidequest\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 16:02+0200\n"
+"POT-Creation-Date: 2026-11-19 16:06+0200\n"
 "PO-Revision-Date: 2026-11-02 20:52+0200\n"
 "Last-Translator: Sidequest <dev@sidequest.invalid>\n"
 "Language-Team: Swedish\n"
@@ -194,6 +194,12 @@ msgstr "Nya evenemang från dem du följer"
 msgid "New posts from people you get all notifications from"
 msgstr "Nya inlägg från dem du får alla aviseringar från"
 
+msgid "New events near you"
+msgstr "Nya evenemang nära dig"
+
+msgid "New events for your interests"
+msgstr "Nya evenemang inom dina intressen"
+
 msgid "Changes to events you're going to"
 msgstr "Ändringar i evenemang du ska gå på"
 
@@ -246,6 +252,18 @@ msgstr "%(name)s godkände din följarförfrågan."
 #, python-format
 msgid "New event from %(name)s."
 msgstr "Nytt evenemang från %(name)s."
+
+#, python-format
+msgid "%(count)s new event near you"
+msgid_plural "%(count)s new events near you"
+msgstr[0] "%(count)s nytt evenemang nära dig"
+msgstr[1] "%(count)s nya evenemang nära dig"
+
+#, python-format
+msgid "%(count)s new event for your interests"
+msgid_plural "%(count)s new events for your interests"
+msgstr[0] "%(count)s nytt evenemang inom dina intressen"
+msgstr[1] "%(count)s nya evenemang inom dina intressen"
 
 msgid "New post"
 msgstr "Nytt inlägg"
