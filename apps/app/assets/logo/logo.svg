@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
+  <!-- The Sidequest logo: a flag, or a K. scripts/make-icons draws every icon from this. -->
+  <rect width="2048" height="2048" fill="#0b1020"/>
+  <path d="M417 417H1588L417 1588Z" fill="#818cf8"/>
+  <path d="M1002.5 1002.5L1605 1605" stroke="#818cf8" stroke-width="47" stroke-linecap="round"/>
+</svg>

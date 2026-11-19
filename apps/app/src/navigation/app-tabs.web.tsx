@@ -12,6 +12,7 @@ import { BesideSidebar } from '@/components/column';
 import { EventDetails, EventMenu } from '@/components/event-details';
 import { EventPanelProvider } from '@/components/event-panel';
 import { IconButton } from '@/components/icon-button';
+import { LogoMark } from '@/components/logo';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
@@ -113,10 +114,13 @@ function NavBar({ children }: TabListProps) {
     <div className={classes.navArea}>
       <nav className={classes.nav}>
         <div className={classes.brand}>
-          <Link href="/">
-            <ThemedText type="subtitle" themeColor="tint" style={styles.brand}>
-              Sidequest
-            </ThemedText>
+          <Link href="/" asChild>
+            <Pressable role="link" style={styles.brandLink}>
+              <LogoMark size={30} />
+              <ThemedText type="subtitle" themeColor="tint" style={styles.brand}>
+                Sidequest
+              </ThemedText>
+            </Pressable>
           </Link>
         </div>
         {children}
@@ -216,5 +220,6 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
     padding: Spacing.three,
   },
+  brandLink: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
   brand: { fontSize: 24, lineHeight: 32 },
 });

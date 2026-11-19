@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""Draws every icon the app and website use from the logo (apps/app/assets/logo/logo.svg).
+
+Run it after changing the logo: `scripts/make-icons`. Needs rsvg-convert (librsvg) and
+ImageMagick. The shapes and colours are below, so the variants (no background, one colour,
+smaller or larger mark) stay in step with the logo.
+"""
+
+import shutil
+import subprocess
+import tempfile
+from pathlib import Path
+
+APP = Path(__file__).resolve().parent.parent / "apps" / "app"
+IMAGES = APP / "assets" / "images"
+WEB = APP / "public" / "icons"
+
+NAVY = "#0b1020"
+INDIGO = "#818cf8"
+CANVAS = 2048
+CENTRE = 1024
+
+
+def svg(mark_scale=1.0, colour=INDIGO, background=NAVY, radius=0, bar=47):
+    """The logo on a 2048 canvas: the mark scaled around the middle, on a (rounded) square.
+
+    `bar` is the line's width; small icons get a thicker one, so it doesn't vanish.
+    """
+    backdrop = (
+        f'<rect width="{CANVAS}" height="{CANVAS}" rx="{radius}" fill="{background}"/>'
+        if background
+        else ""
+    )
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {CANVAS} {CANVAS}">
+  {backdrop}
+  <g transform="translate({CENTRE} {CENTRE}) scale({mark_scale}) translate(-{CENTRE} -{CENTRE})">
+    <path d="M417 417H1588L417 1588Z" fill="{colour}"/>
+    <path d="M1002.5 1002.5L1605 1605" stroke="{colour}" stroke-width="{bar}" stroke-linecap="round"/>
+  </g>
+</svg>
+"""
+
+
+def png(source, size, target):
+    with tempfile.NamedTemporaryFile("w", suffix=".svg", delete=False) as file:
+        file.write(source)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(
+        ["rsvg-convert", "-w", str(size), "-h", str(size), "-o", str(target), file.name],
+        check=True,
+    )
+    Path(file.name).unlink()
+    if target.is_relative_to(APP):
+        print(f"{target.relative_to(APP)} ({size}×{size})")
+
+
+for tool in ("rsvg-convert", "magick"):
+    if not shutil.which(tool):
+        raise SystemExit(f"{tool} is needed: install librsvg and ImageMagick.")
+
+# The full logo, edge to edge: iOS rounds its corners itself.
+FULL = svg()
+# Small sizes: a bigger mark on a rounded square, so it still reads at 16 pixels.
+SMALL = svg(mark_scale=1.3, radius=400, bar=90)
+# Android crops its icons to circles and other shapes, keeping the middle 61%: the mark's
+# corners (42% from the middle at scale 1) have to stay inside it.
+ANDROID = 0.72
+# Maskable web icons keep the middle 80% circle.
+MASKABLE = 0.9
+
+# The app (Expo): app.json points at these.
+png(FULL, 1024, IMAGES / "icon.png")
+png(svg(mark_scale=ANDROID, background=None), 1024, IMAGES / "android-icon-foreground.png")
+png(
+    svg(mark_scale=ANDROID, colour="#ffffff", background=None),
+    1024,
+    IMAGES / "android-icon-monochrome.png",
+)
+png(svg(mark_scale=1.6, background=None), 512, IMAGES / "splash-icon.png")
+png(SMALL, 48, IMAGES / "favicon.png")
+
+# The website: the manifest and +html.tsx point at these.
+png(FULL, 180, WEB / "apple-touch-icon.png")
+for size in (192, 512):
+    png(FULL, size, WEB / f"icon-{size}.png")
+    png(svg(mark_scale=MASKABLE), size, WEB / f"icon-maskable-{size}.png")
+(WEB / "favicon.svg").write_text(SMALL)
+print("public/icons/favicon.svg")
+with tempfile.TemporaryDirectory() as directory:
+    sizes = []
+    for size in (16, 32, 48):
+        target = Path(directory) / f"{size}.png"
+        png(SMALL, size, target)
+        sizes.append(str(target))
+    subprocess.run(["magick", *sizes, str(WEB / "favicon.ico")], check=True)
+    print("public/icons/favicon.ico (16, 32, 48)")
+png(SMALL, 32, WEB / "favicon-32.png")
