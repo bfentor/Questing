@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Draws every icon the app and website use from the logo (apps/app/assets/logo/logo.svg).
+"""Draws the logo and every icon the app and website use: `scripts/make-icons`.
 
-Run it after changing the logo: `scripts/make-icons`. Needs rsvg-convert (librsvg) and
-ImageMagick. The shapes and colours are below, so the variants (no background, one colour,
-smaller or larger mark) stay in step with the logo.
+The logo is a path that winds to a destination, as a side quest does (and an S). It's drawn
+on a 32-unit grid where every straight edge falls on a whole pixel at 16 and 32 pixels, so
+the favicons stay sharp. Change the shapes and colours here, then run this again; it writes
+apps/app/assets/logo/logo.svg too. Needs rsvg-convert (librsvg) and ImageMagick.
 """
 
 import shutil
@@ -13,29 +14,43 @@ from pathlib import Path
 
 APP = Path(__file__).resolve().parent.parent / "apps" / "app"
 IMAGES = APP / "assets" / "images"
+LOGO = APP / "assets" / "logo"
 WEB = APP / "public" / "icons"
 
-NAVY = "#0b1020"
-INDIGO = "#818cf8"
-CANVAS = 2048
-CENTRE = 1024
+# The app's indigo (constants/theme.ts), as a gentle top-to-bottom gradient.
+TOP = "#6366f1"
+BOTTOM = "#4338ca"
+# The page colours, behind the splash screen.
+LIGHT_PAGE = "#f8fafc"
+DARK_PAGE = "#0b1020"
+# The rounded square's corners, in grid units: soft, but still a square.
+CORNER = 7
 
 
-def svg(mark_scale=1.0, colour=INDIGO, background=NAVY, radius=0, bar=47):
-    """The logo on a 2048 canvas: the mark scaled around the middle, on a (rounded) square.
+def svg(*, background=True, corner=CORNER, scale=1.0, colour="#ffffff", path_opacity=0.8, dot=3.5):
+    """The logo on a 32 × 32 grid.
 
-    `bar` is the line's width; small icons get a thicker one, so it doesn't vanish.
+    background: the indigo square (False for the mark alone, e.g. Android's foreground).
+    corner: its corner radius; 0 for systems that round the corners themselves.
+    scale: the mark's size around the middle; smaller where a system crops the icon.
+    dot: the destination's radius; 4 keeps its edges on whole pixels at 16 and 32.
     """
-    backdrop = (
-        f'<rect width="{CANVAS}" height="{CANVAS}" rx="{radius}" fill="{background}"/>'
-        if background
-        else ""
+    square = (
+        f'<rect width="32" height="32" rx="{corner}" fill="url(#indigo)"/>' if background else ""
     )
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {CANVAS} {CANVAS}">
-  {backdrop}
-  <g transform="translate({CENTRE} {CENTRE}) scale({mark_scale}) translate(-{CENTRE} -{CENTRE})">
-    <path d="M417 417H1588L417 1588Z" fill="{colour}"/>
-    <path d="M1002.5 1002.5L1605 1605" stroke="{colour}" stroke-width="{bar}" stroke-linecap="round"/>
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="indigo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="{TOP}"/>
+      <stop offset="1" stop-color="{BOTTOM}"/>
+    </linearGradient>
+  </defs>
+  {square}
+  <g transform="translate(16 16) scale({scale}) translate(-16 -16)">
+    <path d="M8 24H20A4 4 0 0 0 20 16H12A4 4 0 0 1 12 8H18" fill="none" stroke="{colour}"
+      stroke-opacity="{path_opacity}" stroke-width="4" stroke-linecap="round"
+      stroke-linejoin="round"/>
+    <circle cx="22" cy="8" r="{dot}" fill="{colour}"/>
   </g>
 </svg>
 """
@@ -58,34 +73,40 @@ for tool in ("rsvg-convert", "magick"):
     if not shutil.which(tool):
         raise SystemExit(f"{tool} is needed: install librsvg and ImageMagick.")
 
-# The full logo, edge to edge: iOS rounds its corners itself.
-FULL = svg()
-# Small sizes: a bigger mark on a rounded square, so it still reads at 16 pixels.
-SMALL = svg(mark_scale=1.3, radius=400, bar=90)
-# Android crops its icons to circles and other shapes, keeping the middle 61%: the mark's
-# corners (42% from the middle at scale 1) have to stay inside it.
-ANDROID = 0.72
+LOGO_SVG = svg()
+# Favicons: the bigger dot, which lands on whole pixels.
+SMALL = svg(dot=4)
+# For iOS and maskable icons, which get their corners rounded (or cropped) for them.
+SQUARE = svg(corner=0)
+# Android crops icons to a circle (or other shapes) keeping the middle 61%; the mark reaches
+# 44% from the middle at full size.
+ANDROID = 0.69
 # Maskable web icons keep the middle 80% circle.
 MASKABLE = 0.9
 
+(LOGO / "logo.svg").write_text(LOGO_SVG)
+print("assets/logo/logo.svg")
+
 # The app (Expo): app.json points at these.
-png(FULL, 1024, IMAGES / "icon.png")
-png(svg(mark_scale=ANDROID, background=None), 1024, IMAGES / "android-icon-foreground.png")
+png(SQUARE, 1024, IMAGES / "icon.png")
+png(svg(corner=0, scale=0), 1024, IMAGES / "android-icon-background.png")
+png(svg(background=False, scale=ANDROID), 1024, IMAGES / "android-icon-foreground.png")
 png(
-    svg(mark_scale=ANDROID, colour="#ffffff", background=None),
+    svg(background=False, scale=ANDROID, path_opacity=1),
     1024,
     IMAGES / "android-icon-monochrome.png",
 )
-png(svg(mark_scale=1.6, background=None), 512, IMAGES / "splash-icon.png")
+png(LOGO_SVG, 512, IMAGES / "splash-icon.png")
 png(SMALL, 48, IMAGES / "favicon.png")
 
 # The website: the manifest and +html.tsx point at these.
-png(FULL, 180, WEB / "apple-touch-icon.png")
+png(SQUARE, 180, WEB / "apple-touch-icon.png")
 for size in (192, 512):
-    png(FULL, size, WEB / f"icon-{size}.png")
-    png(svg(mark_scale=MASKABLE), size, WEB / f"icon-maskable-{size}.png")
+    png(LOGO_SVG, size, WEB / f"icon-{size}.png")
+    png(svg(corner=0, scale=MASKABLE), size, WEB / f"icon-maskable-{size}.png")
 (WEB / "favicon.svg").write_text(SMALL)
 print("public/icons/favicon.svg")
+png(SMALL, 32, WEB / "favicon-32.png")
 with tempfile.TemporaryDirectory() as directory:
     sizes = []
     for size in (16, 32, 48):
@@ -93,5 +114,4 @@ with tempfile.TemporaryDirectory() as directory:
         png(SMALL, size, target)
         sizes.append(str(target))
     subprocess.run(["magick", *sizes, str(WEB / "favicon.ico")], check=True)
-    print("public/icons/favicon.ico (16, 32, 48)")
-png(SMALL, 32, WEB / "favicon-32.png")
+print("public/icons/favicon.ico (16, 32, 48)")

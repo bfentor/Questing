@@ -1,4 +1,3 @@
-import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Linking, StyleSheet, View } from 'react-native';
@@ -10,6 +9,7 @@ import { useShape } from '@/hooks/use-shape';
 import { APP_STORE_URL, PLAY_STORE_URL } from '@/lib/config';
 
 import { Button } from './button';
+import { Logo } from './logo';
 import { ThemedText } from './themed-text';
 
 /**
@@ -36,11 +36,7 @@ export function Welcome() {
         styles.hero,
         { borderRadius: shape.boxRadius * 1.5, borderColor: theme.backgroundElement },
       ]}>
-      <Image
-        source={require('@/assets/images/icon.png')}
-        style={styles.icon}
-        accessibilityLabel="Sidequest"
-      />
+      <Logo size={56} />
       <ThemedText type="subtitle" role="heading" aria-level={1}>
         {t('welcome.title')}
       </ThemedText>
@@ -75,11 +71,6 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
     borderWidth: 2,
     padding: Spacing.four,
-  },
-  icon: {
-    width: 56,
-    height: 56,
-    borderRadius: 14,
   },
   points: {
     gap: Spacing.one,

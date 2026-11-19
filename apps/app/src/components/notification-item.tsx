@@ -10,7 +10,7 @@ import { useShape } from '@/hooks/use-shape';
 import { useFormat } from '@/lib/format';
 
 import { Avatar } from './avatar';
-import { LogoBadge } from './logo';
+import { Logo } from './logo';
 import { ThemedText } from './themed-text';
 
 function describe(notification: Notification, t: TFunction) {
@@ -90,7 +90,7 @@ export function NotificationItem({ notification }: { notification: Notification 
         />
       ) : (
         // From Sidequest itself: reminders, feedback requests and the like.
-        <LogoBadge size={40} />
+        <Logo size={40} />
       )}
       <View style={styles.text}>
         <ThemedText>{describe(notification, t)}</ThemedText>
