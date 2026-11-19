@@ -339,3 +339,15 @@ msgstr "Koden är fel."
 
 #~ msgid "Choose admin or editor."
 #~ msgstr "Välj administratör eller redaktör."
+
+#: accounts/signup.py:35
+msgid "Enter your name."
+msgstr "Skriv ditt namn."
+
+#: accounts/signup.py:42
+msgid "Use at most 30 characters."
+msgstr "Använd högst 30 tecken."
+
+#: accounts/signup.py:45
+msgid "That username is taken. Try another one."
+msgstr "Användarnamnet är upptaget. Prova ett annat."

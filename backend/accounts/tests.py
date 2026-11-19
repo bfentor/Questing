@@ -47,7 +47,13 @@ SIGNUP = "/_allauth/app/v1/auth/signup"
 
 
 def signup(client, **fields):
-    data = {"email": "new@uni.example", "password": "a-long-passphrase", **fields}
+    data = {
+        "email": "new@uni.example",
+        "password": "a-long-passphrase",
+        "display_name": "New Person",
+        "handle": "new_person",
+        **fields,
+    }
     return client.post(SIGNUP, data, format="json")
 
 
@@ -65,6 +71,27 @@ def test_signup_needs_terms_and_a_minimum_age(api_client, db, settings):
     assert signup(api_client, birth_date="2000-01-01", accept_terms=True).status_code == 401
     user = User.objects.get(email="new@uni.example")
     assert user.terms_version == settings.TERMS_VERSION and user.age >= 26
+
+
+def test_signup_takes_a_name_and_an_unused_handle(api_client, make_user, db):
+    taken = make_user().profile
+    taken.handle = "taken"
+    taken.save()
+    adult = {"birth_date": "2000-01-01", "accept_terms": True}
+
+    def errors(**fields):
+        response = signup(api_client, **adult, **fields)
+        return {e["param"] for e in response.json().get("errors", [])}
+
+    assert errors(handle="taken") == {"handle"}
+    assert errors(handle="no spaces") == {"handle"}
+    assert errors(handle="x" * 31) == {"handle"}
+    assert errors(display_name="  ") == {"display_name"}
+
+    # A leading @ and capitals are fine: the handle is stored as it's shown.
+    assert signup(api_client, **adult, handle="@Aino_V", display_name=" Aino ").status_code == 401
+    profile = User.objects.get(email="new@uni.example").profile
+    assert (profile.handle, profile.display_name) == ("aino_v", "Aino")
 
 
 def test_accept_updated_terms(auth_client, user, settings):

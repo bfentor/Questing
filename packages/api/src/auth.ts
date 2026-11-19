@@ -71,6 +71,10 @@ export async function submit(url: string, body: object, flowToken?: string): Pro
 export type SignUpDetails = {
   email: string;
   password: string;
+  /** The name shown on the profile. */
+  display_name: string;
+  /** Lowercase letters, numbers and underscores; the server checks it's free. */
+  handle: string;
   /** YYYY-MM-DD */
   birth_date: string;
   accept_terms: boolean;
