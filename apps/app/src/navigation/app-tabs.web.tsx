@@ -1,225 +1,27 @@
-import { eventsRetrieveOptions, useUnreadCount } from '@sidequest/api';
-import { useQuery } from '@tanstack/react-query';
-import { Link, usePathname } from 'expo-router';
-import { TabList, TabSlot, TabTrigger, Tabs, type TabListProps } from 'expo-router/ui';
-import { SymbolView, type AndroidSymbol } from 'expo-symbols';
-import { useCallback, useMemo, useState, type ComponentProps } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { TabList, TabSlot, TabTrigger, Tabs } from 'expo-router/ui';
+import { StyleSheet } from 'react-native';
 
-import { useAuth } from '@/auth/auth-provider';
-import { BesideSidebar } from '@/components/column';
-import { EventDetails, EventMenu } from '@/components/event-details';
-import { EventPanelProvider } from '@/components/event-panel';
-import { IconButton } from '@/components/icon-button';
-import { Logo } from '@/components/logo';
-import { ThemedText } from '@/components/themed-text';
-import { Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
-
-import classes from './app-tabs.module.css';
-import { KeyboardShortcuts } from './keyboard-shortcuts';
 import { TABS } from './tabs';
 
-// From this width, events open in a panel beside the feed instead of on their own page.
-const PANEL_MIN_WIDTH = 1200;
-
 /**
- * Responsive navigation for the web: a sidebar on desktop and a bottom bar on
- * phones. The switch happens in CSS (see app-tabs.module.css), so server and
- * client render identical markup. Wide screens also get a side panel for
- * event details, and every screen keyboard shortcuts.
+ * The tabs on the website. Their buttons are in the sidebar or bottom bar around every page
+ * (navigation/web-shell.web.tsx), so this only switches between them, keeping each one's
+ * scroll position. The triggers stay, hidden, because they declare the tabs.
  */
 export default function AppTabs() {
-  const { t } = useTranslation();
-  const { status } = useAuth();
-  const unread = useUnreadCount({ enabled: status === 'signed-in' });
-  const { width } = useWindowDimensions();
-  const pathname = usePathname();
-  const [selected, setSelected] = useState<number | null>(null);
-  const close = useCallback(() => setSelected(null), []);
-  const wide = width >= PANEL_MIN_WIDTH;
-  const panel = useMemo(() => ({ selected, open: setSelected, close }), [selected, close]);
-  const panelOpen = wide && selected !== null;
-
-  // Another page, another context: the panel closes.
-  const [panelPath, setPanelPath] = useState(pathname);
-  if (panelPath !== pathname) {
-    setPanelPath(pathname);
-    setSelected(null);
-  }
-
   return (
-    <EventPanelProvider value={wide ? panel : null}>
-      <KeyboardShortcuts onEscape={close} />
-      <Tabs asChild>
-        <div className={panelOpen ? `${classes.shell} ${classes.withPanel}` : classes.shell}>
-          <TabList asChild>
-            <NavBar>
-              {TABS.map((tab) => (
-                <TabTrigger key={tab.name} name={tab.name} href={tab.href} asChild>
-                  <TabButton
-                    icon={tab.icon.material}
-                    badge={tab.name === 'notifications' ? unread : 0}>
-                    {t(`tabs.${tab.label}`)}
-                  </TabButton>
-                </TabTrigger>
-              ))}
-            </NavBar>
-          </TabList>
-          <div className={classes.content}>
-            <BesideSidebar value>
-              <TabSlot style={styles.slot} />
-            </BesideSidebar>
-          </div>
-          {panelOpen && selected !== null ? (
-            <div className={classes.panelArea}>
-              <aside className={classes.panel} aria-label={t('event.title')}>
-                <View style={styles.panelBar}>
-                  <Link href={{ pathname: '/events/[id]', params: { id: selected } }}>
-                    <ThemedText type="small" themeColor="tint">
-                      {t('event.openPage')}
-                    </ThemedText>
-                  </Link>
-                  <View style={styles.panelActions}>
-                    <PanelMenu id={selected} onDeleted={close} />
-                    <IconButton
-                      icon={{ ios: 'xmark', material: 'close' }}
-                      label={t('event.closePanel')}
-                      onPress={close}
-                    />
-                  </View>
-                </View>
-                <ScrollView contentContainerStyle={styles.panelContent}>
-                  <EventDetails key={selected} id={selected} />
-                </ScrollView>
-              </aside>
-            </div>
-          ) : null}
-        </div>
-      </Tabs>
-    </EventPanelProvider>
-  );
-}
-
-/** The event's menu, once it has loaded (it's already cached by the details). */
-function PanelMenu({ id, onDeleted }: { id: number; onDeleted: () => void }) {
-  const { data: event } = useQuery(eventsRetrieveOptions({ path: { id } }));
-  return event ? <EventMenu event={event} onDeleted={onDeleted} /> : null;
-}
-
-/** In the gutter left of the column on wide screens, against its edge (see the CSS). */
-function NavBar({ children }: TabListProps) {
-  return (
-    <div className={classes.navArea}>
-      <nav className={classes.nav}>
-        <div className={classes.brand}>
-          <Link href="/" asChild>
-            <Pressable role="link" style={styles.brandLink}>
-              <Logo size={30} />
-              <ThemedText type="subtitle" themeColor="tint" style={styles.brand}>
-                Sidequest
-              </ThemedText>
-            </Pressable>
-          </Link>
-        </div>
-        {children}
-        <SidebarLinks />
-      </nav>
-    </div>
-  );
-}
-
-/** The drawer's places without a tab, under the tabs in the desktop sidebar (hidden on phones). */
-function SidebarLinks() {
-  const { t } = useTranslation();
-  const { status } = useAuth();
-  const pathname = usePathname();
-  const links: {
-    href: '/my-events' | '/organizations' | '/settings';
-    label: string;
-    icon: AndroidSymbol;
-  }[] = [
-    ...(status === 'signed-in'
-      ? [
-          {
-            href: '/my-events' as const,
-            label: t('myEvents.title'),
-            icon: 'event_available' as const,
-          },
-          {
-            href: '/organizations' as const,
-            label: t('organizations.title'),
-            icon: 'groups' as const,
-          },
-        ]
-      : []),
-    { href: '/settings', label: t('common.settings'), icon: 'settings' },
-  ];
-
-  return (
-    <div className={classes.extras}>
-      {links.map((link) => (
-        <Link key={link.href} href={link.href} asChild>
-          <TabButton icon={link.icon} isFocused={pathname === link.href}>
-            {link.label}
-          </TabButton>
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-type TabButtonProps = Omit<ComponentProps<typeof Pressable>, 'children'> & {
-  icon: AndroidSymbol;
-  children: string;
-  /** A count shown next to the label, e.g. unread notifications. */
-  badge?: number;
-  /** Injected by `<TabTrigger asChild>`. */
-  isFocused?: boolean;
-};
-
-function TabButton({ icon, children, badge = 0, isFocused, ...props }: TabButtonProps) {
-  const theme = useTheme();
-  const color = isFocused ? theme.tint : theme.textSecondary;
-
-  return (
-    <Pressable {...props}>
-      <div className={classes.tabButton}>
-        <SymbolView name={{ web: icon }} tintColor={color} size={24} />
-        <span className={classes.label}>
-          <ThemedText type="smallBold" style={{ color }}>
-            {children}
-          </ThemedText>
-        </span>
-        {badge > 0 ? (
-          <span className={classes.badge} style={{ backgroundColor: theme.tint }}>
-            {badge > 99 ? '99+' : badge}
-          </span>
-        ) : null}
-      </div>
-    </Pressable>
+    <Tabs style={styles.tabs}>
+      <TabList style={styles.hidden}>
+        {TABS.map((tab) => (
+          <TabTrigger key={tab.name} name={tab.name} href={tab.href} />
+        ))}
+      </TabList>
+      <TabSlot style={styles.tabs} />
+    </Tabs>
   );
 }
 
 const styles = StyleSheet.create({
-  slot: { flex: 1 },
-  panelBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.two,
-  },
-  panelActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.three,
-  },
-  panelContent: {
-    gap: Spacing.three,
-    padding: Spacing.three,
-  },
-  brandLink: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
-  brand: { fontSize: 24, lineHeight: 32 },
+  tabs: { flex: 1 },
+  hidden: { display: 'none' },
 });

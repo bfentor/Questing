@@ -1,6 +1,7 @@
 import { SymbolView, type AndroidSymbol, type SFSymbol } from 'expo-symbols';
 import { Pressable, StyleSheet } from 'react-native';
 
+import { useShape } from '@/hooks/use-shape';
 import { useTheme } from '@/hooks/use-theme';
 
 type IconButtonProps = {
@@ -32,9 +33,18 @@ export function IconButton({ icon, label, onPress, size = 20, color }: IconButto
   );
 }
 
-/** An icon in a filled circle, as tall as a small Button, e.g. "…" beside Follow. */
-export function RoundIconButton({ icon, label, onPress }: Omit<IconButtonProps, 'size' | 'color'>) {
+/**
+ * An icon in a filled circle, as tall as a small Button, e.g. "…" beside Follow. `primary`
+ * fills it with the accent colour, like a primary Button.
+ */
+export function RoundIconButton({
+  icon,
+  label,
+  onPress,
+  primary,
+}: Omit<IconButtonProps, 'size' | 'color'> & { primary?: boolean }) {
   const theme = useTheme();
+  const shape = useShape();
 
   return (
     <Pressable
@@ -44,13 +54,14 @@ export function RoundIconButton({ icon, label, onPress }: Omit<IconButtonProps, 
       onPress={onPress}
       style={({ pressed }) => [
         styles.round,
-        { backgroundColor: theme.backgroundElement },
+        { backgroundColor: primary ? theme.tint : theme.backgroundElement },
+        primary && shape.raised,
         pressed && styles.pressed,
       ]}>
       <SymbolView
         name={{ ios: icon.ios, android: icon.material, web: icon.material }}
         size={18}
-        tintColor={theme.text}
+        tintColor={primary ? theme.onTint : theme.text}
       />
     </Pressable>
   );

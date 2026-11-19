@@ -44,3 +44,15 @@ test('posts with hashtags and mentions', async ({ page }) => {
   await page.getByRole('link', { name: '@sam' }).last().click();
   await expect(page).toHaveURL(/profiles\/sam/);
 });
+
+test('posts a quick thought from the home page', async ({ page }) => {
+  const thought = `Board games on Friday? ${Date.now()}`;
+  await signIn(page);
+  await page.goto('/');
+  await page.getByLabel('Quick post').fill(thought);
+  await page.getByRole('button', { name: 'Post', exact: true }).click();
+  // Still on the home page: the box is cleared and the post is in the feed below it.
+  await expect(page.getByText('Posted', { exact: true })).toBeVisible();
+  await expect(page.getByLabel('Quick post')).toHaveValue('');
+  await expect(page.getByText(thought)).toBeVisible();
+});

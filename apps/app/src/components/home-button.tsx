@@ -32,12 +32,18 @@ export function HomeButton() {
   );
 }
 
-/** A screen's own header buttons, followed by the home button every screen has. */
+/**
+ * A screen's own header buttons, followed by the home button every screen has on phones. The
+ * website leaves it out: its sidebar or bottom bar, on every page, already has Home.
+ */
 export function HeaderActions({ children }: { children?: ReactNode }) {
+  if (Platform.OS === 'web' && !children) {
+    return null;
+  }
   return (
     <View style={styles.row}>
       {children}
-      <HomeButton />
+      {Platform.OS === 'web' ? null : <HomeButton />}
     </View>
   );
 }

@@ -17,6 +17,7 @@ import { HeaderActions } from '@/components/home-button';
 import { OnboardingGate } from '@/components/onboarding-gate';
 import { TermsGate } from '@/components/terms-gate';
 import { ThemeReady } from '@/components/theme-ready';
+import { WebShell } from '@/navigation/web-shell';
 import { NotificationHandler } from '@/notifications/notification-handler';
 
 // Phones keep the launch screen up until the chosen appearance is applied, so the app
@@ -48,7 +49,9 @@ export default function RootLayout() {
         <NotificationHandler />
         <ThemeProvider value={navigationTheme}>
           <ThemeReady />
-          <RootStack />
+          <WebShell>
+            <RootStack />
+          </WebShell>
           <TermsGate />
           <OnboardingGate />
         </ThemeProvider>

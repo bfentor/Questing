@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useSyncExternalStore } from 'react';
 import { Platform, useWindowDimensions, type ViewStyle } from 'react-native';
 
 /** From this width, the web app has a sidebar and frames the page's column. */
@@ -7,6 +7,7 @@ export const SidebarMinWidth = 768;
 export const DividerColor = 'rgba(127, 127, 127, 0.25)';
 
 const BesideSidebarContext = createContext(false);
+const subscribe = () => () => {};
 
 /** Set by the web tabs: their column sits against the sidebar instead of in the middle. */
 export const BesideSidebar = BesideSidebarContext.Provider;
@@ -19,7 +20,14 @@ export const BesideSidebar = BesideSidebarContext.Provider;
 export function useColumnStyle(): ViewStyle | null {
   const { width } = useWindowDimensions();
   const besideSidebar = useContext(BesideSidebarContext);
-  if (Platform.OS !== 'web' || width < SidebarMinWidth) {
+  // The server doesn't know the window's width. Hydration renders what it did, and the column
+  // follows right after; otherwise React would keep the server's styles on pages opened directly.
+  const hasHydrated = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
+  if (Platform.OS !== 'web' || !hasHydrated || width < SidebarMinWidth) {
     return null;
   }
   return {
