@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sidequest\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 15:45+0200\n"
+"POT-Creation-Date: 2026-11-19 16:02+0200\n"
 "PO-Revision-Date: 2026-11-02 20:52+0200\n"
 "Last-Translator: Sidequest <dev@sidequest.invalid>\n"
 "Language-Team: Swedish\n"
@@ -191,6 +191,9 @@ msgstr "Inbjudningar till organisationer"
 msgid "New events from people you follow"
 msgstr "Nya evenemang från dem du följer"
 
+msgid "New posts from people you get all notifications from"
+msgstr "Nya inlägg från dem du får alla aviseringar från"
+
 msgid "Changes to events you're going to"
 msgstr "Ändringar i evenemang du ska gå på"
 
@@ -243,6 +246,9 @@ msgstr "%(name)s godkände din följarförfrågan."
 #, python-format
 msgid "New event from %(name)s."
 msgstr "Nytt evenemang från %(name)s."
+
+msgid "New post"
+msgstr "Nytt inlägg"
 
 msgid "The time or place of this event changed."
 msgstr "Tiden eller platsen för evenemanget har ändrats."
@@ -341,6 +347,9 @@ msgstr "Du kan inte följa dig själv."
 
 msgid "Unblock this profile to follow it."
 msgstr "Häv blockeringen av profilen för att följa den."
+
+msgid "Follow this profile to choose its notifications."
+msgstr "Följ den här profilen för att välja dess aviseringar."
 
 msgid "This profile's followers are hidden."
 msgstr "Den här profilens följare är dolda."

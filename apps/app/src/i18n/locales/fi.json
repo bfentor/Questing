@@ -88,7 +88,11 @@
     "requested": "Pyydetty",
     "privateAccount": "Tili on yksityinen",
     "privateHint": "Seuraa sitä nähdäksesi sen julkaisut ja tapahtumat.",
-    "share": "Jaa profiili"
+    "share": "Jaa profiili",
+    "notifyMenu": "Ilmoitukset: {{name}}",
+    "notifyAll": "Uudet tapahtumat ja julkaisut",
+    "notifyEvents": "Vain uudet tapahtumat",
+    "notifyNone": "Ei ilmoituksia"
   },
   "event": {
     "title": "Tapahtuma",
@@ -134,6 +138,7 @@
     "pushKinds": {
       "new_follower": "Uudet seuraajat",
       "new_event": "Uudet tapahtumat seuraamiltasi",
+      "new_post": "Uudet julkaisut niiltä, joista saat kaikki ilmoitukset",
       "event_changed": "Muutokset tapahtumiin, joihin osallistut",
       "event_cancelled": "Perutut tapahtumat",
       "event_reminder": "Tapahtumamuistutukset",
@@ -245,7 +250,8 @@
     "organizationInvite": "{{name}} kutsui sinut jäseneksi.",
     "eventPostponed": "{{title}} on siirretty.",
     "coHostInvite": "{{name}} kutsui sinut järjestämään tapahtumaa {{title}}.",
-    "feedbackRequest": "Millainen oli {{title}}? Kerro järjestäjille."
+    "feedbackRequest": "Millainen oli {{title}}? Kerro järjestäjille.",
+    "newPost": "{{name}} jakoi uuden julkaisun."
   },
   "editProfile": {
     "changeCover": "Vaihda kansikuva",

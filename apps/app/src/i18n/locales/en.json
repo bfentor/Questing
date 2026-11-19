@@ -88,7 +88,11 @@
     "requested": "Requested",
     "privateAccount": "This account is private",
     "privateHint": "Follow it to see its posts and events.",
-    "share": "Share profile"
+    "share": "Share profile",
+    "notifyMenu": "Notifications from {{name}}",
+    "notifyAll": "New events and posts",
+    "notifyEvents": "New events only",
+    "notifyNone": "No notifications"
   },
   "event": {
     "title": "Event",
@@ -134,6 +138,7 @@
     "pushKinds": {
       "new_follower": "New followers",
       "new_event": "New events from people you follow",
+      "new_post": "New posts from people you get all notifications from",
       "event_changed": "Changes to events you're going to",
       "event_cancelled": "Cancelled events",
       "event_reminder": "Event reminders",
@@ -245,7 +250,8 @@
     "organizationInvite": "{{name}} invited you to join them.",
     "eventPostponed": "{{title}} was postponed.",
     "coHostInvite": "{{name}} invited you to co-host {{title}}.",
-    "feedbackRequest": "How was {{title}}? Let the organizers know."
+    "feedbackRequest": "How was {{title}}? Let the organizers know.",
+    "newPost": "{{name}} shared a new post."
   },
   "editProfile": {
     "changeCover": "Change cover picture",

@@ -28,6 +28,8 @@ function describe(notification: Notification, t: TFunction) {
       return t('notifications.organizationInvite', { name });
     case 'new_event':
       return t('notifications.newEvent', { name, title });
+    case 'new_post':
+      return t('notifications.newPost', { name });
     case 'event_changed':
       return t('notifications.eventChanged', { title });
     case 'event_cancelled':

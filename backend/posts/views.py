@@ -10,8 +10,8 @@ from events.models import Event
 from moderation import filters
 from moderation.visibility import viewer_profile
 from notifications.models import Kind
-from notifications.services import managers_of, notify
-from profiles.models import Profile
+from notifications.services import followers_of, managers_of, notify
+from profiles.models import Follow, Profile
 from profiles.permissions import CanActAsOwner
 
 from .links import first_url, preview_for
@@ -44,6 +44,13 @@ class PostViewSet(
             link_preview=preview_for(first_url(serializer.validated_data.get("body")))
         )
         notify_mentions(post.body, author=post.author, post=post)
+        # Followers who asked for all notifications hear about every new post.
+        notify(
+            followers_of(post.author, notify=[Follow.Notify.ALL]),
+            Kind.NEW_POST,
+            actor=post.author,
+            post=post,
+        )
         filters.flag(post, post.body)
 
     def perform_update(self, serializer):

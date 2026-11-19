@@ -12,6 +12,7 @@ from itertools import batched
 
 from django.conf import settings
 from django.utils import formats, timezone, translation
+from django.utils.text import Truncator
 from django.utils.translation import gettext as _
 
 from .models import Kind, Notification, PushDevice, PushSetting
@@ -42,6 +43,9 @@ def render(notification) -> tuple[str, str]:
             return "Sidequest", _("%(name)s accepted your follow request.") % {"name": actor}
         case Kind.NEW_EVENT:
             return title, _("New event from %(name)s.") % {"name": actor}
+        case Kind.NEW_POST:
+            body = notification.post.body if notification.post else ""
+            return actor or "Sidequest", Truncator(body).chars(120) or _("New post")
         case Kind.EVENT_CHANGED:
             return title, _("The time or place of this event changed.")
         case Kind.EVENT_CANCELLED:

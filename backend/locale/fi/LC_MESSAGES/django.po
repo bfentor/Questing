@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sidequest\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 15:45+0200\n"
+"POT-Creation-Date: 2026-11-19 16:02+0200\n"
 "PO-Revision-Date: 2026-11-02 20:52+0200\n"
 "Last-Translator: Sidequest <dev@sidequest.invalid>\n"
 "Language-Team: Finnish\n"
@@ -191,6 +191,9 @@ msgstr "Kutsut järjestöihin"
 msgid "New events from people you follow"
 msgstr "Uudet tapahtumat seuraamiltasi"
 
+msgid "New posts from people you get all notifications from"
+msgstr "Uudet julkaisut niiltä, joista saat kaikki ilmoitukset"
+
 msgid "Changes to events you're going to"
 msgstr "Muutokset tapahtumiin, joihin osallistut"
 
@@ -243,6 +246,9 @@ msgstr "%(name)s hyväksyi seuraamispyyntösi."
 #, python-format
 msgid "New event from %(name)s."
 msgstr "Uusi tapahtuma: %(name)s."
+
+msgid "New post"
+msgstr "Uusi julkaisu"
 
 msgid "The time or place of this event changed."
 msgstr "Tapahtuman aika tai paikka muuttui."
@@ -341,6 +347,9 @@ msgstr "Et voi seurata itseäsi."
 
 msgid "Unblock this profile to follow it."
 msgstr "Poista profiilin esto seurataksesi sitä."
+
+msgid "Follow this profile to choose its notifications."
+msgstr "Seuraa tätä profiilia valitaksesi sen ilmoitukset."
 
 msgid "This profile's followers are hidden."
 msgstr "Tämän profiilin seuraajat on piilotettu."

@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex, OpClass
 from django.core.validators import RegexValidator
 from django.db import models
-from django.db.models import Count, Exists, OuterRef, Q
+from django.db.models import Count, Exists, OuterRef, Q, Subquery
 from django.db.models.functions import Upper
 from django.utils.translation import gettext_lazy as _
 
@@ -50,10 +50,16 @@ class ProfileQuerySet(models.QuerySet):
         if viewer is None:
             false = models.Value(False)
             return qs.annotate(
-                is_followed=false, is_requested=false, is_blocked=false, is_muted=false
+                is_followed=false,
+                notify=models.Value(None, models.CharField()),
+                is_requested=false,
+                is_blocked=false,
+                is_muted=false,
             )
+        follow = Follow.objects.filter(follower=viewer, followee=OuterRef("pk"))
         return qs.annotate(
-            is_followed=Exists(Follow.objects.filter(follower=viewer, followee=OuterRef("pk"))),
+            is_followed=Exists(follow),
+            notify=Subquery(follow.values("notify")[:1]),
             is_requested=Exists(
                 FollowRequest.objects.filter(requester=viewer, target=OuterRef("pk"))
             ),
@@ -185,8 +191,16 @@ class Membership(models.Model):
 
 
 class Follow(models.Model):
+    class Notify(models.TextChoices):
+        """What the follower hears about from the followee."""
+
+        ALL = "all"  # New events and new posts.
+        EVENTS = "events"  # New events.
+        NONE = "none"
+
     follower = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="follows")
     followee = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="followed_by")
+    notify = models.CharField(max_length=10, choices=Notify.choices, default=Notify.EVENTS)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

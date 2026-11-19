@@ -514,6 +514,7 @@ export type NotificationEvent = {
  * * `follow_accepted` - Accepted follow requests
  * * `organization_invite` - Invitations to organizations
  * * `new_event` - New events from people you follow
+ * * `new_post` - New posts from people you get all notifications from
  * * `event_changed` - Changes to events you're going to
  * * `event_cancelled` - Cancelled events
  * * `event_postponed` - Postponed events
@@ -526,7 +527,36 @@ export type NotificationEvent = {
  * * `comment` - Comments
  * * `reaction` - Likes
  */
-export type NotificationKindEnum = 'new_follower' | 'follow_request' | 'follow_accepted' | 'organization_invite' | 'new_event' | 'event_changed' | 'event_cancelled' | 'event_postponed' | 'co_host_invite' | 'event_reminder' | 'feedback_request' | 'waitlist_promoted' | 'announcement' | 'mention' | 'comment' | 'reaction';
+export type NotificationKindEnum = 'new_follower' | 'follow_request' | 'follow_accepted' | 'organization_invite' | 'new_event' | 'new_post' | 'event_changed' | 'event_cancelled' | 'event_postponed' | 'co_host_invite' | 'event_reminder' | 'feedback_request' | 'waitlist_promoted' | 'announcement' | 'mention' | 'comment' | 'reaction';
+
+export type Notify = {
+    /**
+     * all: new events and posts; events: new events; none: nothing.
+     *
+     * * `all` - All
+     * * `events` - Events
+     * * `none` - None
+     */
+    notify: NotifyEnum;
+};
+
+/**
+ * * `all` - All
+ * * `events` - Events
+ * * `none` - None
+ */
+export type NotifyEnum = 'all' | 'events' | 'none';
+
+export type NotifyRequest = {
+    /**
+     * all: new events and posts; events: new events; none: nothing.
+     *
+     * * `all` - All
+     * * `events` - Events
+     * * `none` - None
+     */
+    notify: NotifyEnum;
+};
 
 export type NullEnum = never;
 
@@ -767,6 +797,10 @@ export type Profile = {
      */
     student_of: University | null;
     readonly is_followed: boolean;
+    /**
+     * What you get notified about from a profile you follow; null if you don't.
+     */
+    notify: NotifyEnum | NullEnum | null;
     /**
      * The viewer asked to follow this private profile.
      */
@@ -2980,6 +3014,21 @@ export type ProfilesMuteCreateResponses = {
 };
 
 export type ProfilesMuteCreateResponse = ProfilesMuteCreateResponses[keyof ProfilesMuteCreateResponses];
+
+export type ProfilesNotificationsUpdateData = {
+    body: NotifyRequest;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/profiles/{handle}/notifications/';
+};
+
+export type ProfilesNotificationsUpdateResponses = {
+    200: Notify;
+};
+
+export type ProfilesNotificationsUpdateResponse = ProfilesNotificationsUpdateResponses[keyof ProfilesNotificationsUpdateResponses];
 
 export type ProfilesPostsListData = {
     body?: never;

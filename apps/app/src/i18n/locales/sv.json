@@ -88,7 +88,11 @@
     "requested": "Förfrågan skickad",
     "privateAccount": "Kontot är privat",
     "privateHint": "Följ det för att se dess inlägg och evenemang.",
-    "share": "Dela profilen"
+    "share": "Dela profilen",
+    "notifyMenu": "Aviseringar från {{name}}",
+    "notifyAll": "Nya evenemang och inlägg",
+    "notifyEvents": "Bara nya evenemang",
+    "notifyNone": "Inga aviseringar"
   },
   "event": {
     "title": "Evenemang",
@@ -134,6 +138,7 @@
     "pushKinds": {
       "new_follower": "Nya följare",
       "new_event": "Nya evenemang från dem du följer",
+      "new_post": "Nya inlägg från dem du får alla aviseringar från",
       "event_changed": "Ändringar i evenemang du ska gå på",
       "event_cancelled": "Inställda evenemang",
       "event_reminder": "Påminnelser om evenemang",
@@ -245,7 +250,8 @@
     "organizationInvite": "{{name}} bjöd in dig som medlem.",
     "eventPostponed": "{{title}} har skjutits upp.",
     "coHostInvite": "{{name}} bjöd in dig att arrangera {{title}} tillsammans.",
-    "feedbackRequest": "Hur var {{title}}? Berätta för arrangörerna."
+    "feedbackRequest": "Hur var {{title}}? Berätta för arrangörerna.",
+    "newPost": "{{name}} delade ett nytt inlägg."
   },
   "editProfile": {
     "changeCover": "Byt omslagsbild",

@@ -9,6 +9,7 @@ class Kind(models.TextChoices):
     FOLLOW_ACCEPTED = "follow_accepted", _("Accepted follow requests")
     ORGANIZATION_INVITE = "organization_invite", _("Invitations to organizations")
     NEW_EVENT = "new_event", _("New events from people you follow")
+    NEW_POST = "new_post", _("New posts from people you get all notifications from")
     EVENT_CHANGED = "event_changed", _("Changes to events you're going to")
     EVENT_CANCELLED = "event_cancelled", _("Cancelled events")
     EVENT_POSTPONED = "event_postponed", _("Postponed events")

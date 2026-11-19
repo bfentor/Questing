@@ -2377,6 +2377,39 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/profiles/{handle}/notifications/:
+    put:
+      operationId: profiles_notifications_update
+      description: Choose what you get notified about from a profile you follow.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - profiles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotifyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotifyRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notify'
+          description: ''
   /api/profiles/{handle}/posts/:
     get:
       operationId: profiles_posts_list
@@ -3703,6 +3736,7 @@ components:
       - follow_accepted
       - organization_invite
       - new_event
+      - new_post
       - event_changed
       - event_cancelled
       - event_postponed
@@ -3721,6 +3755,7 @@ components:
         * `follow_accepted` - Accepted follow requests
         * `organization_invite` - Invitations to organizations
         * `new_event` - New events from people you follow
+        * `new_post` - New posts from people you get all notifications from
         * `event_changed` - Changes to events you're going to
         * `event_cancelled` - Cancelled events
         * `event_postponed` - Postponed events
@@ -3732,6 +3767,44 @@ components:
         * `mention` - Mentions
         * `comment` - Comments
         * `reaction` - Likes
+    Notify:
+      type: object
+      properties:
+        notify:
+          allOf:
+          - $ref: '#/components/schemas/NotifyEnum'
+          description: |-
+            all: new events and posts; events: new events; none: nothing.
+
+            * `all` - All
+            * `events` - Events
+            * `none` - None
+      required:
+      - notify
+    NotifyEnum:
+      enum:
+      - all
+      - events
+      - none
+      type: string
+      description: |-
+        * `all` - All
+        * `events` - Events
+        * `none` - None
+    NotifyRequest:
+      type: object
+      properties:
+        notify:
+          allOf:
+          - $ref: '#/components/schemas/NotifyEnum'
+          description: |-
+            all: new events and posts; events: new events; none: nothing.
+
+            * `all` - All
+            * `events` - Events
+            * `none` - None
+      required:
+      - notify
     NullEnum:
       enum:
       - null
@@ -4374,6 +4447,14 @@ components:
         is_followed:
           type: boolean
           readOnly: true
+        notify:
+          description: What you get notified about from a profile you follow; null
+            if you don't.
+          nullable: true
+          readOnly: true
+          oneOf:
+          - $ref: '#/components/schemas/NotifyEnum'
+          - $ref: '#/components/schemas/NullEnum'
         is_requested:
           type: boolean
           readOnly: true
@@ -4397,6 +4478,7 @@ components:
       - is_muted
       - is_requested
       - kind
+      - notify
       - student_of
       - verified
     ProfileKindEnum:

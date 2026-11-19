@@ -146,3 +146,23 @@ test('choose who sees the events you go to, and hide past ones', async ({ page }
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(page).not.toHaveURL(/edit-profile/);
 });
+
+test('get all notifications from an organization you follow', async ({ page }) => {
+  await signIn(page);
+  await page.goto('/profiles/student_union');
+  const bell = page.getByRole('button', { name: /^Notifications from / });
+  // New events only, until you choose otherwise.
+  await expect(bell).toHaveAccessibleName(/New events only$/);
+  await bell.click();
+  await page.getByText('New events and posts', { exact: true }).click();
+  await expect(bell).toHaveAccessibleName(/New events and posts$/);
+  await page.reload();
+  await expect(bell).toHaveAccessibleName(/New events and posts$/);
+
+  // Back as it was, so the test can run again.
+  await bell.click();
+  await page.getByText('New events only', { exact: true }).click();
+  await expect(bell).toHaveAccessibleName(/New events only$/);
+  await page.reload();
+  await expect(bell).toHaveAccessibleName(/New events only$/);
+});

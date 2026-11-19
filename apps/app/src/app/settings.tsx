@@ -87,6 +87,7 @@ const PUSH_KINDS = [
   'follow_accepted',
   'organization_invite',
   'new_event',
+  'new_post',
   'event_changed',
   'event_cancelled',
   'event_postponed',
