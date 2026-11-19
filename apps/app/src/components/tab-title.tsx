@@ -6,6 +6,12 @@ import { Spacing } from '@/constants/theme';
 import { DrawerButton } from './drawer-button';
 import { ThemedText } from './themed-text';
 
+/**
+ * Below this window width, labelled buttons (e.g. New event and New post) don't fit beside a
+ * tab's title, so they're round icon buttons.
+ */
+export const LABELLED_ACTIONS_MIN_WIDTH = 480;
+
 /** A tab's title, with the drawer button before it and the tab's own buttons after. */
 export function TabTitle({ title, children }: { title: string; children?: ReactNode }) {
   return (

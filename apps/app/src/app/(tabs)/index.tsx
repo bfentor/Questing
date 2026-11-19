@@ -24,7 +24,7 @@ import { NewPostButton } from '@/components/new-post-button';
 import { PostCard } from '@/components/post-card';
 import { QuickPost } from '@/components/quick-post';
 import { Screen } from '@/components/screen';
-import { TabTitle } from '@/components/tab-title';
+import { LABELLED_ACTIONS_MIN_WIDTH, TabTitle } from '@/components/tab-title';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Welcome } from '@/components/welcome';
@@ -35,9 +35,6 @@ import { useBooleanPreference } from '@/lib/preferences';
 
 // From this window width, the home page's event sections have two columns.
 const TWO_COLUMNS_MIN_WIDTH = 600;
-// Below this window width, "New post" and "New event" don't both fit beside the title with
-// their labels, so they're round icon buttons.
-const LABELLED_BUTTONS_MIN_WIDTH = 480;
 // Nearby, for the home page's row: a short walk or ride.
 const NEAR_KM = 10;
 
@@ -73,7 +70,7 @@ function SignedInHome() {
   const { t } = useTranslation();
   const shape = useShape();
   const { width } = useWindowDimensions();
-  const compact = width < LABELLED_BUTTONS_MIN_WIDTH;
+  const compact = width < LABELLED_ACTIONS_MIN_WIDTH;
   const [hidePast, setHidePast] = useBooleanPreference('following.hidePast', false);
   const [hideSuggestions, setHideSuggestions] = useBooleanPreference(
     'following.hideSuggestions',

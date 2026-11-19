@@ -8,15 +8,16 @@ import {
 import { router } from 'expo-router';
 import { useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
 import { EventCard } from '@/components/event-card';
 import { FeedFilterBar, useFeedFilters } from '@/components/feed-filter-bar';
 import { FeedList, type FeedQuery } from '@/components/feed-list';
 import { IconButton } from '@/components/icon-button';
+import { NewEventButton } from '@/components/new-event-button';
 import { SegmentedControl } from '@/components/segmented-control';
-import { TabTitle } from '@/components/tab-title';
+import { LABELLED_ACTIONS_MIN_WIDTH, TabTitle } from '@/components/tab-title';
 import { Spacing } from '@/constants/theme';
 import { useCurrentPosition } from '@/hooks/use-current-position';
 
@@ -63,6 +64,7 @@ export default function UpcomingScreen() {
   const filterState = useFeedFilters();
   const filtered = Object.keys(filterState.filters).length > 0;
   const signedIn = status === 'signed-in';
+  const { width } = useWindowDimensions();
   const order = !signedIn && chosenOrder === 'forYou' ? 'all' : chosenOrder;
 
   const orders: { value: Order; label: string }[] = [
@@ -80,14 +82,7 @@ export default function UpcomingScreen() {
           size={28}
           onPress={() => router.push('/search')}
         />
-        {signedIn ? (
-          <IconButton
-            icon={{ ios: 'plus.circle.fill', material: 'add_circle' }}
-            label={t('eventForm.newEvent')}
-            size={32}
-            onPress={() => router.push('/events/new')}
-          />
-        ) : null}
+        {signedIn ? <NewEventButton compact={width < LABELLED_ACTIONS_MIN_WIDTH} /> : null}
       </TabTitle>
       <SegmentedControl options={orders} value={order} onChange={setOrder} />
       <FeedFilterBar {...filterState} />

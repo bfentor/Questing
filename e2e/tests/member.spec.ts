@@ -57,10 +57,15 @@ test('posts a quick thought from the home page', async ({ page }) => {
   await expect(page.getByText(thought)).toBeVisible();
 });
 
-test('the home page has a New event button beside New post', async ({ page }) => {
+test('Home and Upcoming have a New event button', async ({ page }) => {
   await signIn(page);
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'New post' })).toBeVisible();
+  await page.getByRole('button', { name: 'New event' }).click();
+  await expect(page).toHaveURL(/\/events\/new/);
+
+  // The same button on Upcoming.
+  await page.goto('/upcoming');
   await page.getByRole('button', { name: 'New event' }).click();
   await expect(page).toHaveURL(/\/events\/new/);
 });
