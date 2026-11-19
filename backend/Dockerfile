@@ -36,7 +36,9 @@ RUN export DJANGO_SECRET_KEY=build DATABASE_URL=postgis://build@localhost/build 
 ARG SOURCE_COMMIT
 ENV SOURCE_COMMIT=$SOURCE_COMMIT
 
-RUN useradd --uid 10001 --no-create-home app && chown -R app /app
+# media/ is where uploads go without object storage. It's made here, owned by the app, so a
+# volume mounted on it (Coolify's Persistent Storage) starts out writable too.
+RUN useradd --uid 10001 --no-create-home app && mkdir -p /app/media && chown -R app /app
 USER app
 
 EXPOSE 8000
