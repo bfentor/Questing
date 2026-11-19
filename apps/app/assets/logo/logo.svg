@@ -1,6 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
-  <!-- The Sidequest logo: a flag, or a K. scripts/make-icons draws every icon from this. -->
-  <rect width="2048" height="2048" fill="#0b1020"/>
-  <path d="M417 417H1588L417 1588Z" fill="#818cf8"/>
-  <path d="M1002.5 1002.5L1605 1605" stroke="#818cf8" stroke-width="47" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="indigo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#4338ca"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="url(#indigo)"/>
+  <g transform="translate(16 16) scale(1.0) translate(-16 -16)">
+    <path d="M8 24H20A4 4 0 0 0 20 16H12A4 4 0 0 1 12 8H18" fill="none" stroke="#ffffff"
+      stroke-opacity="0.8" stroke-width="4" stroke-linecap="round"
+      stroke-linejoin="round"/>
+    <circle cx="22" cy="8" r="3.5" fill="#ffffff"/>
+  </g>
 </svg>

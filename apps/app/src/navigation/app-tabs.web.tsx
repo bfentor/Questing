@@ -12,7 +12,7 @@ import { BesideSidebar } from '@/components/column';
 import { EventDetails, EventMenu } from '@/components/event-details';
 import { EventPanelProvider } from '@/components/event-panel';
 import { IconButton } from '@/components/icon-button';
-import { LogoMark } from '@/components/logo';
+import { Logo } from '@/components/logo';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
@@ -116,7 +116,7 @@ function NavBar({ children }: TabListProps) {
         <div className={classes.brand}>
           <Link href="/" asChild>
             <Pressable role="link" style={styles.brandLink}>
-              <LogoMark size={30} />
+              <Logo size={30} />
               <ThemedText type="subtitle" themeColor="tint" style={styles.brand}>
                 Sidequest
               </ThemedText>
