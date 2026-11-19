@@ -144,7 +144,7 @@ npm run e2e
 Commit messages follow [Conventional Commits](https://www.conventionalcommits.org): `feat(events): add RSVP buttons`, `fix: crash on sign out`, `docs: …`. `scripts/git-ship` (set up once with `git config alias.ship '!scripts/git-ship'`) asks for the type, scope and description, commits, and ships your branch to `testing`:
 
 1. Coolify notices the change to `testing` and deploys staging: it builds on the server and switches over once the new version is healthy (see DEPLOYMENT.md, kept outside the repository).
-2. When it's time for a release, run **Actions › Release › Run workflow**: release-please opens a pull request titled `chore: release X.Y.Z`. It bumps the version in every file that holds it and adds the changes to `CHANGELOG.md`. `fix` bumps the patch version, `feat` the minor version, and a breaking change (`feat!: …`) the major version. Before 1.0.0, breaking changes bump the minor version instead.
+2. On every push to `testing`, release-please keeps a pull request titled `chore: release X.Y.Z` open and up to date. It bumps the version in every file that holds it and adds the changes to `CHANGELOG.md`; merging it into `testing` makes the release (a tag, a GitHub Release, and the new version on the next deploy). `fix` bumps the patch version, `feat` the minor version, and a breaking change (`feat!: …`) the major version. Before 1.0.0, breaking changes bump the minor version instead.
 3. Merging that pull request tags `vX.Y.Z` and creates a GitHub Release.
 
 Pull requests are squash-merged, so their title is the commit message; CI checks that it follows the format.
