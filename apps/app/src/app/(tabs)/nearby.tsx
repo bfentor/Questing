@@ -1,17 +1,32 @@
 import { useNearbyFeed, type LatLng } from '@sidequest/api';
-import { ActivityIndicator } from 'react-native';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/button';
+import { Checkbox } from '@/components/checkbox';
 import { EventCard } from '@/components/event-card';
+import { EventMap } from '@/components/event-map';
+import { FeedFilterBar, useFeedFilters } from '@/components/feed-filter-bar';
 import { FeedList } from '@/components/feed-list';
 import { Screen } from '@/components/screen';
+import { TabTitle } from '@/components/tab-title';
 import { ThemedText } from '@/components/themed-text';
+import { Spacing } from '@/constants/theme';
 import { useCurrentPosition } from '@/hooks/use-current-position';
+import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
+import { useBooleanPreference } from '@/lib/preferences';
 
-const header = <ThemedText type="subtitle">Nearby</ThemedText>;
+function Header() {
+  const { t } = useTranslation();
+  return <TabTitle title={t('tabs.nearby')} />;
+}
 
 export default function NearbyScreen() {
   const { permission, requestPermission, position, failed } = useCurrentPosition();
+  const { t } = useTranslation();
 
   if (position) {
     return <NearbyFeed position={position} />;
@@ -19,24 +34,22 @@ export default function NearbyScreen() {
 
   return (
     <Screen>
-      {header}
+      <Header />
       {!permission ? (
         <ActivityIndicator />
       ) : permission.granted ? (
         failed ? (
-          <ThemedText themeColor="textSecondary">Couldn&apos;t determine your location.</ThemedText>
+          <ThemedText themeColor="textSecondary">{t('nearby.locationFailed')}</ThemedText>
         ) : (
           <ActivityIndicator />
         )
       ) : (
         <>
           <ThemedText themeColor="textSecondary">
-            {permission.canAskAgain
-              ? 'Share your location to see events around you. It is only used to sort events and is never stored.'
-              : 'Location access is turned off for Sidequest. Enable it in your settings to see events around you.'}
+            {permission.canAskAgain ? t('nearby.askPermission') : t('nearby.permissionDenied')}
           </ThemedText>
           {permission.canAskAgain ? (
-            <Button title="Use my location" onPress={requestPermission} />
+            <Button title={t('nearby.useMyLocation')} onPress={requestPermission} />
           ) : null}
         </>
       )}
@@ -44,16 +57,81 @@ export default function NearbyScreen() {
   );
 }
 
+const RADII_KM = [2, 5, 10, 25];
+const WIDEST_KM = RADII_KM[RADII_KM.length - 1];
+
 function NearbyFeed({ position }: { position: LatLng }) {
-  const feed = useNearbyFeed(position);
+  const shape = useShape();
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const [radius, setRadius] = useState(10);
+  const filterState = useFeedFilters();
+  const feed = useNearbyFeed(position, radius, filterState.filters);
+  const [showMap, setShowMap] = useBooleanPreference('nearby.showMap', false);
+  const events = feed.data?.pages.flatMap((page) => page.results) ?? [];
 
   return (
     <FeedList
       query={feed}
-      header={header}
+      header={
+        <View style={styles.header}>
+          <Header />
+          <View style={styles.radii}>
+            {RADII_KM.map((km) => (
+              <Pressable
+                key={km}
+                role="radio"
+                aria-checked={radius === km}
+                onPress={() => setRadius(km)}
+                style={[
+                  styles.radius,
+                  shape.selector,
+                  { backgroundColor: radius === km ? theme.backgroundSelected : 'transparent' },
+                ]}>
+                <ThemedText type="small">{t('nearby.within', { km })}</ThemedText>
+              </Pressable>
+            ))}
+          </View>
+          <FeedFilterBar {...filterState} />
+          <Checkbox checked={showMap} onChange={setShowMap} label={t('nearby.showMap')} />
+          {showMap ? (
+            <EventMap
+              center={position}
+              radiusKm={radius}
+              events={events}
+              onSelect={(event) =>
+                router.push({ pathname: '/events/[id]', params: { id: event.id } })
+              }
+            />
+          ) : null}
+        </View>
+      }
       renderItem={(event) => <EventCard event={event} distanceM={event.distance_m} />}
       keyExtractor={(event) => String(event.id)}
-      emptyText="No events near you right now."
+      emptyText={radius < WIDEST_KM ? t('nearby.emptyWithin', { km: radius }) : t('nearby.empty')}
+      emptyAction={
+        radius < WIDEST_KM ? (
+          <Button
+            title={t('nearby.widen', { km: WIDEST_KM })}
+            variant="secondary"
+            onPress={() => setRadius(WIDEST_KM)}
+          />
+        ) : undefined
+      }
     />
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    gap: Spacing.three,
+  },
+  radii: {
+    flexDirection: 'row',
+    gap: Spacing.one,
+  },
+  radius: {
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one,
+  },
+});

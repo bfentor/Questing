@@ -4,6 +4,163 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}` | (string & {});
 };
 
+export type AccountSettings = {
+    /**
+     * Change it through allauth: /_allauth/app/v1/account/email.
+     */
+    readonly email: string;
+    language?: LanguageEnum;
+    /**
+     * Can only be added when missing (older accounts).
+     */
+    birth_date?: string;
+    /**
+     * The version you accepted.
+     */
+    readonly terms_version: string;
+    readonly current_terms_version: string;
+    /**
+     * A weekly email of upcoming events (off unless turned on).
+     */
+    email_digest?: boolean;
+    /**
+     * Whether the first-run steps are done; set it once they are.
+     */
+    onboarded?: boolean;
+    /**
+     * Push on (true) or off (false), by notification kind. Missing kinds are on.
+     */
+    push?: {
+        [key: string]: boolean;
+    };
+};
+
+/**
+ * Compact profile representation embedded in events and posts.
+ */
+export type ActingProfile = {
+    readonly handle: string;
+    readonly display_name: string;
+    kind: ProfileKindEnum;
+    avatar: Image | null;
+    readonly verified: boolean;
+    /**
+     * self for your own profile, otherwise your role in the organization.
+     */
+    role: ActingProfileRoleEnum;
+};
+
+export type ActingProfileRoleEnum = 'self' | 'admin' | 'editor';
+
+export type AnnouncementRequest = {
+    message: string;
+};
+
+export type AnnouncementSent = {
+    /**
+     * How many people were notified.
+     */
+    sent: number;
+};
+
+/**
+ * * `going` - Going
+ * * `interested` - Interested
+ * * `waitlisted` - On the waitlist
+ */
+export type AttendanceStatusEnum = 'going' | 'interested' | 'waitlisted';
+
+export type AttendanceSummary = {
+    going: number;
+    interested: number;
+    waitlisted: number;
+    /**
+     * The signed-in user's RSVP, if any.
+     *
+     * * `going` - Going
+     * * `interested` - Interested
+     * * `waitlisted` - On the waitlist
+     */
+    mine: AttendanceStatusEnum | NullEnum | null;
+    is_full: boolean;
+    /**
+     * Up to 3 people you follow who are going.
+     */
+    friends_going: Array<ProfileSummary>;
+    /**
+     * How many people you follow are going (who share their attendance).
+     */
+    friends_going_count: number;
+};
+
+export type CalendarSource = {
+    readonly id: number;
+    /**
+     * The calendar's iCal address (https:// or webcal://), e.g. a Google Calendar's public address in iCal format.
+     */
+    url: string;
+    readonly synced_at: string | null;
+    /**
+     * Why the last sync failed: 'fetch' (unreachable or not public) or 'parse' (not an iCal calendar). Empty when it worked.
+     */
+    readonly error: string;
+    /**
+     * Upcoming events from it.
+     */
+    readonly event_count: number;
+};
+
+export type CalendarSourceRequest = {
+    /**
+     * The calendar's iCal address (https:// or webcal://), e.g. a Google Calendar's public address in iCal format.
+     */
+    url: string;
+};
+
+export type Category = {
+    readonly slug: string;
+    /**
+     * In the request's language.
+     */
+    readonly name: string;
+    readonly icon: string;
+};
+
+export type Comment = {
+    readonly id: number;
+    author: ProfileSummary;
+    body: string;
+    readonly created_at: string;
+    /**
+     * Whether you may delete it: you wrote it, or it's on your post or event.
+     */
+    readonly can_delete: boolean;
+};
+
+export type CommentRequest = {
+    body: string;
+};
+
+/**
+ * Part of a picture, as fractions of its width and height (0 to 1, from the top left).
+ */
+export type Crop = {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+};
+
+/**
+ * Part of a picture, as fractions of its width and height (0 to 1, from the top left).
+ */
+export type CropRequest = {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+};
+
 export type Event = {
     readonly id: number;
     organizer: ProfileSummary;
@@ -14,8 +171,47 @@ export type Event = {
     venue_name?: string;
     address?: string;
     location?: LatLng | null;
+    categories?: Array<string>;
+    capacity?: number | null;
+    cover: Image | null;
+    online_url?: string | string;
+    /**
+     * In euros; empty for free events.
+     */
+    price?: string | null;
+    ticket_url?: string | string;
+    min_age?: number | null;
+    /**
+     * Only verified students of this university can RSVP.
+     */
+    students_of: University | null;
+    visibility?: EventVisibilityEnum;
+    status?: EventStatusEnum;
+    /**
+     * Leave out to publish now; empty for a draft; a future time to schedule.
+     */
+    published_at?: string | null;
+    readonly series_id: string | null;
+    /**
+     * Co-hosts who accepted.
+     */
+    readonly co_hosts: Array<ProfileSummary>;
+    attendance: AttendanceSummary;
+    /**
+     * Whether you saved this event.
+     */
+    readonly is_saved: boolean;
     readonly created_at: string;
     readonly updated_at: string;
+};
+
+/**
+ * A picture from a post that shares an event, for the event's gallery.
+ */
+export type EventPhoto = {
+    image: Image;
+    readonly post_id: number;
+    author: ProfileSummary;
 };
 
 export type EventRequest = {
@@ -26,13 +222,165 @@ export type EventRequest = {
     venue_name?: string;
     address?: string;
     location?: LatLngRequest | null;
+    categories?: Array<string>;
+    capacity?: number | null;
+    online_url?: string | string;
+    /**
+     * In euros; empty for free events.
+     */
+    price?: string | null;
+    ticket_url?: string | string;
+    min_age?: number | null;
+    visibility?: EventVisibilityEnum;
+    status?: EventStatusEnum;
+    /**
+     * Leave out to publish now; empty for a draft; a future time to schedule.
+     */
+    published_at?: string | null;
+};
+
+export type EventStats = {
+    id: number;
+    title: string;
+    starts_at: string;
+    /**
+     * Times its page was opened, by anyone but its hosts.
+     */
+    views: number;
+    going: number;
+    interested: number;
 };
 
 /**
- * * `person` - Person
- * * `organization` - Organization
+ * * `active` - Active
+ * * `postponed` - Postponed
+ * * `cancelled` - Cancelled
  */
-export type KindEnum = 'person' | 'organization';
+export type EventStatusEnum = 'active' | 'postponed' | 'cancelled';
+
+/**
+ * * `public` - Public
+ * * `followers` - Followers
+ * * `unlisted` - Unlisted
+ */
+export type EventVisibilityEnum = 'public' | 'followers' | 'unlisted';
+
+export type FeedbackComment = {
+    rating: number;
+    comment: string;
+    created_at: string;
+};
+
+export type FeedbackRequest = {
+    rating: number;
+    comment?: string;
+};
+
+export type FeedbackSummary = {
+    count: number;
+    average: number | null;
+    /**
+     * How many rated it 1, 2, 3, 4 and 5.
+     */
+    ratings: Array<number>;
+    /**
+     * Newest first, without names.
+     */
+    comments: Array<FeedbackComment>;
+};
+
+export type FollowStatus = {
+    /**
+     * requested: the profile is private and has to accept you first.
+     *
+     * * `following` - following
+     * * `requested` - requested
+     * * `none` - none
+     */
+    status: FollowStatusStatusEnum;
+};
+
+/**
+ * * `following` - following
+ * * `requested` - requested
+ * * `none` - none
+ */
+export type FollowStatusStatusEnum = 'following' | 'requested' | 'none';
+
+/**
+ * * `weekly` - weekly
+ * * `biweekly` - biweekly
+ * * `monthly` - monthly
+ */
+export type FrequencyEnum = 'weekly' | 'biweekly' | 'monthly';
+
+export type GeocodeResult = {
+    label: string;
+    lat: number;
+    lng: number;
+};
+
+/**
+ * How images appear inside other resources.
+ */
+export type Image = {
+    readonly id: number;
+    readonly url: string;
+    readonly width: number;
+    readonly height: number;
+};
+
+/**
+ * An image with what it was cropped from, for reframing it.
+ */
+export type ImageDetail = {
+    readonly id: number;
+    readonly url: string;
+    readonly width: number;
+    readonly height: number;
+    original: OriginalImage | null;
+    crop: Crop | null;
+};
+
+/**
+ * How images appear inside other resources.
+ */
+export type ImageUpload = {
+    readonly id: number;
+    readonly url: string;
+    readonly width: number;
+    readonly height: number;
+};
+
+/**
+ * How images appear inside other resources.
+ */
+export type ImageUploadRequest = {
+    file: Blob | File;
+};
+
+export type Invitation = {
+    readonly id: number;
+    organization: ProfileSummary;
+    invitee: ProfileSummary;
+    role: MembershipRoleEnum;
+    readonly created_at: string;
+};
+
+export type InviteRequest = {
+    /**
+     * The person's handle.
+     */
+    handle: string;
+    role?: MembershipRoleEnum;
+};
+
+/**
+ * * `en` - English
+ * * `fi` - Suomi
+ * * `sv` - Svenska
+ */
+export type LanguageEnum = 'en' | 'fi' | 'sv';
 
 export type LatLng = {
     lat: number;
@@ -42,6 +390,42 @@ export type LatLng = {
 export type LatLngRequest = {
     lat: number;
     lng: number;
+};
+
+export type LinkPreview = {
+    readonly url: string;
+    readonly title: string;
+    readonly description: string;
+    readonly image_url: string;
+    readonly site_name: string;
+};
+
+export type MarkReadRequest = {
+    /**
+     * Notifications to mark read; all of them when left out.
+     */
+    ids?: Array<number>;
+};
+
+export type Member = {
+    profile: ProfileSummary;
+    role?: MembershipRoleEnum;
+    readonly created_at: string;
+};
+
+/**
+ * * `admin` - Admin
+ * * `editor` - Editor
+ */
+export type MembershipRoleEnum = 'admin' | 'editor';
+
+export type MyFeedback = {
+    /**
+     * Whether you can rate the event: you were going and it has ended.
+     */
+    can_give: boolean;
+    rating: number | null;
+    comment: string;
 };
 
 export type NearbyEvent = {
@@ -54,15 +438,120 @@ export type NearbyEvent = {
     venue_name?: string;
     address?: string;
     location?: LatLng | null;
+    categories?: Array<string>;
+    capacity?: number | null;
+    cover: Image | null;
+    online_url?: string | string;
+    /**
+     * In euros; empty for free events.
+     */
+    price?: string | null;
+    ticket_url?: string | string;
+    min_age?: number | null;
+    /**
+     * Only verified students of this university can RSVP.
+     */
+    students_of: University | null;
+    visibility?: EventVisibilityEnum;
+    status?: EventStatusEnum;
+    /**
+     * Leave out to publish now; empty for a draft; a future time to schedule.
+     */
+    published_at?: string | null;
+    readonly series_id: string | null;
+    /**
+     * Co-hosts who accepted.
+     */
+    readonly co_hosts: Array<ProfileSummary>;
+    attendance: AttendanceSummary;
+    /**
+     * Whether you saved this event.
+     */
+    readonly is_saved: boolean;
     readonly created_at: string;
     readonly updated_at: string;
     readonly distance_m: number;
 };
 
+export type Notification = {
+    readonly id: number;
+    kind: NotificationKindEnum;
+    actor: ProfileSummary | null;
+    event: NotificationEvent | null;
+    readonly post: number | null;
+    readonly message: string;
+    readonly created_at: string;
+    readonly read: boolean;
+};
+
+export type NotificationEvent = {
+    readonly id: number;
+    readonly title: string;
+    readonly starts_at: string;
+};
+
+/**
+ * * `new_follower` - New followers
+ * * `follow_request` - Follow requests
+ * * `follow_accepted` - Accepted follow requests
+ * * `organization_invite` - Invitations to organizations
+ * * `new_event` - New events from people you follow
+ * * `event_changed` - Changes to events you're going to
+ * * `event_cancelled` - Cancelled events
+ * * `event_postponed` - Postponed events
+ * * `co_host_invite` - Invitations to co-host events
+ * * `event_reminder` - Event reminders
+ * * `feedback_request` - Requests for feedback after events
+ * * `waitlist_promoted` - A spot opened up for you
+ * * `announcement` - Announcements from organizers
+ * * `mention` - Mentions
+ * * `comment` - Comments
+ * * `reaction` - Likes
+ */
+export type NotificationKindEnum = 'new_follower' | 'follow_request' | 'follow_accepted' | 'organization_invite' | 'new_event' | 'event_changed' | 'event_cancelled' | 'event_postponed' | 'co_host_invite' | 'event_reminder' | 'feedback_request' | 'waitlist_promoted' | 'announcement' | 'mention' | 'comment' | 'reaction';
+
+export type NullEnum = never;
+
+export type OrganizationCreate = {
+    handle: string;
+    display_name: string;
+    bio?: string;
+};
+
+export type OrganizationCreateRequest = {
+    handle: string;
+    display_name: string;
+    bio?: string;
+};
+
+/**
+ * The whole picture a crop was made from.
+ */
+export type OriginalImage = {
+    readonly id: number;
+    readonly url: string;
+    readonly width: number;
+    readonly height: number;
+};
+
+export type PaginatedCommentList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<Comment>;
+};
+
 export type PaginatedEventList = {
+    count: number;
     next?: string | null;
     previous?: string | null;
     results: Array<Event>;
+};
+
+export type PaginatedEventPhotoList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<EventPhoto>;
 };
 
 export type PaginatedNearbyEventList = {
@@ -72,10 +561,49 @@ export type PaginatedNearbyEventList = {
     results: Array<NearbyEvent>;
 };
 
+export type PaginatedNotificationList = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<Notification>;
+};
+
 export type PaginatedPostList = {
     next?: string | null;
     previous?: string | null;
     results: Array<Post>;
+};
+
+export type PaginatedProfileSummaryList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<ProfileSummary>;
+};
+
+export type PasswordRequest = {
+    password: string;
+};
+
+export type PatchedAccountSettingsRequest = {
+    language?: LanguageEnum;
+    /**
+     * Can only be added when missing (older accounts).
+     */
+    birth_date?: string;
+    /**
+     * A weekly email of upcoming events (off unless turned on).
+     */
+    email_digest?: boolean;
+    /**
+     * Whether the first-run steps are done; set it once they are.
+     */
+    onboarded?: boolean;
+    /**
+     * Push on (true) or off (false), by notification kind. Missing kinds are on.
+     */
+    push?: {
+        [key: string]: boolean;
+    };
 };
 
 export type PatchedEventRequest = {
@@ -86,6 +614,29 @@ export type PatchedEventRequest = {
     venue_name?: string;
     address?: string;
     location?: LatLngRequest | null;
+    categories?: Array<string>;
+    capacity?: number | null;
+    online_url?: string | string;
+    /**
+     * In euros; empty for free events.
+     */
+    price?: string | null;
+    ticket_url?: string | string;
+    min_age?: number | null;
+    visibility?: EventVisibilityEnum;
+    status?: EventStatusEnum;
+    /**
+     * Leave out to publish now; empty for a draft; a future time to schedule.
+     */
+    published_at?: string | null;
+};
+
+export type PatchedMemberRoleRequest = {
+    role?: MembershipRoleEnum;
+};
+
+export type PatchedPostRequest = {
+    body?: string;
 };
 
 /**
@@ -95,15 +646,39 @@ export type PatchedProfileRequest = {
     handle?: string;
     display_name?: string;
     bio?: string;
-    avatar?: Blob | File;
+    pronouns?: string;
+    university?: string;
+    faculty?: string;
+    study_year?: number | null;
+    website?: string | string;
+    instagram?: string | string;
+    is_private?: boolean;
+    hide_followers?: boolean;
+    hide_attendance?: boolean;
+    /**
+     * Category slugs (GET /api/categories/).
+     */
+    interests?: Array<string>;
 };
 
 export type Post = {
     readonly id: number;
     author: ProfileSummary;
     body?: string;
-    event: Event;
+    event: Event | null;
+    readonly images: Array<Image>;
+    /**
+     * The page the first link in the text points to.
+     */
+    link_preview: LinkPreview | null;
+    readonly like_count: number;
+    /**
+     * Whether you liked this post.
+     */
+    readonly is_liked: boolean;
+    readonly comment_count: number;
     readonly created_at: string;
+    readonly edited_at: string | null;
 };
 
 export type PostRequest = {
@@ -116,13 +691,68 @@ export type PostRequest = {
 export type Profile = {
     handle: string;
     display_name: string;
-    kind: KindEnum;
+    kind: ProfileKindEnum;
     bio?: string;
-    avatar?: string | null;
+    avatar: Image | null;
+    cover: Image | null;
+    pronouns?: string;
+    university?: string;
+    faculty?: string;
+    study_year?: number | null;
+    website?: string | string;
+    instagram?: string | string;
+    readonly verified: boolean;
+    is_private?: boolean;
+    hide_followers?: boolean;
+    hide_attendance?: boolean;
+    /**
+     * Category slugs (GET /api/categories/).
+     */
+    interests?: Array<string>;
     readonly created_at: string;
     readonly follower_count: number;
     readonly following_count: number;
+    /**
+     * The university this person is a verified student of.
+     */
+    student_of: University | null;
     readonly is_followed: boolean;
+    /**
+     * The viewer asked to follow this private profile.
+     */
+    readonly is_requested: boolean;
+    readonly is_blocked: boolean;
+    readonly is_muted: boolean;
+};
+
+/**
+ * * `person` - Person
+ * * `organization` - Organization
+ */
+export type ProfileKindEnum = 'person' | 'organization';
+
+export type ProfileStats = {
+    /**
+     * The last 30 days, oldest first.
+     */
+    days: Array<string>;
+    /**
+     * Views of the profile's events, per day.
+     */
+    views: Array<number>;
+    /**
+     * New going or interested answers to its events, per day.
+     */
+    rsvps: Array<number>;
+    new_followers: Array<number>;
+    /**
+     * Followers now.
+     */
+    followers: number;
+    /**
+     * Events from the last 30 days on, newest first.
+     */
+    events: Array<EventStats>;
 };
 
 /**
@@ -131,8 +761,194 @@ export type Profile = {
 export type ProfileSummary = {
     readonly handle: string;
     readonly display_name: string;
-    kind: KindEnum;
-    readonly avatar: string | null;
+    kind: ProfileKindEnum;
+    avatar: Image | null;
+    readonly verified: boolean;
+};
+
+export type PushDeviceRequest = {
+    /**
+     * The device's Expo push token.
+     */
+    token: string;
+};
+
+export type Repeat = {
+    frequency: FrequencyEnum;
+    /**
+     * How many dates in total, the first included.
+     */
+    count: number;
+};
+
+export type RepeatRequest = {
+    frequency: FrequencyEnum;
+    /**
+     * How many dates in total, the first included.
+     */
+    count: number;
+};
+
+export type Report = {
+    readonly id: number;
+    reason: ReportReasonEnum;
+    details?: string;
+    readonly created_at: string;
+};
+
+/**
+ * * `spam` - Spam
+ * * `harassment` - Harassment or bullying
+ * * `hate` - Hate speech
+ * * `sexual` - Nudity or sexual content
+ * * `violence` - Violence or dangerous activity
+ * * `false_information` - False information
+ * * `other` - Something else
+ */
+export type ReportReasonEnum = 'spam' | 'harassment' | 'hate' | 'sexual' | 'violence' | 'false_information' | 'other';
+
+export type ReportRequest = {
+    reason: ReportReasonEnum;
+    details?: string;
+};
+
+export type RsvpRequest = {
+    /**
+     * Going to a full event puts you on the waitlist.
+     *
+     * * `going` - going
+     * * `interested` - interested
+     */
+    status: RsvpStatusEnum;
+};
+
+/**
+ * * `going` - going
+ * * `interested` - interested
+ */
+export type RsvpStatusEnum = 'going' | 'interested';
+
+export type SearchResults = {
+    events: Array<Event>;
+    profiles: Array<ProfileSummary>;
+};
+
+export type StudentCodeRequest = {
+    code: string;
+};
+
+export type StudentEmailRequest = {
+    /**
+     * Your university email address.
+     */
+    email: string;
+};
+
+export type StudentStatus = {
+    university: University;
+    readonly email: string;
+    readonly verified_at: string;
+    readonly is_current: boolean;
+};
+
+/**
+ * * `post` - post
+ * * `event` - event
+ * * `profile` - profile
+ * * `comment` - comment
+ */
+export type TargetTypeEnum = 'post' | 'event' | 'profile' | 'comment';
+
+export type University = {
+    readonly id: number;
+    readonly name: string;
+    readonly short_name: string;
+};
+
+export type UnreadCount = {
+    unread: number;
+};
+
+export type VerificationRequest = {
+    readonly id: number;
+    message: string;
+    status: VerificationStatusEnum;
+    readonly created_at: string;
+};
+
+export type VerificationRequestRequest = {
+    message: string;
+};
+
+/**
+ * * `pending` - Pending
+ * * `approved` - Approved
+ * * `rejected` - Rejected
+ */
+export type VerificationStatusEnum = 'pending' | 'approved' | 'rejected';
+
+export type AccountSettingsWritable = {
+    language?: LanguageEnum;
+    /**
+     * Can only be added when missing (older accounts).
+     */
+    birth_date?: string;
+    /**
+     * A weekly email of upcoming events (off unless turned on).
+     */
+    email_digest?: boolean;
+    /**
+     * Whether the first-run steps are done; set it once they are.
+     */
+    onboarded?: boolean;
+    /**
+     * Push on (true) or off (false), by notification kind. Missing kinds are on.
+     */
+    push?: {
+        [key: string]: boolean;
+    };
+};
+
+export type AttendanceSummaryWritable = {
+    going: number;
+    interested: number;
+    waitlisted: number;
+    /**
+     * The signed-in user's RSVP, if any.
+     *
+     * * `going` - Going
+     * * `interested` - Interested
+     * * `waitlisted` - On the waitlist
+     */
+    mine: AttendanceStatusEnum | NullEnum | null;
+    is_full: boolean;
+    /**
+     * Up to 3 people you follow who are going.
+     */
+    friends_going: Array<unknown>;
+    /**
+     * How many people you follow are going (who share their attendance).
+     */
+    friends_going_count: number;
+};
+
+export type CalendarSourceWritable = {
+    /**
+     * The calendar's iCal address (https:// or webcal://), e.g. a Google Calendar's public address in iCal format.
+     */
+    url: string;
+};
+
+export type CommentWritable = {
+    body: string;
+};
+
+export type CommentRequestWritable = {
+    /**
+     * Comment as this profile (yourself or an organization you belong to). Defaults to your own profile.
+     */
+    author_handle?: string;
+    body: string;
 };
 
 export type EventWritable = {
@@ -143,6 +959,21 @@ export type EventWritable = {
     venue_name?: string;
     address?: string;
     location?: LatLng | null;
+    categories?: Array<string>;
+    capacity?: number | null;
+    online_url?: string | string;
+    /**
+     * In euros; empty for free events.
+     */
+    price?: string | null;
+    ticket_url?: string | string;
+    min_age?: number | null;
+    visibility?: EventVisibilityEnum;
+    status?: EventStatusEnum;
+    /**
+     * Leave out to publish now; empty for a draft; a future time to schedule.
+     */
+    published_at?: string | null;
 };
 
 export type EventRequestWritable = {
@@ -157,6 +988,45 @@ export type EventRequestWritable = {
     venue_name?: string;
     address?: string;
     location?: LatLngRequest | null;
+    categories?: Array<string>;
+    capacity?: number | null;
+    /**
+     * An image uploaded with POST /api/images/.
+     */
+    cover_id?: number | null;
+    online_url?: string | string;
+    /**
+     * In euros; empty for free events.
+     */
+    price?: string | null;
+    ticket_url?: string | string;
+    min_age?: number | null;
+    students_of_id?: number | null;
+    visibility?: EventVisibilityEnum;
+    status?: EventStatusEnum;
+    /**
+     * Leave out to publish now; empty for a draft; a future time to schedule.
+     */
+    published_at?: string | null;
+    /**
+     * Profiles to ask to co-host; leaving one out removes it.
+     */
+    co_host_handles?: Array<string>;
+    /**
+     * Create a series of dates. Only on create.
+     */
+    repeat?: RepeatRequest;
+};
+
+/**
+ * An image with what it was cropped from, for reframing it.
+ */
+export type ImageDetailWritable = {
+    [key: string]: unknown;
+};
+
+export type MemberWritable = {
+    role?: MembershipRoleEnum;
 };
 
 export type NearbyEventWritable = {
@@ -167,12 +1037,41 @@ export type NearbyEventWritable = {
     venue_name?: string;
     address?: string;
     location?: LatLng | null;
+    categories?: Array<string>;
+    capacity?: number | null;
+    online_url?: string | string;
+    /**
+     * In euros; empty for free events.
+     */
+    price?: string | null;
+    ticket_url?: string | string;
+    min_age?: number | null;
+    visibility?: EventVisibilityEnum;
+    status?: EventStatusEnum;
+    /**
+     * Leave out to publish now; empty for a draft; a future time to schedule.
+     */
+    published_at?: string | null;
+};
+
+export type PaginatedCommentListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<CommentWritable>;
 };
 
 export type PaginatedEventListWritable = {
+    count: number;
     next?: string | null;
     previous?: string | null;
     results: Array<EventWritable>;
+};
+
+export type PaginatedEventPhotoListWritable = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<unknown>;
 };
 
 export type PaginatedNearbyEventListWritable = {
@@ -182,10 +1081,23 @@ export type PaginatedNearbyEventListWritable = {
     results: Array<NearbyEventWritable>;
 };
 
+export type PaginatedNotificationListWritable = {
+    next?: string | null;
+    previous?: string | null;
+    results: Array<unknown>;
+};
+
 export type PaginatedPostListWritable = {
     next?: string | null;
     previous?: string | null;
     results: Array<PostWritable>;
+};
+
+export type PaginatedProfileSummaryListWritable = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<unknown>;
 };
 
 export type PatchedEventRequestWritable = {
@@ -200,6 +1112,80 @@ export type PatchedEventRequestWritable = {
     venue_name?: string;
     address?: string;
     location?: LatLngRequest | null;
+    categories?: Array<string>;
+    capacity?: number | null;
+    /**
+     * An image uploaded with POST /api/images/.
+     */
+    cover_id?: number | null;
+    online_url?: string | string;
+    /**
+     * In euros; empty for free events.
+     */
+    price?: string | null;
+    ticket_url?: string | string;
+    min_age?: number | null;
+    students_of_id?: number | null;
+    visibility?: EventVisibilityEnum;
+    status?: EventStatusEnum;
+    /**
+     * Leave out to publish now; empty for a draft; a future time to schedule.
+     */
+    published_at?: string | null;
+    /**
+     * Profiles to ask to co-host; leaving one out removes it.
+     */
+    co_host_handles?: Array<string>;
+    /**
+     * Create a series of dates. Only on create.
+     */
+    repeat?: RepeatRequest;
+};
+
+export type PatchedPostRequestWritable = {
+    /**
+     * Post as this profile (yourself or an organization you belong to). Defaults to your own profile.
+     */
+    author_handle?: string;
+    body?: string;
+    /**
+     * Attach (share) an existing event.
+     */
+    event_id?: number | null;
+    /**
+     * Up to 4 images uploaded with POST /api/images/, in order. On edit, replaces the post's pictures.
+     */
+    image_ids?: Array<number>;
+};
+
+/**
+ * Full profile. Expects a queryset annotated with `with_social_stats`.
+ */
+export type PatchedProfileRequestWritable = {
+    handle?: string;
+    display_name?: string;
+    bio?: string;
+    /**
+     * An image uploaded with POST /api/images/.
+     */
+    avatar_id?: number | null;
+    /**
+     * An image uploaded with POST /api/images/.
+     */
+    cover_id?: number | null;
+    pronouns?: string;
+    university?: string;
+    faculty?: string;
+    study_year?: number | null;
+    website?: string | string;
+    instagram?: string | string;
+    is_private?: boolean;
+    hide_followers?: boolean;
+    hide_attendance?: boolean;
+    /**
+     * Category slugs (GET /api/categories/).
+     */
+    interests?: Array<string>;
 };
 
 export type PostWritable = {
@@ -216,6 +1202,10 @@ export type PostRequestWritable = {
      * Attach (share) an existing event.
      */
     event_id?: number | null;
+    /**
+     * Up to 4 images uploaded with POST /api/images/, in order. On edit, replaces the post's pictures.
+     */
+    image_ids?: Array<number>;
 };
 
 /**
@@ -225,8 +1215,75 @@ export type ProfileWritable = {
     handle: string;
     display_name: string;
     bio?: string;
-    avatar?: string | null;
+    pronouns?: string;
+    university?: string;
+    faculty?: string;
+    study_year?: number | null;
+    website?: string | string;
+    instagram?: string | string;
+    is_private?: boolean;
+    hide_followers?: boolean;
+    hide_attendance?: boolean;
+    /**
+     * Category slugs (GET /api/categories/).
+     */
+    interests?: Array<string>;
 };
+
+export type ReportWritable = {
+    reason: ReportReasonEnum;
+    details?: string;
+};
+
+export type ReportRequestWritable = {
+    target_type: TargetTypeEnum;
+    /**
+     * The post's or event's id, or the profile's handle.
+     */
+    target_id: string;
+    reason: ReportReasonEnum;
+    details?: string;
+};
+
+export type SearchResultsWritable = {
+    events: Array<EventWritable>;
+    profiles: Array<unknown>;
+};
+
+export type VerificationRequestWritable = {
+    message: string;
+};
+
+export type CategoriesListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/categories/';
+};
+
+export type CategoriesListResponses = {
+    200: Array<Category>;
+};
+
+export type CategoriesListResponse = CategoriesListResponses[keyof CategoriesListResponses];
+
+export type CommentsDestroyData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/api/comments/{id}/';
+};
+
+export type CommentsDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type CommentsDestroyResponse = CommentsDestroyResponses[keyof CommentsDestroyResponses];
 
 export type EventsCreateData = {
     body: EventRequestWritable;
@@ -298,6 +1355,342 @@ export type EventsPartialUpdateResponses = {
 
 export type EventsPartialUpdateResponse = EventsPartialUpdateResponses[keyof EventsPartialUpdateResponses];
 
+export type EventsAnnouncementsCreateData = {
+    body: AnnouncementRequest;
+    path: {
+        /**
+         * A unique integer value identifying this event.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/announcements/';
+};
+
+export type EventsAnnouncementsCreateResponses = {
+    200: AnnouncementSent;
+};
+
+export type EventsAnnouncementsCreateResponse = EventsAnnouncementsCreateResponses[keyof EventsAnnouncementsCreateResponses];
+
+export type EventsAttendanceDestroyData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this event.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/attendance/';
+};
+
+export type EventsAttendanceDestroyResponses = {
+    200: AttendanceSummary;
+};
+
+export type EventsAttendanceDestroyResponse = EventsAttendanceDestroyResponses[keyof EventsAttendanceDestroyResponses];
+
+export type EventsAttendanceUpdateData = {
+    body: RsvpRequest;
+    path: {
+        /**
+         * A unique integer value identifying this event.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/attendance/';
+};
+
+export type EventsAttendanceUpdateResponses = {
+    200: AttendanceSummary;
+};
+
+export type EventsAttendanceUpdateResponse = EventsAttendanceUpdateResponses[keyof EventsAttendanceUpdateResponses];
+
+export type EventsAttendeesListData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this event.
+         */
+        id: number;
+    };
+    query?: {
+        /**
+         * Number of results to return per page.
+         */
+        limit?: number;
+        /**
+         * The initial index from which to return the results.
+         */
+        offset?: number;
+        /**
+         * * `going` - going
+         * * `interested` - interested
+         */
+        status?: 'going' | 'interested';
+    };
+    url: '/api/events/{id}/attendees/';
+};
+
+export type EventsAttendeesListResponses = {
+    200: PaginatedProfileSummaryList;
+};
+
+export type EventsAttendeesListResponse = EventsAttendeesListResponses[keyof EventsAttendeesListResponses];
+
+export type EventsAttendeesExportRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this event.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/attendees/export/';
+};
+
+export type EventsAttendeesExportRetrieveResponses = {
+    /**
+     * CSV file
+     */
+    200: string;
+};
+
+export type EventsAttendeesExportRetrieveResponse = EventsAttendeesExportRetrieveResponses[keyof EventsAttendeesExportRetrieveResponses];
+
+export type EventsCoHostListData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/co-host/';
+};
+
+export type EventsCoHostListResponses = {
+    200: Array<ProfileSummary>;
+};
+
+export type EventsCoHostListResponse = EventsCoHostListResponses[keyof EventsCoHostListResponses];
+
+export type EventsCoHostDestroyData = {
+    body?: never;
+    path: {
+        handle: string;
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/co-host/{handle}/';
+};
+
+export type EventsCoHostDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type EventsCoHostDestroyResponse = EventsCoHostDestroyResponses[keyof EventsCoHostDestroyResponses];
+
+export type EventsCoHostCreateData = {
+    body?: never;
+    path: {
+        handle: string;
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/co-host/{handle}/';
+};
+
+export type EventsCoHostCreateResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type EventsCoHostCreateResponse = EventsCoHostCreateResponses[keyof EventsCoHostCreateResponses];
+
+export type EventsCommentsListData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+    };
+    url: '/api/events/{id}/comments/';
+};
+
+export type EventsCommentsListResponses = {
+    200: PaginatedCommentList;
+};
+
+export type EventsCommentsListResponse = EventsCommentsListResponses[keyof EventsCommentsListResponses];
+
+export type EventsCommentsCreateData = {
+    body: CommentRequestWritable;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/comments/';
+};
+
+export type EventsCommentsCreateResponses = {
+    201: Comment;
+};
+
+export type EventsCommentsCreateResponse = EventsCommentsCreateResponses[keyof EventsCommentsCreateResponses];
+
+export type EventsFeedbackRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this event.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/feedback/';
+};
+
+export type EventsFeedbackRetrieveResponses = {
+    200: FeedbackSummary;
+};
+
+export type EventsFeedbackRetrieveResponse = EventsFeedbackRetrieveResponses[keyof EventsFeedbackRetrieveResponses];
+
+export type EventsFeedbackMineRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this event.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/feedback/mine/';
+};
+
+export type EventsFeedbackMineRetrieveResponses = {
+    200: MyFeedback;
+};
+
+export type EventsFeedbackMineRetrieveResponse = EventsFeedbackMineRetrieveResponses[keyof EventsFeedbackMineRetrieveResponses];
+
+export type EventsFeedbackMineUpdateData = {
+    body: FeedbackRequest;
+    path: {
+        /**
+         * A unique integer value identifying this event.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/feedback/mine/';
+};
+
+export type EventsFeedbackMineUpdateResponses = {
+    200: MyFeedback;
+};
+
+export type EventsFeedbackMineUpdateResponse = EventsFeedbackMineUpdateResponses[keyof EventsFeedbackMineUpdateResponses];
+
+export type EventsPhotosListData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: {
+        /**
+         * Number of results to return per page.
+         */
+        limit?: number;
+        /**
+         * The initial index from which to return the results.
+         */
+        offset?: number;
+    };
+    url: '/api/events/{id}/photos/';
+};
+
+export type EventsPhotosListResponses = {
+    200: PaginatedEventPhotoList;
+};
+
+export type EventsPhotosListResponse = EventsPhotosListResponses[keyof EventsPhotosListResponses];
+
+export type EventsSaveDestroyData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this event.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/save/';
+};
+
+export type EventsSaveDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type EventsSaveDestroyResponse = EventsSaveDestroyResponses[keyof EventsSaveDestroyResponses];
+
+export type EventsSaveUpdateData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this event.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/save/';
+};
+
+export type EventsSaveUpdateResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type EventsSaveUpdateResponse = EventsSaveUpdateResponses[keyof EventsSaveUpdateResponses];
+
+export type EventsViewCreateData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this event.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/events/{id}/view/';
+};
+
+export type EventsViewCreateResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type EventsViewCreateResponse = EventsViewCreateResponses[keyof EventsViewCreateResponses];
+
 export type FeedsFollowingListData = {
     body?: never;
     path?: never;
@@ -306,6 +1699,10 @@ export type FeedsFollowingListData = {
          * The pagination cursor value.
          */
         cursor?: string;
+        /**
+         * Leave out posts about events that have ended.
+         */
+        hide_past?: boolean;
     };
     url: '/api/feeds/following/';
 };
@@ -316,10 +1713,78 @@ export type FeedsFollowingListResponses = {
 
 export type FeedsFollowingListResponse = FeedsFollowingListResponses[keyof FeedsFollowingListResponses];
 
+export type FeedsForYouListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Category slugs; events in any of them.
+         */
+        category?: Array<string>;
+        /**
+         * Free events only.
+         */
+        free?: boolean;
+        lat?: number;
+        /**
+         * Number of results to return per page.
+         */
+        limit?: number;
+        lng?: number;
+        /**
+         * The initial index from which to return the results.
+         */
+        offset?: number;
+        /**
+         * Events still going on after this time.
+         */
+        starts_after?: string;
+        /**
+         * Events starting before this time.
+         */
+        starts_before?: string;
+    };
+    url: '/api/feeds/for-you/';
+};
+
+export type FeedsForYouListResponses = {
+    200: PaginatedEventList;
+};
+
+export type FeedsForYouListResponse = FeedsForYouListResponses[keyof FeedsForYouListResponses];
+
+export type FeedsHashtagListData = {
+    body?: never;
+    path: {
+        tag: string;
+    };
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+    };
+    url: '/api/feeds/hashtag/{tag}/';
+};
+
+export type FeedsHashtagListResponses = {
+    200: PaginatedPostList;
+};
+
+export type FeedsHashtagListResponse = FeedsHashtagListResponses[keyof FeedsHashtagListResponses];
+
 export type FeedsNearbyListData = {
     body?: never;
     path?: never;
     query: {
+        /**
+         * Category slugs; events in any of them.
+         */
+        category?: Array<string>;
+        /**
+         * Free events only.
+         */
+        free?: boolean;
         lat: number;
         /**
          * Number of results to return per page.
@@ -331,6 +1796,14 @@ export type FeedsNearbyListData = {
          */
         offset?: number;
         radius_km?: number;
+        /**
+         * Events still going on after this time.
+         */
+        starts_after?: string;
+        /**
+         * Events starting before this time.
+         */
+        starts_before?: string;
     };
     url: '/api/feeds/nearby/';
 };
@@ -341,14 +1814,68 @@ export type FeedsNearbyListResponses = {
 
 export type FeedsNearbyListResponse = FeedsNearbyListResponses[keyof FeedsNearbyListResponses];
 
+export type FeedsTrendingListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Category slugs; events in any of them.
+         */
+        category?: Array<string>;
+        /**
+         * Free events only.
+         */
+        free?: boolean;
+        /**
+         * Number of results to return per page.
+         */
+        limit?: number;
+        /**
+         * The initial index from which to return the results.
+         */
+        offset?: number;
+        /**
+         * Events still going on after this time.
+         */
+        starts_after?: string;
+        /**
+         * Events starting before this time.
+         */
+        starts_before?: string;
+    };
+    url: '/api/feeds/trending/';
+};
+
+export type FeedsTrendingListResponses = {
+    200: PaginatedEventList;
+};
+
+export type FeedsTrendingListResponse = FeedsTrendingListResponses[keyof FeedsTrendingListResponses];
+
 export type FeedsUpcomingListData = {
     body?: never;
     path?: never;
     query?: {
         /**
+         * Category slugs; events in any of them.
+         */
+        category?: Array<string>;
+        /**
          * The pagination cursor value.
          */
         cursor?: string;
+        /**
+         * Free events only.
+         */
+        free?: boolean;
+        /**
+         * Events still going on after this time.
+         */
+        starts_after?: string;
+        /**
+         * Events starting before this time.
+         */
+        starts_before?: string;
     };
     url: '/api/feeds/upcoming/';
 };
@@ -358,6 +1885,82 @@ export type FeedsUpcomingListResponses = {
 };
 
 export type FeedsUpcomingListResponse = FeedsUpcomingListResponses[keyof FeedsUpcomingListResponses];
+
+export type FlagsRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/flags/';
+};
+
+export type FlagsRetrieveResponses = {
+    200: {
+        [key: string]: boolean;
+    };
+};
+
+export type FlagsRetrieveResponse = FlagsRetrieveResponses[keyof FlagsRetrieveResponses];
+
+export type GeocodeListData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * What to look for.
+         */
+        q: string;
+    };
+    url: '/api/geocode/';
+};
+
+export type GeocodeListResponses = {
+    200: Array<GeocodeResult>;
+};
+
+export type GeocodeListResponse = GeocodeListResponses[keyof GeocodeListResponses];
+
+export type ImagesCreateData = {
+    body: ImageUploadRequest;
+    path?: never;
+    query?: never;
+    url: '/api/images/';
+};
+
+export type ImagesCreateResponses = {
+    201: ImageUpload;
+};
+
+export type ImagesCreateResponse = ImagesCreateResponses[keyof ImagesCreateResponses];
+
+export type ImagesRetrieveData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/api/images/{id}/';
+};
+
+export type ImagesRetrieveResponses = {
+    200: ImageDetail;
+};
+
+export type ImagesRetrieveResponse = ImagesRetrieveResponses[keyof ImagesRetrieveResponses];
+
+export type ImagesCropCreateData = {
+    body: CropRequest;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/api/images/{id}/crop/';
+};
+
+export type ImagesCropCreateResponses = {
+    201: ImageDetail;
+};
+
+export type ImagesCropCreateResponse = ImagesCropCreateResponses[keyof ImagesCropCreateResponses];
 
 export type MeRetrieveData = {
     body?: never;
@@ -373,7 +1976,7 @@ export type MeRetrieveResponses = {
 export type MeRetrieveResponse = MeRetrieveResponses[keyof MeRetrieveResponses];
 
 export type MePartialUpdateData = {
-    body?: PatchedProfileRequest;
+    body?: PatchedProfileRequestWritable;
     path?: never;
     query?: never;
     url: '/api/me/';
@@ -384,6 +1987,533 @@ export type MePartialUpdateResponses = {
 };
 
 export type MePartialUpdateResponse = MePartialUpdateResponses[keyof MePartialUpdateResponses];
+
+export type MeAcceptTermsCreateData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/me/accept-terms/';
+};
+
+export type MeAcceptTermsCreateResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type MeAcceptTermsCreateResponse = MeAcceptTermsCreateResponses[keyof MeAcceptTermsCreateResponses];
+
+export type MeAccountDeleteCreateData = {
+    body: PasswordRequest;
+    path?: never;
+    query?: never;
+    url: '/api/me/account/delete/';
+};
+
+export type MeAccountDeleteCreateResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type MeAccountDeleteCreateResponse = MeAccountDeleteCreateResponses[keyof MeAccountDeleteCreateResponses];
+
+export type MeAttendingListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Number of results to return per page.
+         */
+        limit?: number;
+        /**
+         * The initial index from which to return the results.
+         */
+        offset?: number;
+        when?: 'past' | 'upcoming';
+    };
+    url: '/api/me/attending/';
+};
+
+export type MeAttendingListResponses = {
+    200: PaginatedEventList;
+};
+
+export type MeAttendingListResponse = MeAttendingListResponses[keyof MeAttendingListResponses];
+
+export type MeBlockedListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/me/blocked/';
+};
+
+export type MeBlockedListResponses = {
+    200: Array<ProfileSummary>;
+};
+
+export type MeBlockedListResponse = MeBlockedListResponses[keyof MeBlockedListResponses];
+
+export type MeEventsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Number of results to return per page.
+         */
+        limit?: number;
+        /**
+         * The initial index from which to return the results.
+         */
+        offset?: number;
+        when?: 'past' | 'upcoming';
+    };
+    url: '/api/me/events/';
+};
+
+export type MeEventsListResponses = {
+    200: PaginatedEventList;
+};
+
+export type MeEventsListResponse = MeEventsListResponses[keyof MeEventsListResponses];
+
+export type MeExportRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/me/export/';
+};
+
+export type MeExportRetrieveResponses = {
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type MeExportRetrieveResponse = MeExportRetrieveResponses[keyof MeExportRetrieveResponses];
+
+export type MeFollowRequestsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+    };
+    url: '/api/me/follow-requests/';
+};
+
+export type MeFollowRequestsListResponses = {
+    200: PaginatedProfileSummaryList;
+};
+
+export type MeFollowRequestsListResponse = MeFollowRequestsListResponses[keyof MeFollowRequestsListResponses];
+
+export type MeFollowRequestsDestroyData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/me/follow-requests/{handle}/';
+};
+
+export type MeFollowRequestsDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type MeFollowRequestsDestroyResponse = MeFollowRequestsDestroyResponses[keyof MeFollowRequestsDestroyResponses];
+
+export type MeFollowRequestsCreateData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/me/follow-requests/{handle}/';
+};
+
+export type MeFollowRequestsCreateResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type MeFollowRequestsCreateResponse = MeFollowRequestsCreateResponses[keyof MeFollowRequestsCreateResponses];
+
+export type MeInvitationsListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/me/invitations/';
+};
+
+export type MeInvitationsListResponses = {
+    200: Array<Invitation>;
+};
+
+export type MeInvitationsListResponse = MeInvitationsListResponses[keyof MeInvitationsListResponses];
+
+export type MeInvitationsDestroyData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/api/me/invitations/{id}/';
+};
+
+export type MeInvitationsDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type MeInvitationsDestroyResponse = MeInvitationsDestroyResponses[keyof MeInvitationsDestroyResponses];
+
+export type MeInvitationsCreateData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/api/me/invitations/{id}/';
+};
+
+export type MeInvitationsCreateResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type MeInvitationsCreateResponse = MeInvitationsCreateResponses[keyof MeInvitationsCreateResponses];
+
+export type MeMutedListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/me/muted/';
+};
+
+export type MeMutedListResponses = {
+    200: Array<ProfileSummary>;
+};
+
+export type MeMutedListResponse = MeMutedListResponses[keyof MeMutedListResponses];
+
+export type MeProfilesListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/me/profiles/';
+};
+
+export type MeProfilesListResponses = {
+    200: Array<ActingProfile>;
+};
+
+export type MeProfilesListResponse = MeProfilesListResponses[keyof MeProfilesListResponses];
+
+export type MeSavedListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Number of results to return per page.
+         */
+        limit?: number;
+        /**
+         * The initial index from which to return the results.
+         */
+        offset?: number;
+        when?: 'past' | 'upcoming';
+    };
+    url: '/api/me/saved/';
+};
+
+export type MeSavedListResponses = {
+    200: PaginatedEventList;
+};
+
+export type MeSavedListResponse = MeSavedListResponses[keyof MeSavedListResponses];
+
+export type MeSettingsRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/me/settings/';
+};
+
+export type MeSettingsRetrieveResponses = {
+    200: AccountSettings;
+};
+
+export type MeSettingsRetrieveResponse = MeSettingsRetrieveResponses[keyof MeSettingsRetrieveResponses];
+
+export type MeSettingsPartialUpdateData = {
+    body?: PatchedAccountSettingsRequest;
+    path?: never;
+    query?: never;
+    url: '/api/me/settings/';
+};
+
+export type MeSettingsPartialUpdateResponses = {
+    200: AccountSettings;
+};
+
+export type MeSettingsPartialUpdateResponse = MeSettingsPartialUpdateResponses[keyof MeSettingsPartialUpdateResponses];
+
+export type MeStudentDestroyData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/me/student/';
+};
+
+export type MeStudentDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type MeStudentDestroyResponse = MeStudentDestroyResponses[keyof MeStudentDestroyResponses];
+
+export type MeStudentRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/me/student/';
+};
+
+export type MeStudentRetrieveResponses = {
+    200: StudentStatus;
+};
+
+export type MeStudentRetrieveResponse = MeStudentRetrieveResponses[keyof MeStudentRetrieveResponses];
+
+export type MeStudentCreateData = {
+    body: StudentEmailRequest;
+    path?: never;
+    query?: never;
+    url: '/api/me/student/';
+};
+
+export type MeStudentCreateResponses = {
+    200: University;
+};
+
+export type MeStudentCreateResponse = MeStudentCreateResponses[keyof MeStudentCreateResponses];
+
+export type MeStudentVerifyCreateData = {
+    body: StudentCodeRequest;
+    path?: never;
+    query?: never;
+    url: '/api/me/student/verify/';
+};
+
+export type MeStudentVerifyCreateResponses = {
+    200: StudentStatus;
+};
+
+export type MeStudentVerifyCreateResponse = MeStudentVerifyCreateResponses[keyof MeStudentVerifyCreateResponses];
+
+export type MeSuggestionsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Only people or organizations.
+         *
+         * * `person` - Person
+         * * `organization` - Organization
+         */
+        kind?: 'person' | 'organization';
+    };
+    url: '/api/me/suggestions/';
+};
+
+export type MeSuggestionsListResponses = {
+    200: Array<Profile>;
+};
+
+export type MeSuggestionsListResponse = MeSuggestionsListResponses[keyof MeSuggestionsListResponses];
+
+export type NotificationsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+    };
+    url: '/api/notifications/';
+};
+
+export type NotificationsListResponses = {
+    200: PaginatedNotificationList;
+};
+
+export type NotificationsListResponse = NotificationsListResponses[keyof NotificationsListResponses];
+
+export type NotificationsReadCreateData = {
+    body?: MarkReadRequest;
+    path?: never;
+    query?: never;
+    url: '/api/notifications/read/';
+};
+
+export type NotificationsReadCreateResponses = {
+    200: UnreadCount;
+};
+
+export type NotificationsReadCreateResponse = NotificationsReadCreateResponses[keyof NotificationsReadCreateResponses];
+
+export type NotificationsUnreadRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/notifications/unread/';
+};
+
+export type NotificationsUnreadRetrieveResponses = {
+    200: UnreadCount;
+};
+
+export type NotificationsUnreadRetrieveResponse = NotificationsUnreadRetrieveResponses[keyof NotificationsUnreadRetrieveResponses];
+
+export type OrganizationsCreateData = {
+    body: OrganizationCreateRequest;
+    path?: never;
+    query?: never;
+    url: '/api/organizations/';
+};
+
+export type OrganizationsCreateResponses = {
+    201: OrganizationCreate;
+};
+
+export type OrganizationsCreateResponse = OrganizationsCreateResponses[keyof OrganizationsCreateResponses];
+
+export type OrganizationsPartialUpdateData = {
+    body?: PatchedProfileRequestWritable;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/organizations/{handle}/';
+};
+
+export type OrganizationsPartialUpdateResponses = {
+    200: ProfileSummary;
+};
+
+export type OrganizationsPartialUpdateResponse = OrganizationsPartialUpdateResponses[keyof OrganizationsPartialUpdateResponses];
+
+export type OrganizationsInvitationsListData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/organizations/{handle}/invitations/';
+};
+
+export type OrganizationsInvitationsListResponses = {
+    200: Array<Invitation>;
+};
+
+export type OrganizationsInvitationsListResponse = OrganizationsInvitationsListResponses[keyof OrganizationsInvitationsListResponses];
+
+export type OrganizationsMembersListData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/organizations/{handle}/members/';
+};
+
+export type OrganizationsMembersListResponses = {
+    200: Array<Member>;
+};
+
+export type OrganizationsMembersListResponse = OrganizationsMembersListResponses[keyof OrganizationsMembersListResponses];
+
+export type OrganizationsMembersCreateData = {
+    body: InviteRequest;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/organizations/{handle}/members/';
+};
+
+export type OrganizationsMembersCreateResponses = {
+    200: Invitation;
+};
+
+export type OrganizationsMembersCreateResponse = OrganizationsMembersCreateResponses[keyof OrganizationsMembersCreateResponses];
+
+export type OrganizationsMembersDestroyData = {
+    body?: never;
+    path: {
+        handle: string;
+        member: string;
+    };
+    query?: never;
+    url: '/api/organizations/{handle}/members/{member}/';
+};
+
+export type OrganizationsMembersDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type OrganizationsMembersDestroyResponse = OrganizationsMembersDestroyResponses[keyof OrganizationsMembersDestroyResponses];
+
+export type OrganizationsMembersPartialUpdateData = {
+    body?: PatchedMemberRoleRequest;
+    path: {
+        handle: string;
+        member: string;
+    };
+    query?: never;
+    url: '/api/organizations/{handle}/members/{member}/';
+};
+
+export type OrganizationsMembersPartialUpdateResponses = {
+    200: Member;
+};
+
+export type OrganizationsMembersPartialUpdateResponse = OrganizationsMembersPartialUpdateResponses[keyof OrganizationsMembersPartialUpdateResponses];
+
+export type OrganizationsVerificationCreateData = {
+    body: VerificationRequestRequest;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/organizations/{handle}/verification/';
+};
+
+export type OrganizationsVerificationCreateResponses = {
+    200: VerificationRequest;
+};
+
+export type OrganizationsVerificationCreateResponse = OrganizationsVerificationCreateResponses[keyof OrganizationsVerificationCreateResponses];
 
 export type PostsCreateData = {
     body?: PostRequestWritable;
@@ -437,6 +2567,101 @@ export type PostsRetrieveResponses = {
 
 export type PostsRetrieveResponse = PostsRetrieveResponses[keyof PostsRetrieveResponses];
 
+export type PostsPartialUpdateData = {
+    body?: PatchedPostRequestWritable;
+    path: {
+        /**
+         * A unique integer value identifying this post.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/posts/{id}/';
+};
+
+export type PostsPartialUpdateResponses = {
+    200: Post;
+};
+
+export type PostsPartialUpdateResponse = PostsPartialUpdateResponses[keyof PostsPartialUpdateResponses];
+
+export type PostsCommentsListData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+    };
+    url: '/api/posts/{id}/comments/';
+};
+
+export type PostsCommentsListResponses = {
+    200: PaginatedCommentList;
+};
+
+export type PostsCommentsListResponse = PostsCommentsListResponses[keyof PostsCommentsListResponses];
+
+export type PostsCommentsCreateData = {
+    body: CommentRequestWritable;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/api/posts/{id}/comments/';
+};
+
+export type PostsCommentsCreateResponses = {
+    201: Comment;
+};
+
+export type PostsCommentsCreateResponse = PostsCommentsCreateResponses[keyof PostsCommentsCreateResponses];
+
+export type PostsLikeDestroyData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this post.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/posts/{id}/like/';
+};
+
+export type PostsLikeDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type PostsLikeDestroyResponse = PostsLikeDestroyResponses[keyof PostsLikeDestroyResponses];
+
+export type PostsLikeUpdateData = {
+    body?: never;
+    path: {
+        /**
+         * A unique integer value identifying this post.
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/posts/{id}/like/';
+};
+
+export type PostsLikeUpdateResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type PostsLikeUpdateResponse = PostsLikeUpdateResponses[keyof PostsLikeUpdateResponses];
+
 export type ProfilesRetrieveData = {
     body?: never;
     path: {
@@ -451,6 +2676,119 @@ export type ProfilesRetrieveResponses = {
 };
 
 export type ProfilesRetrieveResponse = ProfilesRetrieveResponses[keyof ProfilesRetrieveResponses];
+
+export type ProfilesBlockDestroyData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/profiles/{handle}/block/';
+};
+
+export type ProfilesBlockDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type ProfilesBlockDestroyResponse = ProfilesBlockDestroyResponses[keyof ProfilesBlockDestroyResponses];
+
+export type ProfilesBlockCreateData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/profiles/{handle}/block/';
+};
+
+export type ProfilesBlockCreateResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type ProfilesBlockCreateResponse = ProfilesBlockCreateResponses[keyof ProfilesBlockCreateResponses];
+
+export type ProfilesCalendarsListData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/profiles/{handle}/calendars/';
+};
+
+export type ProfilesCalendarsListResponses = {
+    200: Array<CalendarSource>;
+};
+
+export type ProfilesCalendarsListResponse = ProfilesCalendarsListResponses[keyof ProfilesCalendarsListResponses];
+
+export type ProfilesCalendarsCreateData = {
+    body: CalendarSourceRequest;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/profiles/{handle}/calendars/';
+};
+
+export type ProfilesCalendarsCreateResponses = {
+    201: CalendarSource;
+};
+
+export type ProfilesCalendarsCreateResponse = ProfilesCalendarsCreateResponses[keyof ProfilesCalendarsCreateResponses];
+
+export type ProfilesCalendarsDestroyData = {
+    body?: never;
+    path: {
+        handle: string;
+        id: number;
+    };
+    query?: never;
+    url: '/api/profiles/{handle}/calendars/{id}/';
+};
+
+export type ProfilesCalendarsDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type ProfilesCalendarsDestroyResponse = ProfilesCalendarsDestroyResponses[keyof ProfilesCalendarsDestroyResponses];
+
+export type ProfilesEventsListData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: {
+        /**
+         * Number of results to return per page.
+         */
+        limit?: number;
+        /**
+         * The initial index from which to return the results.
+         */
+        offset?: number;
+        /**
+         * Which events.
+         */
+        when?: 'past' | 'upcoming';
+    };
+    url: '/api/profiles/{handle}/events/';
+};
+
+export type ProfilesEventsListResponses = {
+    200: PaginatedEventList;
+};
+
+export type ProfilesEventsListResponse = ProfilesEventsListResponses[keyof ProfilesEventsListResponses];
 
 export type ProfilesFollowDestroyData = {
     body?: never;
@@ -480,10 +2818,200 @@ export type ProfilesFollowCreateData = {
 };
 
 export type ProfilesFollowCreateResponses = {
+    200: FollowStatus;
+};
+
+export type ProfilesFollowCreateResponse = ProfilesFollowCreateResponses[keyof ProfilesFollowCreateResponses];
+
+export type ProfilesFollowersListData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+    };
+    url: '/api/profiles/{handle}/followers/';
+};
+
+export type ProfilesFollowersListResponses = {
+    200: PaginatedProfileSummaryList;
+};
+
+export type ProfilesFollowersListResponse = ProfilesFollowersListResponses[keyof ProfilesFollowersListResponses];
+
+export type ProfilesFollowingListData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+    };
+    url: '/api/profiles/{handle}/following/';
+};
+
+export type ProfilesFollowingListResponses = {
+    200: PaginatedProfileSummaryList;
+};
+
+export type ProfilesFollowingListResponse = ProfilesFollowingListResponses[keyof ProfilesFollowingListResponses];
+
+export type ProfilesMuteDestroyData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/profiles/{handle}/mute/';
+};
+
+export type ProfilesMuteDestroyResponses = {
     /**
      * No response body
      */
     204: void;
 };
 
-export type ProfilesFollowCreateResponse = ProfilesFollowCreateResponses[keyof ProfilesFollowCreateResponses];
+export type ProfilesMuteDestroyResponse = ProfilesMuteDestroyResponses[keyof ProfilesMuteDestroyResponses];
+
+export type ProfilesMuteCreateData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/profiles/{handle}/mute/';
+};
+
+export type ProfilesMuteCreateResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type ProfilesMuteCreateResponse = ProfilesMuteCreateResponses[keyof ProfilesMuteCreateResponses];
+
+export type ProfilesPostsListData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: {
+        /**
+         * The pagination cursor value.
+         */
+        cursor?: string;
+    };
+    url: '/api/profiles/{handle}/posts/';
+};
+
+export type ProfilesPostsListResponses = {
+    200: PaginatedPostList;
+};
+
+export type ProfilesPostsListResponse = ProfilesPostsListResponses[keyof ProfilesPostsListResponses];
+
+export type ProfilesStatsRetrieveData = {
+    body?: never;
+    path: {
+        handle: string;
+    };
+    query?: never;
+    url: '/api/profiles/{handle}/stats/';
+};
+
+export type ProfilesStatsRetrieveResponses = {
+    200: ProfileStats;
+};
+
+export type ProfilesStatsRetrieveResponse = ProfilesStatsRetrieveResponses[keyof ProfilesStatsRetrieveResponses];
+
+export type PushDevicesCreateData = {
+    body: PushDeviceRequest;
+    path?: never;
+    query?: never;
+    url: '/api/push-devices/';
+};
+
+export type PushDevicesCreateResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type PushDevicesCreateResponse = PushDevicesCreateResponses[keyof PushDevicesCreateResponses];
+
+export type PushDevicesDestroyData = {
+    body?: never;
+    path: {
+        token: string;
+    };
+    query?: never;
+    url: '/api/push-devices/{token}/';
+};
+
+export type PushDevicesDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type PushDevicesDestroyResponse = PushDevicesDestroyResponses[keyof PushDevicesDestroyResponses];
+
+export type ReportsCreateData = {
+    body: ReportRequestWritable;
+    path?: never;
+    query?: never;
+    url: '/api/reports/';
+};
+
+export type ReportsCreateResponses = {
+    201: Report;
+};
+
+export type ReportsCreateResponse = ReportsCreateResponses[keyof ReportsCreateResponses];
+
+export type SearchRetrieveData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Also events that have ended.
+         */
+        include_past?: boolean;
+        /**
+         * What to look for.
+         */
+        q: string;
+    };
+    url: '/api/search/';
+};
+
+export type SearchRetrieveResponses = {
+    200: SearchResults;
+};
+
+export type SearchRetrieveResponse = SearchRetrieveResponses[keyof SearchRetrieveResponses];
+
+export type UniversitiesListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/universities/';
+};
+
+export type UniversitiesListResponses = {
+    200: Array<University>;
+};
+
+export type UniversitiesListResponse = UniversitiesListResponses[keyof UniversitiesListResponses];

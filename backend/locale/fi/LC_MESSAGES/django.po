@@ -1,0 +1,357 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Sidequest\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-03 09:30+0200\n"
+"PO-Revision-Date: 2026-11-02 20:52+0200\n"
+"Last-Translator: Sidequest <dev@sidequest.invalid>\n"
+"Language-Team: Finnish\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Accept the terms of service and privacy policy to continue."
+msgstr "Hyväksy käyttöehdot ja tietosuojaseloste jatkaaksesi."
+
+#, python-format
+msgid "You need to be at least %(age)s years old to use Sidequest."
+msgstr "Sidequestin käyttäjän täytyy olla vähintään %(age)s-vuotias."
+
+msgid "The password is wrong."
+msgstr "Salasana on väärä."
+
+msgid "Going"
+msgstr "Osallistuu"
+
+msgid "Interested"
+msgstr "Kiinnostunut"
+
+msgid "On the waitlist"
+msgstr "Jonossa"
+
+#, python-format
+msgid "No profile has the username %(handle)s."
+msgstr "Millään profiililla ei ole käyttäjänimeä %(handle)s."
+
+msgid "Must be after the start time."
+msgstr "Täytyy olla alkamisajan jälkeen."
+
+msgid "Enter the calendar's iCal address."
+msgstr "Anna kalenterin iCal-osoite."
+
+msgid "This event was cancelled."
+msgstr "Tapahtuma on peruttu."
+
+#, python-format
+msgid "This event is for %(university)s students. Verify you study there in Settings."
+msgstr "Tapahtuma on tarkoitettu yliopiston %(university)s opiskelijoille. Vahvista opiskelusi asetuksissa."
+
+msgid "Add your birth date in Settings to join this event."
+msgstr "Lisää syntymäaikasi asetuksissa osallistuaksesi tähän tapahtumaan."
+
+#, python-format
+msgid "This event is for people aged %(age)s or over."
+msgstr "Tapahtuma on vähintään %(age)s-vuotiaille."
+
+msgid "Only people who went can rate an event, after it ends."
+msgstr "Vain tapahtumaan osallistuneet voivat arvioida sen, kun se on päättynyt."
+
+msgid "Name"
+msgstr "Nimi"
+
+msgid "Username"
+msgstr "Käyttäjänimi"
+
+msgid "Status"
+msgstr "Tila"
+
+msgid "Answered at"
+msgstr "Vastattu"
+
+msgid "A profile can sync at most five calendars."
+msgstr "Profiili voi synkronoida enintään viisi kalenteria."
+
+msgid "This calendar is already being synced."
+msgstr "Tämä kalenteri synkronoidaan jo."
+
+msgid "This profile wasn't invited to co-host."
+msgstr "Tätä profiilia ei kutsuttu yhteisjärjestäjäksi."
+
+msgid "The picture is too large (at most 10 MB)."
+msgstr "Kuva on liian suuri (enintään 10 Mt)."
+
+msgid "That's a lot of links. Keep it to five or fewer."
+msgstr "Siinä on paljon linkkejä. Käytä enintään viittä."
+
+msgid "This contains words that aren't allowed here."
+msgstr "Tässä on sanoja, jotka eivät ole täällä sallittuja."
+
+msgid "You just posted this."
+msgstr "Julkaisit juuri tämän."
+
+msgid "Spam"
+msgstr "Roskaposti"
+
+msgid "Harassment or bullying"
+msgstr "Häirintä tai kiusaaminen"
+
+msgid "Hate speech"
+msgstr "Vihapuhe"
+
+msgid "Nudity or sexual content"
+msgstr "Alastomuus tai seksuaalinen sisältö"
+
+msgid "Violence or dangerous activity"
+msgstr "Väkivalta tai vaarallinen toiminta"
+
+msgid "False information"
+msgstr "Väärää tietoa"
+
+msgid "Something else"
+msgstr "Jokin muu"
+
+msgid "Open"
+msgstr "Avoin"
+
+msgid "Resolved"
+msgstr "Ratkaistu"
+
+msgid "Dismissed"
+msgstr "Hylätty"
+
+msgid "Removed content"
+msgstr "Poisti sisällön"
+
+msgid "Restored content"
+msgstr "Palautti sisällön"
+
+msgid "Dismissed reports"
+msgstr "Hylkäsi ilmoitukset"
+
+msgid "Block: don't allow the text"
+msgstr "Estä: älä salli tekstiä"
+
+msgid "Flag: allow it, and report it to moderators"
+msgstr "Merkitse: salli, mutta ilmoita moderaattoreille"
+
+msgid "This content no longer exists."
+msgstr "Tätä sisältöä ei ole enää olemassa."
+
+msgid "You cannot block yourself."
+msgstr "Et voi estää itseäsi."
+
+msgid "You cannot mute yourself."
+msgstr "Et voi mykistää itseäsi."
+
+msgid "Your week:"
+msgstr "Viikkosi:"
+
+msgid "New from people you follow:"
+msgstr "Uutta seuraamiltasi:"
+
+#, python-format
+msgid "You get this email because you turned on the weekly summary. Turn it off in Settings: %(url)s"
+msgstr "Saat tämän viestin, koska otit viikkokoosteen käyttöön. Voit poistaa sen käytöstä asetuksista: %(url)s"
+
+msgid "[Sidequest] Your week of events"
+msgstr "[Sidequest] Viikkosi tapahtumat"
+
+msgid "New followers"
+msgstr "Uudet seuraajat"
+
+msgid "Follow requests"
+msgstr "Seuraamispyynnöt"
+
+msgid "Accepted follow requests"
+msgstr "Hyväksytyt seuraamispyynnöt"
+
+msgid "Invitations to organizations"
+msgstr "Kutsut järjestöihin"
+
+msgid "New events from people you follow"
+msgstr "Uudet tapahtumat seuraamiltasi"
+
+msgid "Changes to events you're going to"
+msgstr "Muutokset tapahtumiin, joihin osallistut"
+
+msgid "Cancelled events"
+msgstr "Perutut tapahtumat"
+
+msgid "Postponed events"
+msgstr "Siirretyt tapahtumat"
+
+msgid "Invitations to co-host events"
+msgstr "Kutsut tapahtumien yhteisjärjestäjäksi"
+
+msgid "Event reminders"
+msgstr "Tapahtumamuistutukset"
+
+msgid "Requests for feedback after events"
+msgstr "Palautepyynnöt tapahtumien jälkeen"
+
+msgid "A spot opened up for you"
+msgstr "Sinulle vapautui paikka"
+
+msgid "Announcements from organizers"
+msgstr "Järjestäjien tiedotteet"
+
+msgid "Mentions"
+msgstr "Maininnat"
+
+msgid "Comments"
+msgstr "Kommentit"
+
+msgid "Likes"
+msgstr "Tykkäykset"
+
+#, python-format
+msgid "%(name)s started following you."
+msgstr "%(name)s alkoi seurata sinua."
+
+#, python-format
+msgid "%(name)s asked to follow you."
+msgstr "%(name)s pyysi saada seurata sinua."
+
+#, python-format
+msgid "%(name)s invited you to join them."
+msgstr "%(name)s kutsui sinut jäseneksi."
+
+#, python-format
+msgid "%(name)s accepted your follow request."
+msgstr "%(name)s hyväksyi seuraamispyyntösi."
+
+#, python-format
+msgid "New event from %(name)s."
+msgstr "Uusi tapahtuma: %(name)s."
+
+msgid "The time or place of this event changed."
+msgstr "Tapahtuman aika tai paikka muuttui."
+
+msgid "This event was postponed."
+msgstr "Tapahtuma on siirretty."
+
+#, python-format
+msgid "%(name)s invited you to co-host this event."
+msgstr "%(name)s kutsui sinut tapahtuman yhteisjärjestäjäksi."
+
+#, python-format
+msgid "Starts at %(time)s."
+msgstr "Alkaa klo %(time)s."
+
+msgid "How was it? Let the organizers know."
+msgstr "Millainen se oli? Kerro järjestäjille."
+
+msgid "A spot opened up: you're going!"
+msgstr "Paikka vapautui: osallistut!"
+
+#, python-format
+msgid "%(name)s mentioned you."
+msgstr "%(name)s mainitsi sinut."
+
+#, python-format
+msgid "%(name)s commented."
+msgstr "%(name)s kommentoi."
+
+#, python-format
+msgid "%(name)s liked your post."
+msgstr "%(name)s tykkäsi julkaisustasi."
+
+msgid "Your birth date is already set."
+msgstr "Syntymäaikasi on jo asetettu."
+
+msgid "The same picture is in the post twice."
+msgstr "Sama kuva on julkaisussa kahdesti."
+
+msgid "A post needs text, a picture or an event."
+msgstr "Julkaisussa täytyy olla tekstiä, kuva tai tapahtuma."
+
+msgid "Write something first."
+msgstr "Kirjoita ensin jotain."
+
+msgid "Use only lowercase letters, numbers and underscores."
+msgstr "Käytä vain pieniä kirjaimia, numeroita ja alaviivoja."
+
+msgid "Enter an Instagram username without the @."
+msgstr "Anna Instagram-käyttäjänimi ilman @-merkkiä."
+
+msgid "Pending"
+msgstr "Odottaa"
+
+msgid "Approved"
+msgstr "Hyväksytty"
+
+msgid "Rejected"
+msgstr "Hylätty"
+
+msgid "Only the organization's admins can do this."
+msgstr "Vain järjestön ylläpitäjät voivat tehdä tämän."
+
+msgid "No person has this username."
+msgstr "Kenelläkään ei ole tätä käyttäjänimeä."
+
+msgid "They are already a member."
+msgstr "Hän on jo jäsen."
+
+msgid "This organization is already verified."
+msgstr "Järjestö on jo vahvistettu."
+
+msgid "An organization needs at least one admin."
+msgstr "Järjestöllä täytyy olla vähintään yksi ylläpitäjä."
+
+msgid "You cannot follow yourself."
+msgstr "Et voi seurata itseäsi."
+
+msgid "Unblock this profile to follow it."
+msgstr "Poista profiilin esto seurataksesi sitä."
+
+msgid "This profile's followers are hidden."
+msgstr "Tämän profiilin seuraajat on piilotettu."
+
+msgid "Use upcoming or past."
+msgstr "Käytä arvoa upcoming tai past."
+
+msgid "This isn't a university email address we know."
+msgstr "Tämä ei ole tuntemamme yliopiston sähköpostiosoite."
+
+msgid "[Sidequest] Your student verification code"
+msgstr "[Sidequest] Opiskelijavahvistuksen koodisi"
+
+#, python-format
+msgid "Your code is %(code)s. Enter it in Sidequest within 15 minutes to show you study at %(university)s. If you didn't ask for this, ignore this email."
+msgstr "Koodisi on %(code)s. Syötä se Sidequestiin 15 minuutin kuluessa osoittaaksesi, että opiskelet yliopistossa %(university)s. Jos et pyytänyt tätä, voit jättää viestin huomiotta."
+
+msgid "The code has expired. Ask for a new one."
+msgstr "Koodi on vanhentunut. Pyydä uusi."
+
+msgid "Too many wrong codes. Ask for a new one."
+msgstr "Liian monta väärää koodia. Pyydä uusi."
+
+msgid "The code is wrong."
+msgstr "Koodi on väärä."
+
+#~ msgid "Choose admin or editor."
+#~ msgstr "Valitse ylläpitäjä tai muokkaaja."
+
+#: accounts/signup.py:35
+msgid "Enter your name."
+msgstr "Kirjoita nimesi."
+
+#: accounts/signup.py:42
+msgid "Use at most 30 characters."
+msgstr "Käytä enintään 30 merkkiä."
+
+#: accounts/signup.py:45
+msgid "That username is taken. Try another one."
+msgstr "Käyttäjänimi on jo käytössä. Kokeile toista."
+
+#: images/serializers.py
+msgid "The crop has to stay inside the picture."
+msgstr "Rajauksen täytyy pysyä kuvan sisällä."

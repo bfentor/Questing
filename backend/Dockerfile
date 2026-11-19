@@ -1,8 +1,11 @@
+# The API's image, which Coolify builds and runs on the server (DEPLOYMENT.md).
+# To try it locally: docker compose up --build (docker-compose.yml).
 FROM python:3.14-slim
 
-# GeoDjango needs GDAL, GEOS and PROJ.
+# gdal-bin: GDAL, GEOS and PROJ for GeoDjango. gettext: compiles the
+# translations. curl: the health check.
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends gdal-bin \
+    && apt-get install -y --no-install-recommends gdal-bin gettext curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=ghcr.io/astral-sh/uv:0.13 /uv /usr/local/bin/uv
@@ -13,7 +16,8 @@ ENV PYTHONUNBUFFERED=1 \
     UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PROJECT_ENVIRONMENT=/opt/venv \
-    PATH="/opt/venv/bin:$PATH"
+    PATH="/opt/venv/bin:$PATH" \
+    STATIC_ROOT=/app/staticfiles
 
 WORKDIR /app
 
@@ -22,5 +26,21 @@ RUN uv sync --locked --no-dev --no-install-project
 
 COPY . .
 
+# Settings require these, but neither command touches the database or secrets.
+RUN export DJANGO_SECRET_KEY=build DATABASE_URL=postgis://build@localhost/build \
+    && python manage.py collectstatic --noinput \
+    && python manage.py compilemessages --ignore=.venv
+
+# The commit, reported by /healthz (Coolify passes it). Late in the file, so
+# a new commit doesn't throw away the cached layers above.
+ARG SOURCE_COMMIT
+ENV SOURCE_COMMIT=$SOURCE_COMMIT
+
+RUN useradd --uid 10001 --no-create-home app && chown -R app /app
+USER app
+
 EXPOSE 8000
-CMD ["gunicorn", "config.wsgi", "--bind", "0.0.0.0:8000"]
+HEALTHCHECK --interval=10s --timeout=5s --start-period=60s \
+    CMD curl -fsS http://localhost:8000/healthz || exit 1
+ENTRYPOINT ["./entrypoint.sh"]
+CMD ["gunicorn", "config.wsgi", "--bind", "0.0.0.0:8000", "--access-logfile", "-"]

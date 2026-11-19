@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -6,11 +7,13 @@ import { BottomTabInset, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 import { Button } from './button';
+import { useColumnStyle } from './column';
 import { screenStyles } from './screen';
+import { SkeletonList } from './skeleton';
 import { ThemedText } from './themed-text';
 
 /** The parts of a TanStack infinite query over paginated results that a feed needs. */
-type FeedQuery<T> = {
+export type FeedQuery<T> = {
   data?: { pages: { results: T[] }[] };
   isPending: boolean;
   isError: boolean;
@@ -27,12 +30,26 @@ type FeedListProps<T> = {
   keyExtractor: (item: T) => string;
   header?: ReactElement;
   emptyText: string;
+  /** Shown under the empty text, e.g. a way to widen the search. */
+  emptyAction?: ReactElement;
+  /** Set when a navigation header already handles the top inset. */
+  hasHeader?: boolean;
 };
 
 /** Infinite-scrolling, pull-to-refresh list for any of the feeds. */
-export function FeedList<T>({ query, renderItem, keyExtractor, header, emptyText }: FeedListProps<T>) {
+export function FeedList<T>({
+  query,
+  renderItem,
+  keyExtractor,
+  header,
+  emptyText,
+  emptyAction,
+  hasHeader,
+}: FeedListProps<T>) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const column = useColumnStyle();
   const items = query.data?.pages.flatMap((page) => page.results) ?? [];
 
   return (
@@ -43,16 +60,25 @@ export function FeedList<T>({ query, renderItem, keyExtractor, header, emptyText
       ListHeaderComponent={header}
       ListEmptyComponent={
         query.isPending ? (
-          <ActivityIndicator style={styles.status} />
+          <View style={styles.skeleton}>
+            <SkeletonList />
+          </View>
         ) : query.isError ? (
           <View style={styles.status}>
-            <ThemedText themeColor="textSecondary">Couldn&apos;t load this feed.</ThemedText>
-            <Button title="Try again" variant="secondary" onPress={() => query.refetch()} />
+            <ThemedText themeColor="textSecondary">{t('feed.loadFailed')}</ThemedText>
+            <Button
+              title={t('common.tryAgain')}
+              variant="secondary"
+              onPress={() => query.refetch()}
+            />
           </View>
         ) : (
-          <ThemedText themeColor="textSecondary" style={styles.status}>
-            {emptyText}
-          </ThemedText>
+          <View style={styles.status}>
+            <ThemedText themeColor="textSecondary" style={styles.emptyText}>
+              {emptyText}
+            </ThemedText>
+            {emptyAction}
+          </View>
         )
       }
       ListFooterComponent={query.isFetchingNextPage ? <ActivityIndicator /> : undefined}
@@ -74,19 +100,26 @@ export function FeedList<T>({ query, renderItem, keyExtractor, header, emptyText
       contentContainerStyle={[
         screenStyles.content,
         {
-          paddingTop: insets.top + Spacing.four,
+          paddingTop: (hasHeader ? 0 : insets.top) + Spacing.four,
           paddingBottom: insets.bottom + BottomTabInset + Spacing.four,
         },
+        column,
       ]}
     />
   );
 }
 
 const styles = StyleSheet.create({
+  skeleton: {
+    paddingTop: Spacing.three,
+  },
   status: {
     alignItems: 'center',
     gap: Spacing.three,
     paddingVertical: Spacing.six,
+    textAlign: 'center',
+  },
+  emptyText: {
     textAlign: 'center',
   },
 });

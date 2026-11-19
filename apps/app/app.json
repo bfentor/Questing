@@ -2,7 +2,7 @@
   "expo": {
     "name": "Sidequest",
     "slug": "sidequest",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "sidequest",
@@ -39,7 +39,14 @@
         {
           "locationWhenInUsePermission": "Sidequest uses your location to show events near you."
         }
-      ]
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Sidequest lets you choose photos for your profile, events and posts."
+        }
+      ],
+      "expo-maps"
     ],
     "experiments": {
       "typedRoutes": true,

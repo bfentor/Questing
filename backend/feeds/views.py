@@ -10,12 +10,48 @@ from rest_framework import generics, permissions, serializers
 
 from events.models import Event
 from events.serializers import EventSerializer, NearbyEventSerializer
+from moderation.visibility import viewer_profile
 from posts.models import Post
 from posts.serializers import PostSerializer
+from posts.text import hashtag_pattern
 
-from .pagination import NearbyPagination, NewestFirstCursorPagination, UpcomingCursorPagination
+from .pagination import (
+    NearbyPagination,
+    NewestFirstCursorPagination,
+    RankedPagination,
+    UpcomingCursorPagination,
+)
+from .ranking import for_you, trending
 
 
+class FeedFilterSerializer(serializers.Serializer):
+    category = serializers.ListField(
+        child=serializers.SlugField(),
+        required=False,
+        help_text="Category slugs; events in any of them.",
+    )
+    starts_after = serializers.DateTimeField(
+        required=False, help_text="Events still going on after this time."
+    )
+    starts_before = serializers.DateTimeField(
+        required=False, help_text="Events starting before this time."
+    )
+    free = serializers.BooleanField(required=False, default=False, help_text="Free events only.")
+
+
+def filter_events(events, query_params):
+    filters = FeedFilterSerializer(data=query_params)
+    filters.is_valid(raise_exception=True)
+    data = filters.validated_data
+    return events.filtered(
+        categories=data.get("category", []),
+        starts_after=data.get("starts_after"),
+        starts_before=data.get("starts_before"),
+        free=data["free"],
+    )
+
+
+@extend_schema(parameters=[FeedFilterSerializer])
 class UpcomingFeedView(generics.ListAPIView):
     """Ongoing and future events, soonest first."""
 
@@ -24,7 +60,9 @@ class UpcomingFeedView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
-        return Event.objects.not_ended().select_related("organizer")
+        viewer = viewer_profile(self.request)
+        events = Event.objects.not_ended().in_feeds_of(viewer)
+        return filter_events(events, self.request.query_params).for_display(viewer)
 
 
 class NearbyQuerySerializer(serializers.Serializer):
@@ -33,7 +71,7 @@ class NearbyQuerySerializer(serializers.Serializer):
     radius_km = serializers.FloatField(min_value=0.1, max_value=100, default=10)
 
 
-@extend_schema(parameters=[NearbyQuerySerializer])
+@extend_schema(parameters=[NearbyQuerySerializer, FeedFilterSerializer])
 class NearbyFeedView(generics.ListAPIView):
     """Ongoing and future events within a radius of the given position, nearest first.
 
@@ -48,21 +86,98 @@ class NearbyFeedView(generics.ListAPIView):
         params = NearbyQuerySerializer(data=self.request.query_params)
         params.is_valid(raise_exception=True)
         point = Point(params.validated_data["lng"], params.validated_data["lat"], srid=4326)
+        viewer = viewer_profile(self.request)
+        events = Event.objects.not_ended().in_feeds_of(viewer)
         return (
-            Event.objects.not_ended()
+            filter_events(events, self.request.query_params)
             .near(point, params.validated_data["radius_km"])
-            .select_related("organizer")
+            .for_display(viewer)
         )
 
 
+@extend_schema(parameters=[FeedFilterSerializer])
+class TrendingFeedView(generics.ListAPIView):
+    """Upcoming events gaining the most RSVPs lately."""
+
+    serializer_class = EventSerializer
+    pagination_class = RankedPagination
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        viewer = viewer_profile(self.request)
+        events = Event.objects.not_ended().in_feeds_of(viewer)
+        return trending(filter_events(events, self.request.query_params)).for_display(viewer)
+
+
+class ForYouQuerySerializer(serializers.Serializer):
+    lat = serializers.FloatField(min_value=-90, max_value=90, required=False)
+    lng = serializers.FloatField(min_value=-180, max_value=180, required=False)
+
+    def validate(self, attrs):
+        if ("lat" in attrs) != ("lng" in attrs):
+            raise serializers.ValidationError("Give both lat and lng, or neither.")
+        return attrs
+
+
+@extend_schema(parameters=[ForYouQuerySerializer, FeedFilterSerializer])
+class ForYouFeedView(generics.ListAPIView):
+    """Upcoming events picked for the signed-in user; see feeds.ranking.for_you.
+
+    The optional position favours nearby events and is never stored.
+    """
+
+    serializer_class = EventSerializer
+    pagination_class = RankedPagination
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        params = ForYouQuerySerializer(data=self.request.query_params)
+        params.is_valid(raise_exception=True)
+        data = params.validated_data
+        point = Point(data["lng"], data["lat"], srid=4326) if "lat" in data else None
+        viewer = self.request.user.profile
+        events = Event.objects.not_ended().in_feeds_of(viewer)
+        events = filter_events(events, self.request.query_params)
+        return for_you(events, viewer, point).for_display(viewer)
+
+
+class FollowingQuerySerializer(serializers.Serializer):
+    hide_past = serializers.BooleanField(
+        required=False, default=False, help_text="Leave out posts about events that have ended."
+    )
+
+
+@extend_schema(parameters=[FollowingQuerySerializer])
 class FollowingFeedView(generics.ListAPIView):
-    """Posts from profiles the signed-in user follows (and their own), newest first."""
+    """Posts from profiles the signed-in user follows (and their own), newest first.
+
+    An event shared more than once shows only in its newest post.
+    """
 
     serializer_class = PostSerializer
     pagination_class = NewestFirstCursorPagination
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Post.objects.following_feed_for(self.request.user.profile).select_related(
-            "author", "event__organizer"
+        params = FollowingQuerySerializer(data=self.request.query_params)
+        params.is_valid(raise_exception=True)
+        viewer = self.request.user.profile
+        posts = Post.objects.following_feed_for(viewer).in_feeds_of(viewer).latest_per_event()
+        if params.validated_data["hide_past"]:
+            posts = posts.without_past_events()
+        return posts.for_display(viewer)
+
+
+class HashtagFeedView(generics.ListAPIView):
+    """Posts with a #hashtag (without the #, any case), newest first."""
+
+    serializer_class = PostSerializer
+    pagination_class = NewestFirstCursorPagination
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        viewer = viewer_profile(self.request)
+        posts = Post.objects.in_feeds_of(viewer).filter(
+            body__iregex=hashtag_pattern(self.kwargs["tag"])
         )
+        return posts.for_display(viewer)

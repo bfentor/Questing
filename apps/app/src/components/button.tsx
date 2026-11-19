@@ -2,21 +2,36 @@ import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useShape } from '@/hooks/use-shape';
 
 import { ThemedText } from './themed-text';
 
 type ButtonProps = {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'danger';
+  /** `small` is a compact pill, e.g. Follow or Edit profile beside a profile picture. */
+  size?: 'regular' | 'small';
   disabled?: boolean;
   loading?: boolean;
 };
 
-export function Button({ title, onPress, variant = 'primary', disabled, loading }: ButtonProps) {
+export function Button({
+  title,
+  onPress,
+  variant = 'primary',
+  size = 'regular',
+  disabled,
+  loading,
+}: ButtonProps) {
   const theme = useTheme();
-  const primary = variant === 'primary';
-  const foreground = primary ? theme.onTint : theme.text;
+  const shape = useShape();
+  const background = {
+    primary: theme.tint,
+    secondary: theme.backgroundElement,
+    danger: theme.danger,
+  }[variant];
+  const foreground = variant === 'secondary' ? theme.text : theme.onTint;
 
   return (
     <Pressable
@@ -25,13 +40,16 @@ export function Button({ title, onPress, variant = 'primary', disabled, loading 
       disabled={disabled || loading}
       style={({ pressed }) => [
         styles.button,
-        { backgroundColor: primary ? theme.tint : theme.backgroundElement },
+        shape.button,
+        size === 'small' && styles.small,
+        variant !== 'secondary' && shape.raised,
+        { backgroundColor: background },
         (pressed || disabled) && styles.dimmed,
       ]}>
       {loading ? (
         <ActivityIndicator color={foreground} />
       ) : (
-        <ThemedText type="smallBold" style={{ color: foreground }}>
+        <ThemedText type="smallBold" style={{ color: foreground, textAlign: 'center' }}>
           {title}
         </ThemedText>
       )}
@@ -43,9 +61,15 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 44,
     paddingHorizontal: Spacing.four,
-    borderRadius: Spacing.three,
+    // Room around labels that wrap onto two lines on narrow screens.
+    paddingVertical: Spacing.two,
+  },
+  small: {
+    // Still a comfortable tap target with the hit slop of the row around it.
+    minHeight: 34,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one,
   },
   dimmed: {
     opacity: 0.6,

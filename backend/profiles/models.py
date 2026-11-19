@@ -1,14 +1,34 @@
 from django.conf import settings
+from django.contrib.postgres.indexes import GinIndex, OpClass
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import Count, Exists, OuterRef, Q
+from django.db.models.functions import Upper
+from django.utils.translation import gettext_lazy as _
 
 handle_validator = RegexValidator(
-    r"^[a-z0-9_]+$", "Use only lowercase letters, numbers and underscores."
+    r"^[a-z0-9_]+$", _("Use only lowercase letters, numbers and underscores.")
+)
+instagram_validator = RegexValidator(
+    r"^[A-Za-z0-9_.]{1,30}$", _("Enter an Instagram username without the @.")
 )
 
 
 class ProfileQuerySet(models.QuerySet):
+    def private_to(self, viewer):
+        """Private profiles whose posts and events the viewer may not see."""
+        queryset = self.filter(is_private=True)
+        if viewer is None:
+            return queryset
+        return queryset.exclude(pk=viewer.pk).exclude(followed_by__follower=viewer)
+
+    def visible_to(self, viewer):
+        """Profiles the viewer may see: not removed, and not ones that blocked the viewer."""
+        queryset = self.filter(removed_at__isnull=True)
+        if viewer is not None:
+            queryset = queryset.exclude(blocks__blocked=viewer)
+        return queryset
+
     def manageable_by(self, user):
         """Profiles `user` may act as: their own and organizations they belong to."""
         if not user.is_authenticated:
@@ -16,15 +36,30 @@ class ProfileQuerySet(models.QuerySet):
         return self.filter(Q(user=user) | Q(memberships__user=user)).distinct()
 
     def with_social_stats(self, viewer):
-        """Annotate follower/following counts and whether `viewer` follows each profile."""
+        """Annotate follower/following counts and the viewer's follow, block and mute state.
+
+        `viewer` is the requesting user's profile, or None when signed out.
+        """
+        # Imported here: moderation's models depend on this module.
+        from moderation.models import Block, Mute
+
         qs = self.annotate(
             follower_count=Count("followed_by", distinct=True),
             following_count=Count("follows", distinct=True),
         )
-        if viewer.is_authenticated:
-            viewer_follows = Follow.objects.filter(follower__user=viewer, followee=OuterRef("pk"))
-            return qs.annotate(is_followed=Exists(viewer_follows))
-        return qs.annotate(is_followed=models.Value(False))
+        if viewer is None:
+            false = models.Value(False)
+            return qs.annotate(
+                is_followed=false, is_requested=false, is_blocked=false, is_muted=false
+            )
+        return qs.annotate(
+            is_followed=Exists(Follow.objects.filter(follower=viewer, followee=OuterRef("pk"))),
+            is_requested=Exists(
+                FollowRequest.objects.filter(requester=viewer, target=OuterRef("pk"))
+            ),
+            is_blocked=Exists(Block.objects.filter(blocker=viewer, blocked=OuterRef("pk"))),
+            is_muted=Exists(Mute.objects.filter(muter=viewer, muted=OuterRef("pk"))),
+        )
 
 
 class Profile(models.Model):
@@ -44,7 +79,29 @@ class Profile(models.Model):
     handle = models.CharField(max_length=30, unique=True, validators=[handle_validator])
     display_name = models.CharField(max_length=80)
     bio = models.TextField(max_length=500, blank=True)
-    avatar = models.ImageField(upload_to="avatars/", blank=True)
+    avatar = models.ForeignKey(
+        "images.Image", on_delete=models.SET_NULL, null=True, blank=True, related_name="avatar_of"
+    )
+    cover = models.ForeignKey(
+        "images.Image", on_delete=models.SET_NULL, null=True, blank=True, related_name="cover_of"
+    )
+    # What the person likes; used for recommendations.
+    interests = models.ManyToManyField("events.Category", blank=True, related_name="interested")
+    # Optional details people can show on their profile.
+    pronouns = models.CharField(max_length=30, blank=True)
+    university = models.CharField(max_length=100, blank=True)
+    faculty = models.CharField(max_length=100, blank=True)
+    study_year = models.PositiveSmallIntegerField(null=True, blank=True)
+    website = models.URLField(blank=True)
+    instagram = models.CharField(max_length=30, blank=True, validators=[instagram_validator])
+    # Set by moderators for official organizations (student unions, guilds, clubs).
+    verified = models.BooleanField(default=False)
+    # Privacy. A private profile approves its followers, and only they see its
+    # posts and events.
+    is_private = models.BooleanField(default=False)
+    hide_followers = models.BooleanField(default=False)
+    # Leave this profile out of the lists of who's going to events.
+    hide_attendance = models.BooleanField(default=False)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -53,10 +110,16 @@ class Profile(models.Model):
         related_name="profile",
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    # Set by moderators; hides the profile and everything it published.
+    removed_at = models.DateTimeField(null=True, blank=True)
 
     objects = ProfileQuerySet.as_manager()
 
     class Meta:
+        indexes = [
+            # Typo-tolerant name search (search/views.py).
+            GinIndex(OpClass(Upper("display_name"), name="gin_trgm_ops"), name="profile_name_trgm"),
+        ]
         constraints = [
             models.CheckConstraint(
                 condition=(
@@ -113,3 +176,63 @@ class Follow(models.Model):
 
     def __str__(self):
         return f"{self.follower} follows {self.followee}"
+
+
+class FollowRequest(models.Model):
+    """Asking to follow a private profile; becomes a Follow when accepted."""
+
+    requester = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="sent_requests")
+    target = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="follow_requests")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["requester", "target"], name="unique_follow_request"),
+        ]
+
+    def __str__(self):
+        return f"{self.requester} asks to follow {self.target}"
+
+
+class Invitation(models.Model):
+    """An organization asking someone to become a member; they accept or decline."""
+
+    organization = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="invitations")
+    invitee = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="invitations"
+    )
+    role = models.CharField(max_length=20, choices=Membership.Role.choices)
+    invited_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["organization", "invitee"], name="unique_invitation"),
+        ]
+
+    def __str__(self):
+        return f"{self.invitee} invited to {self.organization}"
+
+
+class VerificationRequest(models.Model):
+    """An organization asking moderators for the verified badge."""
+
+    class Status(models.TextChoices):
+        PENDING = "pending", _("Pending")
+        APPROVED = "approved", _("Approved")
+        REJECTED = "rejected", _("Rejected")
+
+    organization = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, related_name="verification_requests"
+    )
+    requested_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+"
+    )
+    message = models.TextField(max_length=2000)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Verification of {self.organization} ({self.status})"

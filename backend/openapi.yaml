@@ -3,6 +3,41 @@ info:
   title: Sidequest API
   version: 0.1.0
 paths:
+  /api/categories/:
+    get:
+      operationId: categories_list
+      description: Every category, in display order, named in the request's language.
+      tags:
+      - categories
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+          description: ''
+  /api/comments/{id}/:
+    delete:
+      operationId: comments_destroy
+      description: Delete a comment you wrote, or one on your post or event.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - comments
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/events/:
     post:
       operationId: events_create
@@ -102,11 +137,246 @@ paths:
       responses:
         '204':
           description: No response body
-  /api/feeds/following/:
+  /api/events/{id}/announcements/:
+    post:
+      operationId: events_announcements_create
+      description: Send a message to everyone going, interested or waitlisted (hosts
+        only).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this event.
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnouncementRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AnnouncementRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AnnouncementRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnouncementSent'
+          description: ''
+  /api/events/{id}/attendance/:
+    put:
+      operationId: events_attendance_update
+      description: RSVP to the event.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this event.
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RsvpRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RsvpRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RsvpRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceSummary'
+          description: ''
+    delete:
+      operationId: events_attendance_destroy
+      description: Withdraw your RSVP.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this event.
+        required: true
+      tags:
+      - events
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceSummary'
+          description: ''
+  /api/events/{id}/attendees/:
     get:
-      operationId: feeds_following_list
-      description: Posts from profiles the signed-in user follows (and their own),
-        newest first.
+      operationId: events_attendees_list
+      description: |-
+        Who's going (or interested): people you follow first, then the latest RSVPs.
+
+        Leaves out people who hide their attendance (except yourself), blocked
+        profiles and private profiles you don't follow.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this event.
+        required: true
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: status
+        schema:
+          enum:
+          - going
+          - interested
+          type: string
+          default: going
+          minLength: 1
+        description: |-
+          * `going` - going
+          * `interested` - interested
+      tags:
+      - events
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProfileSummaryList'
+          description: ''
+  /api/events/{id}/attendees/export/:
+    get:
+      operationId: events_attendees_export_retrieve
+      description: Everyone who answered, as CSV (hosts only). Includes people who
+        hide their attendance.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this event.
+        required: true
+      tags:
+      - events
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            text/csv:
+              schema:
+                type: string
+          description: CSV file
+  /api/events/{id}/co-host/:
+    get:
+      operationId: events_co_host_list
+      description: Pending co-host invitations of this event for profiles you manage.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - events
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileSummary'
+          description: ''
+  /api/events/{id}/co-host/{handle}/:
+    post:
+      operationId: events_co_host_create
+      description: |-
+        Accept co-hosting as one of your profiles (POST), or decline or stop (DELETE).
+
+        Answering for one date of a series answers for all of them.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - events
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+    delete:
+      operationId: events_co_host_destroy
+      description: |-
+        Accept co-hosting as one of your profiles (POST), or decline or stop (DELETE).
+
+        Answering for one date of a series answers for all of them.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - events
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/events/{id}/comments/:
+    get:
+      operationId: events_comments_list
+      description: Questions and comments on an event.
       parameters:
       - name: cursor
         required: false
@@ -114,10 +384,353 @@ paths:
         description: The pagination cursor value.
         schema:
           type: string
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - events
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCommentList'
+          description: ''
+    post:
+      operationId: events_comments_create
+      description: Questions and comments on an event.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+  /api/events/{id}/feedback/:
+    get:
+      operationId: events_feedback_retrieve
+      description: Ratings and comments from people who went, without names (hosts
+        only).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this event.
+        required: true
+      tags:
+      - events
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackSummary'
+          description: ''
+  /api/events/{id}/feedback/mine/:
+    get:
+      operationId: events_feedback_mine_retrieve
+      description: Your rating of the event (GET), or give or change it (PUT) once
+        it has ended.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this event.
+        required: true
+      tags:
+      - events
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyFeedback'
+          description: ''
+    put:
+      operationId: events_feedback_mine_update
+      description: Your rating of the event (GET), or give or change it (PUT) once
+        it has ended.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this event.
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyFeedback'
+          description: ''
+  /api/events/{id}/photos/:
+    get:
+      operationId: events_photos_list
+      description: |-
+        Pictures from posts sharing an event, newest first: the event's photo gallery.
+
+        Adding a photo is posting it with the event attached, so photos can be
+        liked, commented on and reported like any post.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - events
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventPhotoList'
+          description: ''
+  /api/events/{id}/save/:
+    put:
+      operationId: events_save_update
+      description: Save the event for later (PUT), or forget it (DELETE). Only you
+        see what you saved.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this event.
+        required: true
+      tags:
+      - events
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+    delete:
+      operationId: events_save_destroy
+      description: Save the event for later (PUT), or forget it (DELETE). Only you
+        see what you saved.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this event.
+        required: true
+      tags:
+      - events
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/events/{id}/view/:
+    post:
+      operationId: events_view_create
+      description: Count that someone opened the event's page (for its hosts' dashboard).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this event.
+        required: true
+      tags:
+      - events
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/feeds/following/:
+    get:
+      operationId: feeds_following_list
+      description: |-
+        Posts from profiles the signed-in user follows (and their own), newest first.
+
+        An event shared more than once shows only in its newest post.
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: query
+        name: hide_past
+        schema:
+          type: boolean
+          default: false
+        description: Leave out posts about events that have ended.
       tags:
       - feeds
       security:
       - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPostList'
+          description: ''
+  /api/feeds/for-you/:
+    get:
+      operationId: feeds_for_you_list
+      description: |-
+        Upcoming events picked for the signed-in user; see feeds.ranking.for_you.
+
+        The optional position favours nearby events and is never stored.
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            pattern: ^[-a-zA-Z0-9_]+$
+        description: Category slugs; events in any of them.
+      - in: query
+        name: free
+        schema:
+          type: boolean
+          default: false
+        description: Free events only.
+      - in: query
+        name: lat
+        schema:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: lng
+        schema:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: starts_after
+        schema:
+          type: string
+          format: date-time
+        description: Events still going on after this time.
+      - in: query
+        name: starts_before
+        schema:
+          type: string
+          format: date-time
+        description: Events starting before this time.
+      tags:
+      - feeds
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventList'
+          description: ''
+  /api/feeds/hashtag/{tag}/:
+    get:
+      operationId: feeds_hashtag_list
+      description: 'Posts with a #hashtag (without the #, any case), newest first.'
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: path
+        name: tag
+        schema:
+          type: string
+        required: true
+      tags:
+      - feeds
+      security:
+      - XSessionTokenAuth: []
+      - {}
       responses:
         '200':
           content:
@@ -133,6 +746,21 @@ paths:
 
         The position is only used for this query and is never stored.
       parameters:
+      - in: query
+        name: category
+        schema:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            pattern: ^[-a-zA-Z0-9_]+$
+        description: Category slugs; events in any of them.
+      - in: query
+        name: free
+        schema:
+          type: boolean
+          default: false
+        description: Free events only.
       - in: query
         name: lat
         schema:
@@ -169,6 +797,18 @@ paths:
           maximum: 100
           minimum: 0.1
           default: 10.0
+      - in: query
+        name: starts_after
+        schema:
+          type: string
+          format: date-time
+        description: Events still going on after this time.
+      - in: query
+        name: starts_before
+        schema:
+          type: string
+          format: date-time
+        description: Events starting before this time.
       tags:
       - feeds
       security:
@@ -181,17 +821,50 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedNearbyEventList'
           description: ''
-  /api/feeds/upcoming/:
+  /api/feeds/trending/:
     get:
-      operationId: feeds_upcoming_list
-      description: Ongoing and future events, soonest first.
+      operationId: feeds_trending_list
+      description: Upcoming events gaining the most RSVPs lately.
       parameters:
-      - name: cursor
+      - in: query
+        name: category
+        schema:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            pattern: ^[-a-zA-Z0-9_]+$
+        description: Category slugs; events in any of them.
+      - in: query
+        name: free
+        schema:
+          type: boolean
+          default: false
+        description: Free events only.
+      - name: limit
         required: false
         in: query
-        description: The pagination cursor value.
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: starts_after
         schema:
           type: string
+          format: date-time
+        description: Events still going on after this time.
+      - in: query
+        name: starts_before
+        schema:
+          type: string
+          format: date-time
+        description: Events starting before this time.
       tags:
       - feeds
       security:
@@ -203,6 +876,179 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedEventList'
+          description: ''
+  /api/feeds/upcoming/:
+    get:
+      operationId: feeds_upcoming_list
+      description: Ongoing and future events, soonest first.
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            pattern: ^[-a-zA-Z0-9_]+$
+        description: Category slugs; events in any of them.
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: query
+        name: free
+        schema:
+          type: boolean
+          default: false
+        description: Free events only.
+      - in: query
+        name: starts_after
+        schema:
+          type: string
+          format: date-time
+        description: Events still going on after this time.
+      - in: query
+        name: starts_before
+        schema:
+          type: string
+          format: date-time
+        description: Events starting before this time.
+      tags:
+      - feeds
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventList'
+          description: ''
+  /api/flags/:
+    get:
+      operationId: flags_retrieve
+      description: 'Which feature flags are on for you, as {"name": true}. Flags left
+        out are off.'
+      tags:
+      - flags
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: boolean
+          description: ''
+  /api/geocode/:
+    get:
+      operationId: geocode_list
+      description: Search for an address or place, for the event form's location.
+      parameters:
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: What to look for.
+        required: true
+      tags:
+      - geocode
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GeocodeResult'
+          description: ''
+  /api/images/:
+    post:
+      operationId: images_create
+      description: Upload a picture, to attach to a profile, event or post by its
+        id.
+      tags:
+      - images
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ImageUploadRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageUpload'
+          description: ''
+  /api/images/{id}/:
+    get:
+      operationId: images_retrieve
+      description: A picture, with the original it was cropped from (if it's a crop).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - images
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageDetail'
+          description: ''
+  /api/images/{id}/crop/:
+    post:
+      operationId: images_crop_create
+      description: |-
+        Make a new picture from part of an uploaded one, e.g. to frame a profile picture.
+
+        Cropping a crop starts again from its original, so a picture can be reframed (or zoomed
+        back out) any number of times without losing quality.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - images
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CropRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CropRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CropRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageDetail'
           description: ''
   /api/me/:
     get:
@@ -244,11 +1090,782 @@ paths:
               schema:
                 $ref: '#/components/schemas/Profile'
           description: ''
+  /api/me/accept-terms/:
+    post:
+      operationId: me_accept_terms_create
+      description: Accept the current terms of service and privacy policy.
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/me/account/delete/:
+    post:
+      operationId: me_account_delete_create
+      description: Permanently delete the signed-in user's account and everything
+        personal in it.
+      tags:
+      - me
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/me/attending/:
+    get:
+      operationId: me_attending_list
+      description: Events the signed-in user is going to, interested in or waitlisted
+        for.
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: when
+        schema:
+          type: string
+          enum:
+          - past
+          - upcoming
+          default: upcoming
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventList'
+          description: ''
+  /api/me/blocked/:
+    get:
+      operationId: me_blocked_list
+      description: Profiles the signed-in user has blocked.
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileSummary'
+          description: ''
+  /api/me/events/:
+    get:
+      operationId: me_events_list
+      description: Events organized by the signed-in user or their organizations,
+        drafts included.
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: when
+        schema:
+          type: string
+          enum:
+          - past
+          - upcoming
+          default: upcoming
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventList'
+          description: ''
+  /api/me/export/:
+    get:
+      operationId: me_export_retrieve
+      description: Everything stored about the signed-in user, as a JSON file.
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/me/follow-requests/:
+    get:
+      operationId: me_follow_requests_list
+      description: People asking to follow the signed-in user's private profile, newest
+        first.
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProfileSummaryList'
+          description: ''
+  /api/me/follow-requests/{handle}/:
+    post:
+      operationId: me_follow_requests_create
+      description: Accept (POST) or decline (DELETE) someone's request to follow you.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+    delete:
+      operationId: me_follow_requests_destroy
+      description: Accept (POST) or decline (DELETE) someone's request to follow you.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/me/invitations/:
+    get:
+      operationId: me_invitations_list
+      description: Invitations to organizations waiting for the signed-in user's answer.
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invitation'
+          description: ''
+  /api/me/invitations/{id}/:
+    post:
+      operationId: me_invitations_create
+      description: Accept (POST) or decline (DELETE) an invitation.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+    delete:
+      operationId: me_invitations_destroy
+      description: Accept (POST) or decline (DELETE) an invitation.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/me/muted/:
+    get:
+      operationId: me_muted_list
+      description: Profiles the signed-in user has muted.
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileSummary'
+          description: ''
+  /api/me/profiles/:
+    get:
+      operationId: me_profiles_list
+      description: 'Profiles the signed-in user can publish as: their own, then their
+        organizations.'
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActingProfile'
+          description: ''
+  /api/me/saved/:
+    get:
+      operationId: me_saved_list
+      description: Events the signed-in user saved.
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: when
+        schema:
+          type: string
+          enum:
+          - past
+          - upcoming
+          default: upcoming
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventList'
+          description: ''
+  /api/me/settings/:
+    get:
+      operationId: me_settings_retrieve
+      description: 'Account-level settings: language and which notifications are pushed.'
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountSettings'
+          description: ''
+    patch:
+      operationId: me_settings_partial_update
+      description: 'Account-level settings: language and which notifications are pushed.'
+      tags:
+      - me
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAccountSettingsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAccountSettingsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAccountSettingsRequest'
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountSettings'
+          description: ''
+  /api/me/student/:
+    get:
+      operationId: me_student_retrieve
+      description: |-
+        Your student verification: see it (GET), send a code to a university
+        address (POST), or remove it (DELETE).
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentStatus'
+          description: ''
+    post:
+      operationId: me_student_create
+      description: |-
+        Your student verification: see it (GET), send a code to a university
+        address (POST), or remove it (DELETE).
+      tags:
+      - me
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentEmailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentEmailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentEmailRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/University'
+          description: ''
+    delete:
+      operationId: me_student_destroy
+      description: |-
+        Your student verification: see it (GET), send a code to a university
+        address (POST), or remove it (DELETE).
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/me/student/verify/:
+    post:
+      operationId: me_student_verify_create
+      description: Confirm the code sent to your university address.
+      tags:
+      - me
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentCodeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentCodeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentCodeRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentStatus'
+          description: ''
+  /api/me/suggestions/:
+    get:
+      operationId: me_suggestions_list
+      description: Up to ten profiles the signed-in user might want to follow.
+      parameters:
+      - in: query
+        name: kind
+        schema:
+          enum:
+          - person
+          - organization
+          type: string
+          minLength: 1
+        description: |-
+          Only people or organizations.
+
+          * `person` - Person
+          * `organization` - Organization
+      tags:
+      - me
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Profile'
+          description: ''
+  /api/notifications/:
+    get:
+      operationId: notifications_list
+      description: The signed-in user's inbox, newest first.
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - notifications
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNotificationList'
+          description: ''
+  /api/notifications/read/:
+    post:
+      operationId: notifications_read_create
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarkReadRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MarkReadRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MarkReadRequest'
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnreadCount'
+          description: ''
+  /api/notifications/unread/:
+    get:
+      operationId: notifications_unread_retrieve
+      tags:
+      - notifications
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnreadCount'
+          description: ''
+  /api/organizations/:
+    post:
+      operationId: organizations_create
+      description: Create organizations and manage them. They are shown like any profile
+        (/api/profiles/).
+      tags:
+      - organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganizationCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganizationCreateRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationCreate'
+          description: ''
+  /api/organizations/{handle}/:
+    patch:
+      operationId: organizations_partial_update
+      description: Edit the organization's profile (admins).
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileRequest'
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileSummary'
+          description: ''
+  /api/organizations/{handle}/invitations/:
+    get:
+      operationId: organizations_invitations_list
+      description: Invitations not answered yet (admins).
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - organizations
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invitation'
+          description: ''
+  /api/organizations/{handle}/members/:
+    get:
+      operationId: organizations_members_list
+      description: List the members (GET), or invite someone by handle (POST, admins).
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - organizations
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Member'
+          description: ''
+    post:
+      operationId: organizations_members_create
+      description: List the members (GET), or invite someone by handle (POST, admins).
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/InviteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InviteRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invitation'
+          description: ''
+  /api/organizations/{handle}/members/{member}/:
+    patch:
+      operationId: organizations_members_partial_update
+      description: |-
+        Change a member's role (PATCH, admins), or remove them (DELETE, admins).
+
+        Members can also DELETE themselves to leave.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: member
+        schema:
+          type: string
+        required: true
+      tags:
+      - organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMemberRoleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMemberRoleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMemberRoleRequest'
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+          description: ''
+    delete:
+      operationId: organizations_members_destroy
+      description: |-
+        Change a member's role (PATCH, admins), or remove them (DELETE, admins).
+
+        Members can also DELETE themselves to leave.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: member
+        schema:
+          type: string
+        required: true
+      tags:
+      - organizations
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/organizations/{handle}/verification/:
+    post:
+      operationId: organizations_verification_create
+      description: Ask moderators for the verified badge (admins).
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificationRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerificationRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerificationRequestRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationRequest'
+          description: ''
   /api/posts/:
     post:
       operationId: posts_create
-      description: Create, view and delete single posts. Listing happens through the
-        feeds.
+      description: Create, view, edit and delete single posts. Listing happens through
+        the feeds.
       tags:
       - posts
       requestBody:
@@ -274,8 +1891,8 @@ paths:
   /api/posts/{id}/:
     get:
       operationId: posts_retrieve
-      description: Create, view and delete single posts. Listing happens through the
-        feeds.
+      description: Create, view, edit and delete single posts. Listing happens through
+        the feeds.
       parameters:
       - in: path
         name: id
@@ -295,10 +1912,142 @@ paths:
               schema:
                 $ref: '#/components/schemas/Post'
           description: ''
+    patch:
+      operationId: posts_partial_update
+      description: Create, view, edit and delete single posts. Listing happens through
+        the feeds.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this post.
+        required: true
+      tags:
+      - posts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPostRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPostRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPostRequest'
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+          description: ''
     delete:
       operationId: posts_destroy
-      description: Create, view and delete single posts. Listing happens through the
-        feeds.
+      description: Create, view, edit and delete single posts. Listing happens through
+        the feeds.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this post.
+        required: true
+      tags:
+      - posts
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/posts/{id}/comments/:
+    get:
+      operationId: posts_comments_list
+      description: Base for the comments on one post or event, oldest first; writing
+        needs sign-in.
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - posts
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCommentList'
+          description: ''
+    post:
+      operationId: posts_comments_create
+      description: Base for the comments on one post or event, oldest first; writing
+        needs sign-in.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - posts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+  /api/posts/{id}/like/:
+    put:
+      operationId: posts_like_update
+      description: Like (PUT) or unlike (DELETE). The author hears about the first
+        like only.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this post.
+        required: true
+      tags:
+      - posts
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+    delete:
+      operationId: posts_like_destroy
+      description: Like (PUT) or unlike (DELETE). The author hears about the first
+        like only.
       parameters:
       - in: path
         name: id
@@ -334,9 +2083,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Profile'
           description: ''
-  /api/profiles/{handle}/follow/:
+  /api/profiles/{handle}/block/:
     post:
-      operationId: profiles_follow_create
+      operationId: profiles_block_create
+      description: POST to start blocking/muting a profile, DELETE to stop.
       parameters:
       - in: path
         name: handle
@@ -351,7 +2101,8 @@ paths:
         '204':
           description: No response body
     delete:
-      operationId: profiles_follow_destroy
+      operationId: profiles_block_destroy
+      description: POST to start blocking/muting a profile, DELETE to stop.
       parameters:
       - in: path
         name: handle
@@ -365,8 +2116,736 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/profiles/{handle}/calendars/:
+    get:
+      operationId: profiles_calendars_list
+      description: |-
+        Calendars (iCal feeds) whose events a profile you act for imports and keeps in sync.
+
+        Adding one syncs it straight away; after that it syncs every hour. Events
+        changed in Sidequest are overwritten by the next sync, so edit them in the
+        calendar.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - profiles
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CalendarSource'
+          description: ''
+    post:
+      operationId: profiles_calendars_create
+      description: |-
+        Calendars (iCal feeds) whose events a profile you act for imports and keeps in sync.
+
+        Adding one syncs it straight away; after that it syncs every hour. Events
+        changed in Sidequest are overwritten by the next sync, so edit them in the
+        calendar.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - profiles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalendarSourceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CalendarSourceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CalendarSourceRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarSource'
+          description: ''
+  /api/profiles/{handle}/calendars/{id}/:
+    delete:
+      operationId: profiles_calendars_destroy
+      description: Stop syncing a calendar. Events already imported stay, as ordinary
+        events.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profiles
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/profiles/{handle}/events/:
+    get:
+      operationId: profiles_events_list
+      description: 'Events this profile organizes: upcoming soonest first, or past
+        newest first.'
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: when
+        schema:
+          type: string
+          enum:
+          - past
+          - upcoming
+          default: upcoming
+        description: Which events.
+      tags:
+      - profiles
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventList'
+          description: ''
+  /api/profiles/{handle}/follow/:
+    post:
+      operationId: profiles_follow_create
+      description: Follow (POST) or unfollow (DELETE). Private profiles get a follow
+        request instead.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - profiles
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowStatus'
+          description: ''
+    delete:
+      operationId: profiles_follow_destroy
+      description: Follow (POST) or unfollow (DELETE). Private profiles get a follow
+        request instead.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - profiles
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/profiles/{handle}/followers/:
+    get:
+      operationId: profiles_followers_list
+      description: Profiles following this one, most recent first.
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - profiles
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProfileSummaryList'
+          description: ''
+  /api/profiles/{handle}/following/:
+    get:
+      operationId: profiles_following_list
+      description: Profiles this one follows, most recent first.
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - profiles
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProfileSummaryList'
+          description: ''
+  /api/profiles/{handle}/mute/:
+    post:
+      operationId: profiles_mute_create
+      description: POST to start blocking/muting a profile, DELETE to stop.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - profiles
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+    delete:
+      operationId: profiles_mute_destroy
+      description: POST to start blocking/muting a profile, DELETE to stop.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - profiles
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/profiles/{handle}/posts/:
+    get:
+      operationId: profiles_posts_list
+      description: This profile's posts, newest first.
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - profiles
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPostList'
+          description: ''
+  /api/profiles/{handle}/stats/:
+    get:
+      operationId: profiles_stats_retrieve
+      description: Views, RSVPs and follower growth for a profile you act for, over
+        the last 30 days.
+      parameters:
+      - in: path
+        name: handle
+        schema:
+          type: string
+        required: true
+      tags:
+      - profiles
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileStats'
+          description: ''
+  /api/push-devices/:
+    post:
+      operationId: push_devices_create
+      description: Register this device for push notifications.
+      tags:
+      - push-devices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushDeviceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PushDeviceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PushDeviceRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/push-devices/{token}/:
+    delete:
+      operationId: push_devices_destroy
+      description: Stop push notifications to a device, e.g. when signing out on it.
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      tags:
+      - push-devices
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/reports/:
+    post:
+      operationId: reports_create
+      description: Report a post, event or profile to the moderators.
+      tags:
+      - reports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+          description: ''
+  /api/search/:
+    get:
+      operationId: search_retrieve
+      description: Events and profiles matching a search, best matches first.
+      parameters:
+      - in: query
+        name: include_past
+        schema:
+          type: boolean
+          default: false
+        description: Also events that have ended.
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: What to look for.
+        required: true
+      tags:
+      - search
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResults'
+          description: ''
+  /api/universities/:
+    get:
+      operationId: universities_list
+      tags:
+      - universities
+      security:
+      - XSessionTokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/University'
+          description: ''
 components:
   schemas:
+    AccountSettings:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          readOnly: true
+          description: 'Change it through allauth: /_allauth/app/v1/account/email.'
+        language:
+          $ref: '#/components/schemas/LanguageEnum'
+        birth_date:
+          type: string
+          format: date
+          description: Can only be added when missing (older accounts).
+        terms_version:
+          type: string
+          readOnly: true
+          description: The version you accepted.
+        current_terms_version:
+          type: string
+          readOnly: true
+        email_digest:
+          type: boolean
+          description: A weekly email of upcoming events (off unless turned on).
+        onboarded:
+          type: boolean
+          description: Whether the first-run steps are done; set it once they are.
+        push:
+          type: object
+          additionalProperties:
+            type: boolean
+          description: Push on (true) or off (false), by notification kind. Missing
+            kinds are on.
+      required:
+      - current_terms_version
+      - email
+      - terms_version
+    ActingProfile:
+      type: object
+      description: Compact profile representation embedded in events and posts.
+      properties:
+        handle:
+          type: string
+          readOnly: true
+        display_name:
+          type: string
+          readOnly: true
+        kind:
+          allOf:
+          - $ref: '#/components/schemas/ProfileKindEnum'
+          readOnly: true
+        avatar:
+          allOf:
+          - $ref: '#/components/schemas/Image'
+          readOnly: true
+          nullable: true
+        verified:
+          type: boolean
+          readOnly: true
+        role:
+          allOf:
+          - $ref: '#/components/schemas/ActingProfileRoleEnum'
+          description: self for your own profile, otherwise your role in the organization.
+          readOnly: true
+      required:
+      - avatar
+      - display_name
+      - handle
+      - kind
+      - role
+      - verified
+    ActingProfileRoleEnum:
+      enum:
+      - self
+      - admin
+      - editor
+      type: string
+    AnnouncementRequest:
+      type: object
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 500
+      required:
+      - message
+    AnnouncementSent:
+      type: object
+      properties:
+        sent:
+          type: integer
+          description: How many people were notified.
+      required:
+      - sent
+    AttendanceStatusEnum:
+      enum:
+      - going
+      - interested
+      - waitlisted
+      type: string
+      description: |-
+        * `going` - Going
+        * `interested` - Interested
+        * `waitlisted` - On the waitlist
+    AttendanceSummary:
+      type: object
+      properties:
+        going:
+          type: integer
+        interested:
+          type: integer
+        waitlisted:
+          type: integer
+        mine:
+          nullable: true
+          description: |-
+            The signed-in user's RSVP, if any.
+
+            * `going` - Going
+            * `interested` - Interested
+            * `waitlisted` - On the waitlist
+          oneOf:
+          - $ref: '#/components/schemas/AttendanceStatusEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        is_full:
+          type: boolean
+        friends_going:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileSummary'
+          description: Up to 3 people you follow who are going.
+        friends_going_count:
+          type: integer
+          description: How many people you follow are going (who share their attendance).
+      required:
+      - friends_going
+      - friends_going_count
+      - going
+      - interested
+      - is_full
+      - mine
+      - waitlisted
+    CalendarSource:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          description: The calendar's iCal address (https:// or webcal://), e.g. a
+            Google Calendar's public address in iCal format.
+          maxLength: 2000
+        synced_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        error:
+          type: string
+          readOnly: true
+          description: 'Why the last sync failed: ''fetch'' (unreachable or not public)
+            or ''parse'' (not an iCal calendar). Empty when it worked.'
+        event_count:
+          type: integer
+          readOnly: true
+          description: Upcoming events from it.
+      required:
+      - error
+      - event_count
+      - id
+      - synced_at
+      - url
+    CalendarSourceRequest:
+      type: object
+      properties:
+        url:
+          type: string
+          minLength: 1
+          description: The calendar's iCal address (https:// or webcal://), e.g. a
+            Google Calendar's public address in iCal format.
+          maxLength: 2000
+      required:
+      - url
+    Category:
+      type: object
+      properties:
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          readOnly: true
+          description: In the request's language.
+        icon:
+          type: string
+          readOnly: true
+      required:
+      - icon
+      - name
+      - slug
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        author:
+          allOf:
+          - $ref: '#/components/schemas/ProfileSummary'
+          readOnly: true
+        body:
+          type: string
+          maxLength: 1000
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        can_delete:
+          type: boolean
+          readOnly: true
+          description: 'Whether you may delete it: you wrote it, or it''s on your
+            post or event.'
+      required:
+      - author
+      - body
+      - can_delete
+      - created_at
+      - id
+    CommentRequest:
+      type: object
+      properties:
+        author_handle:
+          type: string
+          minLength: 1
+          writeOnly: true
+          description: Comment as this profile (yourself or an organization you belong
+            to). Defaults to your own profile.
+        body:
+          type: string
+          minLength: 1
+          maxLength: 1000
+      required:
+      - body
+    Crop:
+      type: object
+      description: Part of a picture, as fractions of its width and height (0 to 1,
+        from the top left).
+      properties:
+        x:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0
+        y:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0
+        width:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0.01
+        height:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0.01
+      required:
+      - height
+      - width
+      - x
+      - y
+    CropRequest:
+      type: object
+      description: Part of a picture, as fractions of its width and height (0 to 1,
+        from the top left).
+      properties:
+        x:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0
+        y:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0
+        width:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0.01
+        height:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0.01
+      required:
+      - height
+      - width
+      - x
+      - y
     Event:
       type: object
       properties:
@@ -398,6 +2877,79 @@ components:
           allOf:
           - $ref: '#/components/schemas/LatLng'
           nullable: true
+        categories:
+          type: array
+          items:
+            type: string
+        capacity:
+          type: integer
+          minimum: 1
+          nullable: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/Image'
+          readOnly: true
+          nullable: true
+        online_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          nullable: true
+          description: In euros; empty for free events.
+        ticket_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        min_age:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        students_of:
+          allOf:
+          - $ref: '#/components/schemas/University'
+          nullable: true
+          readOnly: true
+          description: Only verified students of this university can RSVP.
+        visibility:
+          $ref: '#/components/schemas/EventVisibilityEnum'
+        status:
+          $ref: '#/components/schemas/EventStatusEnum'
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Leave out to publish now; empty for a draft; a future time
+            to schedule.
+        series_id:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        co_hosts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileSummary'
+          readOnly: true
+          description: Co-hosts who accepted.
+        attendance:
+          allOf:
+          - $ref: '#/components/schemas/AttendanceSummary'
+          readOnly: true
+        is_saved:
+          type: boolean
+          readOnly: true
+          description: Whether you saved this event.
         created_at:
           type: string
           format: date-time
@@ -407,13 +2959,38 @@ components:
           format: date-time
           readOnly: true
       required:
+      - attendance
+      - co_hosts
+      - cover
       - created_at
       - ends_at
       - id
+      - is_saved
       - organizer
+      - series_id
       - starts_at
+      - students_of
       - title
       - updated_at
+    EventPhoto:
+      type: object
+      description: A picture from a post that shares an event, for the event's gallery.
+      properties:
+        image:
+          allOf:
+          - $ref: '#/components/schemas/Image'
+          readOnly: true
+        post_id:
+          type: integer
+          readOnly: true
+        author:
+          allOf:
+          - $ref: '#/components/schemas/ProfileSummary'
+          readOnly: true
+      required:
+      - author
+      - image
+      - post_id
     EventRequest:
       type: object
       properties:
@@ -445,18 +3022,355 @@ components:
           allOf:
           - $ref: '#/components/schemas/LatLngRequest'
           nullable: true
+        categories:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        capacity:
+          type: integer
+          minimum: 1
+          nullable: true
+        cover_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+          description: An image uploaded with POST /api/images/.
+        online_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          nullable: true
+          description: In euros; empty for free events.
+        ticket_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        min_age:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        students_of_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+        visibility:
+          $ref: '#/components/schemas/EventVisibilityEnum'
+        status:
+          $ref: '#/components/schemas/EventStatusEnum'
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Leave out to publish now; empty for a draft; a future time
+            to schedule.
+        co_host_handles:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          writeOnly: true
+          description: Profiles to ask to co-host; leaving one out removes it.
+        repeat:
+          allOf:
+          - $ref: '#/components/schemas/RepeatRequest'
+          writeOnly: true
+          description: Create a series of dates. Only on create.
       required:
       - ends_at
       - starts_at
       - title
-    KindEnum:
+    EventStats:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        starts_at:
+          type: string
+          format: date-time
+        views:
+          type: integer
+          description: Times its page was opened, by anyone but its hosts.
+        going:
+          type: integer
+        interested:
+          type: integer
+      required:
+      - going
+      - id
+      - interested
+      - starts_at
+      - title
+      - views
+    EventStatusEnum:
       enum:
-      - person
-      - organization
+      - active
+      - postponed
+      - cancelled
       type: string
       description: |-
-        * `person` - Person
-        * `organization` - Organization
+        * `active` - Active
+        * `postponed` - Postponed
+        * `cancelled` - Cancelled
+    EventVisibilityEnum:
+      enum:
+      - public
+      - followers
+      - unlisted
+      type: string
+      description: |-
+        * `public` - Public
+        * `followers` - Followers
+        * `unlisted` - Unlisted
+    FeedbackComment:
+      type: object
+      properties:
+        rating:
+          type: integer
+        comment:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - comment
+      - created_at
+      - rating
+    FeedbackRequest:
+      type: object
+      properties:
+        rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+        comment:
+          type: string
+          default: ''
+          maxLength: 1000
+      required:
+      - rating
+    FeedbackSummary:
+      type: object
+      properties:
+        count:
+          type: integer
+        average:
+          type: number
+          format: double
+          nullable: true
+        ratings:
+          type: array
+          items:
+            type: integer
+          description: How many rated it 1, 2, 3, 4 and 5.
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeedbackComment'
+          description: Newest first, without names.
+      required:
+      - average
+      - comments
+      - count
+      - ratings
+    FollowStatus:
+      type: object
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/FollowStatusStatusEnum'
+          description: |-
+            requested: the profile is private and has to accept you first.
+
+            * `following` - following
+            * `requested` - requested
+            * `none` - none
+      required:
+      - status
+    FollowStatusStatusEnum:
+      enum:
+      - following
+      - requested
+      - none
+      type: string
+      description: |-
+        * `following` - following
+        * `requested` - requested
+        * `none` - none
+    FrequencyEnum:
+      enum:
+      - weekly
+      - biweekly
+      - monthly
+      type: string
+      description: |-
+        * `weekly` - weekly
+        * `biweekly` - biweekly
+        * `monthly` - monthly
+    GeocodeResult:
+      type: object
+      properties:
+        label:
+          type: string
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+      required:
+      - label
+      - lat
+      - lng
+    Image:
+      type: object
+      description: How images appear inside other resources.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        width:
+          type: integer
+          readOnly: true
+        height:
+          type: integer
+          readOnly: true
+      required:
+      - height
+      - id
+      - url
+      - width
+    ImageDetail:
+      type: object
+      description: An image with what it was cropped from, for reframing it.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        width:
+          type: integer
+          readOnly: true
+        height:
+          type: integer
+          readOnly: true
+        original:
+          allOf:
+          - $ref: '#/components/schemas/OriginalImage'
+          readOnly: true
+          nullable: true
+        crop:
+          allOf:
+          - $ref: '#/components/schemas/Crop'
+          readOnly: true
+          nullable: true
+      required:
+      - crop
+      - height
+      - id
+      - original
+      - url
+      - width
+    ImageUpload:
+      type: object
+      description: How images appear inside other resources.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        width:
+          type: integer
+          readOnly: true
+        height:
+          type: integer
+          readOnly: true
+      required:
+      - height
+      - id
+      - url
+      - width
+    ImageUploadRequest:
+      type: object
+      description: How images appear inside other resources.
+      properties:
+        file:
+          type: string
+          format: binary
+          writeOnly: true
+      required:
+      - file
+    Invitation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        organization:
+          allOf:
+          - $ref: '#/components/schemas/ProfileSummary'
+          readOnly: true
+        invitee:
+          allOf:
+          - $ref: '#/components/schemas/ProfileSummary'
+          readOnly: true
+        role:
+          allOf:
+          - $ref: '#/components/schemas/MembershipRoleEnum'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - invitee
+      - organization
+      - role
+    InviteRequest:
+      type: object
+      properties:
+        handle:
+          type: string
+          minLength: 1
+          description: The person's handle.
+        role:
+          allOf:
+          - $ref: '#/components/schemas/MembershipRoleEnum'
+          default: editor
+      required:
+      - handle
+    LanguageEnum:
+      enum:
+      - en
+      - fi
+      - sv
+      type: string
+      description: |-
+        * `en` - English
+        * `fi` - Suomi
+        * `sv` - Svenska
     LatLng:
       type: object
       properties:
@@ -489,6 +3403,80 @@ components:
       required:
       - lat
       - lng
+    LinkPreview:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        image_url:
+          type: string
+          format: uri
+          readOnly: true
+        site_name:
+          type: string
+          readOnly: true
+      required:
+      - description
+      - image_url
+      - site_name
+      - title
+      - url
+    MarkReadRequest:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+          description: Notifications to mark read; all of them when left out.
+    Member:
+      type: object
+      properties:
+        profile:
+          allOf:
+          - $ref: '#/components/schemas/ProfileSummary'
+          readOnly: true
+        role:
+          $ref: '#/components/schemas/MembershipRoleEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - profile
+    MembershipRoleEnum:
+      enum:
+      - admin
+      - editor
+      type: string
+      description: |-
+        * `admin` - Admin
+        * `editor` - Editor
+    MyFeedback:
+      type: object
+      properties:
+        can_give:
+          type: boolean
+          description: 'Whether you can rate the event: you were going and it has
+            ended.'
+        rating:
+          type: integer
+          nullable: true
+        comment:
+          type: string
+      required:
+      - can_give
+      - comment
+      - rating
     NearbyEvent:
       type: object
       properties:
@@ -520,6 +3508,79 @@ components:
           allOf:
           - $ref: '#/components/schemas/LatLng'
           nullable: true
+        categories:
+          type: array
+          items:
+            type: string
+        capacity:
+          type: integer
+          minimum: 1
+          nullable: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/Image'
+          readOnly: true
+          nullable: true
+        online_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          nullable: true
+          description: In euros; empty for free events.
+        ticket_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        min_age:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        students_of:
+          allOf:
+          - $ref: '#/components/schemas/University'
+          nullable: true
+          readOnly: true
+          description: Only verified students of this university can RSVP.
+        visibility:
+          $ref: '#/components/schemas/EventVisibilityEnum'
+        status:
+          $ref: '#/components/schemas/EventStatusEnum'
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Leave out to publish now; empty for a draft; a future time
+            to schedule.
+        series_id:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        co_hosts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileSummary'
+          readOnly: true
+          description: Co-hosts who accepted.
+        attendance:
+          allOf:
+          - $ref: '#/components/schemas/AttendanceSummary'
+          readOnly: true
+        is_saved:
+          type: boolean
+          readOnly: true
+          description: Whether you saved this event.
         created_at:
           type: string
           format: date-time
@@ -533,15 +3594,175 @@ components:
           format: double
           readOnly: true
       required:
+      - attendance
+      - co_hosts
+      - cover
       - created_at
       - distance_m
       - ends_at
       - id
+      - is_saved
       - organizer
+      - series_id
       - starts_at
+      - students_of
       - title
       - updated_at
-    PaginatedEventList:
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        kind:
+          allOf:
+          - $ref: '#/components/schemas/NotificationKindEnum'
+          readOnly: true
+        actor:
+          allOf:
+          - $ref: '#/components/schemas/ProfileSummary'
+          readOnly: true
+          nullable: true
+        event:
+          allOf:
+          - $ref: '#/components/schemas/NotificationEvent'
+          readOnly: true
+          nullable: true
+        post:
+          type: integer
+          readOnly: true
+          nullable: true
+        message:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        read:
+          type: boolean
+          readOnly: true
+      required:
+      - actor
+      - created_at
+      - event
+      - id
+      - kind
+      - message
+      - post
+      - read
+    NotificationEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        starts_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - starts_at
+      - title
+    NotificationKindEnum:
+      enum:
+      - new_follower
+      - follow_request
+      - follow_accepted
+      - organization_invite
+      - new_event
+      - event_changed
+      - event_cancelled
+      - event_postponed
+      - co_host_invite
+      - event_reminder
+      - feedback_request
+      - waitlist_promoted
+      - announcement
+      - mention
+      - comment
+      - reaction
+      type: string
+      description: |-
+        * `new_follower` - New followers
+        * `follow_request` - Follow requests
+        * `follow_accepted` - Accepted follow requests
+        * `organization_invite` - Invitations to organizations
+        * `new_event` - New events from people you follow
+        * `event_changed` - Changes to events you're going to
+        * `event_cancelled` - Cancelled events
+        * `event_postponed` - Postponed events
+        * `co_host_invite` - Invitations to co-host events
+        * `event_reminder` - Event reminders
+        * `feedback_request` - Requests for feedback after events
+        * `waitlist_promoted` - A spot opened up for you
+        * `announcement` - Announcements from organizers
+        * `mention` - Mentions
+        * `comment` - Comments
+        * `reaction` - Likes
+    NullEnum:
+      enum:
+      - null
+    OrganizationCreate:
+      type: object
+      properties:
+        handle:
+          type: string
+          pattern: ^[a-z0-9_]+$
+          maxLength: 30
+        display_name:
+          type: string
+          maxLength: 80
+        bio:
+          type: string
+          maxLength: 500
+      required:
+      - display_name
+      - handle
+    OrganizationCreateRequest:
+      type: object
+      properties:
+        handle:
+          type: string
+          minLength: 1
+          pattern: ^[a-z0-9_]+$
+          maxLength: 30
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        bio:
+          type: string
+          maxLength: 500
+      required:
+      - display_name
+      - handle
+    OriginalImage:
+      type: object
+      description: The whole picture a crop was made from.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        width:
+          type: integer
+          readOnly: true
+        height:
+          type: integer
+          readOnly: true
+      required:
+      - height
+      - id
+      - url
+      - width
+    PaginatedCommentList:
       type: object
       required:
       - results
@@ -559,7 +3780,53 @@ components:
         results:
           type: array
           items:
+            $ref: '#/components/schemas/Comment'
+    PaginatedEventList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
             $ref: '#/components/schemas/Event'
+    PaginatedEventPhotoList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventPhoto'
     PaginatedNearbyEventList:
       type: object
       required:
@@ -583,6 +3850,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NearbyEvent'
+    PaginatedNotificationList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
     PaginatedPostList:
       type: object
       required:
@@ -602,6 +3888,59 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Post'
+    PaginatedProfileSummaryList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileSummary'
+    PasswordRequest:
+      type: object
+      properties:
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+    PatchedAccountSettingsRequest:
+      type: object
+      properties:
+        language:
+          $ref: '#/components/schemas/LanguageEnum'
+        birth_date:
+          type: string
+          format: date
+          description: Can only be added when missing (older accounts).
+        email_digest:
+          type: boolean
+          description: A weekly email of upcoming events (off unless turned on).
+        onboarded:
+          type: boolean
+          description: Whether the first-run steps are done; set it once they are.
+        push:
+          type: object
+          additionalProperties:
+            type: boolean
+          description: Push on (true) or off (false), by notification kind. Missing
+            kinds are on.
     PatchedEventRequest:
       type: object
       properties:
@@ -633,6 +3972,101 @@ components:
           allOf:
           - $ref: '#/components/schemas/LatLngRequest'
           nullable: true
+        categories:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        capacity:
+          type: integer
+          minimum: 1
+          nullable: true
+        cover_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+          description: An image uploaded with POST /api/images/.
+        online_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          nullable: true
+          description: In euros; empty for free events.
+        ticket_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        min_age:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        students_of_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+        visibility:
+          $ref: '#/components/schemas/EventVisibilityEnum'
+        status:
+          $ref: '#/components/schemas/EventStatusEnum'
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Leave out to publish now; empty for a draft; a future time
+            to schedule.
+        co_host_handles:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          writeOnly: true
+          description: Profiles to ask to co-host; leaving one out removes it.
+        repeat:
+          allOf:
+          - $ref: '#/components/schemas/RepeatRequest'
+          writeOnly: true
+          description: Create a series of dates. Only on create.
+    PatchedMemberRoleRequest:
+      type: object
+      properties:
+        role:
+          $ref: '#/components/schemas/MembershipRoleEnum'
+    PatchedPostRequest:
+      type: object
+      properties:
+        author_handle:
+          type: string
+          minLength: 1
+          writeOnly: true
+          description: Post as this profile (yourself or an organization you belong
+            to). Defaults to your own profile.
+        body:
+          type: string
+          maxLength: 2000
+        event_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+          description: Attach (share) an existing event.
+        image_ids:
+          type: array
+          items:
+            type: integer
+          writeOnly: true
+          description: Up to 4 images uploaded with POST /api/images/, in order. On
+            edit, replaces the post's pictures.
+          maxItems: 4
     PatchedProfileRequest:
       type: object
       description: Full profile. Expects a queryset annotated with `with_social_stats`.
@@ -649,9 +4083,56 @@ components:
         bio:
           type: string
           maxLength: 500
-        avatar:
+        avatar_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+          description: An image uploaded with POST /api/images/.
+        cover_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+          description: An image uploaded with POST /api/images/.
+        pronouns:
           type: string
-          format: binary
+          maxLength: 30
+        university:
+          type: string
+          maxLength: 100
+        faculty:
+          type: string
+          maxLength: 100
+        study_year:
+          type: integer
+          maximum: 10
+          minimum: 1
+          nullable: true
+        website:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        instagram:
+          oneOf:
+          - type: string
+            pattern: ^[A-Za-z0-9_.]{1,30}$
+            maxLength: 30
+          - type: string
+            maxLength: 0
+        is_private:
+          type: boolean
+        hide_followers:
+          type: boolean
+        hide_attendance:
+          type: boolean
+        interests:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          description: Category slugs (GET /api/categories/).
     Post:
       type: object
       properties:
@@ -669,15 +4150,48 @@ components:
           allOf:
           - $ref: '#/components/schemas/Event'
           readOnly: true
+          nullable: true
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+          readOnly: true
+        link_preview:
+          allOf:
+          - $ref: '#/components/schemas/LinkPreview'
+          readOnly: true
+          nullable: true
+          description: The page the first link in the text points to.
+        like_count:
+          type: integer
+          readOnly: true
+        is_liked:
+          type: boolean
+          readOnly: true
+          description: Whether you liked this post.
+        comment_count:
+          type: integer
+          readOnly: true
         created_at:
           type: string
           format: date-time
           readOnly: true
+        edited_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
       required:
       - author
+      - comment_count
       - created_at
+      - edited_at
       - event
       - id
+      - images
+      - is_liked
+      - like_count
+      - link_preview
     PostRequest:
       type: object
       properties:
@@ -695,6 +4209,14 @@ components:
           writeOnly: true
           nullable: true
           description: Attach (share) an existing event.
+        image_ids:
+          type: array
+          items:
+            type: integer
+          writeOnly: true
+          description: Up to 4 images uploaded with POST /api/images/, in order. On
+            edit, replaces the post's pictures.
+          maxItems: 4
     Profile:
       type: object
       description: Full profile. Expects a queryset annotated with `with_social_stats`.
@@ -708,15 +4230,63 @@ components:
           maxLength: 80
         kind:
           allOf:
-          - $ref: '#/components/schemas/KindEnum'
+          - $ref: '#/components/schemas/ProfileKindEnum'
           readOnly: true
         bio:
           type: string
           maxLength: 500
         avatar:
-          type: string
-          format: uri
+          allOf:
+          - $ref: '#/components/schemas/Image'
+          readOnly: true
           nullable: true
+        cover:
+          allOf:
+          - $ref: '#/components/schemas/Image'
+          readOnly: true
+          nullable: true
+        pronouns:
+          type: string
+          maxLength: 30
+        university:
+          type: string
+          maxLength: 100
+        faculty:
+          type: string
+          maxLength: 100
+        study_year:
+          type: integer
+          maximum: 10
+          minimum: 1
+          nullable: true
+        website:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        instagram:
+          oneOf:
+          - type: string
+            pattern: ^[A-Za-z0-9_.]{1,30}$
+            maxLength: 30
+          - type: string
+            maxLength: 0
+        verified:
+          type: boolean
+          readOnly: true
+        is_private:
+          type: boolean
+        hide_followers:
+          type: boolean
+        hide_attendance:
+          type: boolean
+        interests:
+          type: array
+          items:
+            type: string
+          description: Category slugs (GET /api/categories/).
         created_at:
           type: string
           format: date-time
@@ -727,17 +4297,86 @@ components:
         following_count:
           type: integer
           readOnly: true
+        student_of:
+          allOf:
+          - $ref: '#/components/schemas/University'
+          nullable: true
+          readOnly: true
+          description: The university this person is a verified student of.
         is_followed:
           type: boolean
           readOnly: true
+        is_requested:
+          type: boolean
+          readOnly: true
+          description: The viewer asked to follow this private profile.
+        is_blocked:
+          type: boolean
+          readOnly: true
+        is_muted:
+          type: boolean
+          readOnly: true
       required:
+      - avatar
+      - cover
       - created_at
       - display_name
       - follower_count
       - following_count
       - handle
+      - is_blocked
       - is_followed
+      - is_muted
+      - is_requested
       - kind
+      - student_of
+      - verified
+    ProfileKindEnum:
+      enum:
+      - person
+      - organization
+      type: string
+      description: |-
+        * `person` - Person
+        * `organization` - Organization
+    ProfileStats:
+      type: object
+      properties:
+        days:
+          type: array
+          items:
+            type: string
+            format: date
+          description: The last 30 days, oldest first.
+        views:
+          type: array
+          items:
+            type: integer
+          description: Views of the profile's events, per day.
+        rsvps:
+          type: array
+          items:
+            type: integer
+          description: New going or interested answers to its events, per day.
+        new_followers:
+          type: array
+          items:
+            type: integer
+        followers:
+          type: integer
+          description: Followers now.
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventStats'
+          description: Events from the last 30 days on, newest first.
+      required:
+      - days
+      - events
+      - followers
+      - new_followers
+      - rsvps
+      - views
     ProfileSummary:
       type: object
       description: Compact profile representation embedded in events and posts.
@@ -750,18 +4389,269 @@ components:
           readOnly: true
         kind:
           allOf:
-          - $ref: '#/components/schemas/KindEnum'
+          - $ref: '#/components/schemas/ProfileKindEnum'
           readOnly: true
         avatar:
-          type: string
-          format: uri
+          allOf:
+          - $ref: '#/components/schemas/Image'
+          readOnly: true
           nullable: true
+        verified:
+          type: boolean
           readOnly: true
       required:
       - avatar
       - display_name
       - handle
       - kind
+      - verified
+    PushDeviceRequest:
+      type: object
+      properties:
+        token:
+          type: string
+          minLength: 1
+          description: The device's Expo push token.
+          maxLength: 255
+      required:
+      - token
+    Repeat:
+      type: object
+      properties:
+        frequency:
+          $ref: '#/components/schemas/FrequencyEnum'
+        count:
+          type: integer
+          maximum: 26
+          minimum: 2
+          description: How many dates in total, the first included.
+      required:
+      - count
+      - frequency
+    RepeatRequest:
+      type: object
+      properties:
+        frequency:
+          $ref: '#/components/schemas/FrequencyEnum'
+        count:
+          type: integer
+          maximum: 26
+          minimum: 2
+          description: How many dates in total, the first included.
+      required:
+      - count
+      - frequency
+    Report:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        reason:
+          $ref: '#/components/schemas/ReportReasonEnum'
+        details:
+          type: string
+          maxLength: 1000
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - reason
+    ReportReasonEnum:
+      enum:
+      - spam
+      - harassment
+      - hate
+      - sexual
+      - violence
+      - false_information
+      - other
+      type: string
+      description: |-
+        * `spam` - Spam
+        * `harassment` - Harassment or bullying
+        * `hate` - Hate speech
+        * `sexual` - Nudity or sexual content
+        * `violence` - Violence or dangerous activity
+        * `false_information` - False information
+        * `other` - Something else
+    ReportRequest:
+      type: object
+      properties:
+        target_type:
+          allOf:
+          - $ref: '#/components/schemas/TargetTypeEnum'
+          writeOnly: true
+        target_id:
+          type: string
+          writeOnly: true
+          minLength: 1
+          description: The post's or event's id, or the profile's handle.
+        reason:
+          $ref: '#/components/schemas/ReportReasonEnum'
+        details:
+          type: string
+          maxLength: 1000
+      required:
+      - reason
+      - target_id
+      - target_type
+    RsvpRequest:
+      type: object
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/RsvpStatusEnum'
+          description: |-
+            Going to a full event puts you on the waitlist.
+
+            * `going` - going
+            * `interested` - interested
+      required:
+      - status
+    RsvpStatusEnum:
+      enum:
+      - going
+      - interested
+      type: string
+      description: |-
+        * `going` - going
+        * `interested` - interested
+    SearchResults:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        profiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileSummary'
+      required:
+      - events
+      - profiles
+    StudentCodeRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 10
+      required:
+      - code
+    StudentEmailRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          description: Your university email address.
+      required:
+      - email
+    StudentStatus:
+      type: object
+      properties:
+        university:
+          allOf:
+          - $ref: '#/components/schemas/University'
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+        verified_at:
+          type: string
+          format: date-time
+          readOnly: true
+        is_current:
+          type: boolean
+          readOnly: true
+      required:
+      - email
+      - is_current
+      - university
+      - verified_at
+    TargetTypeEnum:
+      enum:
+      - post
+      - event
+      - profile
+      - comment
+      type: string
+      description: |-
+        * `post` - post
+        * `event` - event
+        * `profile` - profile
+        * `comment` - comment
+    University:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        short_name:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - name
+      - short_name
+    UnreadCount:
+      type: object
+      properties:
+        unread:
+          type: integer
+      required:
+      - unread
+    VerificationRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        message:
+          type: string
+          maxLength: 2000
+        status:
+          allOf:
+          - $ref: '#/components/schemas/VerificationStatusEnum'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - message
+      - status
+    VerificationRequestRequest:
+      type: object
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 2000
+      required:
+      - message
+    VerificationStatusEnum:
+      enum:
+      - pending
+      - approved
+      - rejected
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `approved` - Approved
+        * `rejected` - Rejected
   securitySchemes:
     XSessionTokenAuth:
       type: apiKey

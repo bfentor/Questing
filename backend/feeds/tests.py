@@ -60,3 +60,52 @@ def test_following_feed_shows_own_and_followed_posts_newest_first(
 
 def test_following_feed_requires_sign_in(api_client, db):
     assert api_client.get("/api/feeds/following/").status_code in (401, 403)
+
+
+def test_upcoming_filters(api_client, user, make_event):
+    from django.utils import timezone
+
+    from events.models import Category
+
+    games = Category.objects.get(slug="games")
+    board = make_event(user.profile, title="board games", starts_in=timedelta(hours=2), price=0)
+    board.categories.add(games)
+    make_event(user.profile, title="paid concert", starts_in=timedelta(hours=3), price=15)
+    make_event(user.profile, title="next week", starts_in=timedelta(days=7))
+
+    def titles_for(**params):
+        return titles(api_client.get("/api/feeds/upcoming/", params))
+
+    assert titles_for(category=["games"]) == ["board games"]
+    assert titles_for(category=["games", "music"]) == ["board games"]
+    assert titles_for(free="true") == ["board games", "next week"]
+    tomorrow = (timezone.now() + timedelta(days=1)).isoformat()
+    assert titles_for(starts_before=tomorrow) == ["board games", "paid concert"]
+
+
+def test_following_feed_shows_each_event_once(auth_client, user, make_user, make_event):
+    friend = make_user().profile
+    Follow.objects.create(follower=user.profile, followee=friend)
+    party = make_event(friend, title="party")
+    Post.objects.create(author=friend, event=party)
+    Post.objects.create(author=friend, body="hello")
+    Post.objects.create(author=user.profile, body="see you there!", event=party)
+
+    posts = auth_client.get("/api/feeds/following/").json()["results"]
+
+    assert [p["body"] for p in posts] == ["see you there!", "hello"]
+
+
+def test_following_feed_can_hide_past_events(auth_client, user, make_event):
+    over = make_event(user.profile, title="over", starts_in=-timedelta(days=2))
+    soon = make_event(user.profile, title="soon")
+    Post.objects.create(author=user.profile, event=over)
+    Post.objects.create(author=user.profile, event=soon)
+    Post.objects.create(author=user.profile, body="just text")
+
+    def events(**params):
+        posts = auth_client.get("/api/feeds/following/", params).json()["results"]
+        return [p["event"]["title"] if p["event"] else p["body"] for p in posts]
+
+    assert events() == ["just text", "soon", "over"]
+    assert events(hide_past=True) == ["just text", "soon"]

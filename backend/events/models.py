@@ -1,13 +1,104 @@
 from django.contrib.gis.db import models as gis_models
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.measure import D
+from django.contrib.postgres.indexes import GinIndex, OpClass
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models.functions import Upper
 from django.utils import timezone
+from django.utils.translation import get_language
+from django.utils.translation import gettext_lazy as _
 
+from moderation.visibility import hidden_profiles, muted_profiles, private_profiles
 from profiles.models import Profile
 
 
 class EventQuerySet(models.QuerySet):
+    def visible_to(self, viewer):
+        """Events the viewer may open.
+
+        Published public or unlisted events, followers-only events of profiles they
+        follow, and every event (drafts too) of profiles they manage. Never removed
+        events, or ones whose organizer is removed, blocked either way or private.
+        """
+        queryset = (
+            self.filter(removed_at__isnull=True, organizer__removed_at__isnull=True)
+            .exclude(organizer__in=hidden_profiles(viewer))
+            .exclude(organizer__in=private_profiles(viewer))
+        )
+        audience = models.Q(visibility__in=[Event.Visibility.PUBLIC, Event.Visibility.UNLISTED])
+        if viewer is None:
+            return queryset.filter(audience, published_at__lte=timezone.now())
+        followed = Profile.objects.filter(followed_by__follower=viewer)
+        audience |= models.Q(visibility=Event.Visibility.FOLLOWERS, organizer__in=followed)
+        managed = Profile.objects.manageable_by(viewer.user)
+        return queryset.filter(
+            (audience & models.Q(published_at__lte=timezone.now()))
+            | models.Q(organizer__in=managed)
+        )
+
+    def in_feeds_of(self, viewer):
+        """What feeds list: visible, published, not unlisted or cancelled, nor muted."""
+        return (
+            self.visible_to(viewer)
+            .filter(published_at__lte=timezone.now())
+            .exclude(visibility=Event.Visibility.UNLISTED)
+            .exclude(status=Event.Status.CANCELLED)
+            .exclude(organizer__in=muted_profiles(viewer))
+        )
+
+    def with_attendance(self, viewer):
+        """Annotate attendance counts and the viewer's own status (None if not attending)."""
+        going = models.Q(attendances__status=Attendance.Status.GOING)
+        queryset = self.annotate(
+            going_count=models.Count("attendances", filter=going),
+            interested_count=models.Count(
+                "attendances", filter=models.Q(attendances__status=Attendance.Status.INTERESTED)
+            ),
+            waitlist_count=models.Count(
+                "attendances", filter=models.Q(attendances__status=Attendance.Status.WAITLISTED)
+            ),
+        )
+        if viewer is None:
+            return queryset.annotate(my_status=models.Value(None, models.CharField()))
+        mine = Attendance.objects.filter(event=models.OuterRef("pk"), profile=viewer)
+        return queryset.annotate(my_status=models.Subquery(mine.values("status")[:1]))
+
+    def for_display(self, viewer):
+        """Everything an event's serializer shows, fetched in as few queries as possible."""
+        queryset = (
+            self.with_attendance(viewer)
+            .select_related("organizer__avatar", "cover", "students_of")
+            .prefetch_related("categories", "co_host_links__profile__avatar")
+        )
+        if viewer is None:
+            return queryset.annotate(is_saved=models.Value(False))
+        saved = SavedEvent.objects.filter(event=models.OuterRef("pk"), profile=viewer)
+        return queryset.annotate(is_saved=models.Exists(saved)).prefetch_related(
+            models.Prefetch(
+                "attendances",
+                queryset=Attendance.objects.friends_going(viewer),
+                to_attr="friend_attendances",
+            )
+        )
+
+    def filtered(self, *, categories=(), starts_after=None, starts_before=None, free=False):
+        """Feed filters: any of the categories, overlapping a time window, free only."""
+        queryset = self
+        if categories:
+            in_category = Event.categories.through.objects.filter(
+                event=models.OuterRef("pk"), category__slug__in=categories
+            )
+            queryset = queryset.filter(models.Exists(in_category))
+        # Overlapping the window, so events already going on count too.
+        if starts_after is not None:
+            queryset = queryset.filter(ends_at__gt=starts_after)
+        if starts_before is not None:
+            queryset = queryset.filter(starts_at__lt=starts_before)
+        if free:
+            queryset = queryset.filter(models.Q(price__isnull=True) | models.Q(price=0))
+        return queryset
+
     def not_ended(self):
         """Events that are ongoing or yet to start."""
         return self.filter(ends_at__gte=timezone.now())
@@ -21,7 +112,47 @@ class EventQuerySet(models.QuerySet):
         )
 
 
+class Category(models.Model):
+    """What an event is about. Also used for people's interests.
+
+    Names are stored in every language so admins can add categories without a release.
+    """
+
+    slug = models.SlugField(unique=True)
+    name_en = models.CharField(max_length=60)
+    name_fi = models.CharField(max_length=60)
+    name_sv = models.CharField(max_length=60)
+    # Material Symbol shown next to the name.
+    icon = models.CharField(max_length=40, blank=True)
+    position = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["position", "slug"]
+        verbose_name_plural = "categories"
+
+    def __str__(self):
+        return self.name_en
+
+    @property
+    def name(self):
+        """The name in the active language (the request's Accept-Language)."""
+        return getattr(self, f"name_{get_language()}", None) or self.name_en
+
+
 class Event(models.Model):
+    class Visibility(models.TextChoices):
+        PUBLIC = "public"
+        # Only followers of the organizer see it.
+        FOLLOWERS = "followers"
+        # Anyone with the link; never listed in feeds.
+        UNLISTED = "unlisted"
+
+    class Status(models.TextChoices):
+        ACTIVE = "active"
+        # Not happening at the announced time; a new time may follow.
+        POSTPONED = "postponed"
+        CANCELLED = "cancelled"
+
     organizer = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="events")
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
@@ -32,8 +163,57 @@ class Event(models.Model):
     # Geography (not geometry) so distances are computed on the globe in metres.
     # Empty for online events, which then don't appear in the nearby feed.
     location = gis_models.PointField(geography=True, srid=4326, null=True, blank=True)
+    categories = models.ManyToManyField(Category, blank=True, related_name="events")
+    cover = models.ForeignKey(
+        "images.Image",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="cover_of_event",
+    )
+    # For online (or hybrid) events.
+    online_url = models.URLField(blank=True)
+    # Empty for free events.
+    price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    ticket_url = models.URLField(blank=True)
+    # E.g. 18 for parties with alcohol; checked when someone RSVPs.
+    min_age = models.PositiveSmallIntegerField(null=True, blank=True)
+    # Only verified students of this university can RSVP.
+    students_of = models.ForeignKey(
+        "students.University",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
+    # How many can attend; empty for no limit. Beyond it, people join the waitlist.
+    capacity = models.PositiveIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # Set by moderators; hides the event everywhere.
+    removed_at = models.DateTimeField(null=True, blank=True)
+    visibility = models.CharField(
+        max_length=20, choices=Visibility.choices, default=Visibility.PUBLIC
+    )
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.ACTIVE)
+    # Empty for drafts; in the future for scheduled events.
+    published_at = models.DateTimeField(null=True, blank=True, default=timezone.now)
+    # When followers were told about it (an announcement post and notifications).
+    announced_at = models.DateTimeField(null=True, blank=True)
+    # When people going or interested were reminded; cleared when the start time changes.
+    reminded_at = models.DateTimeField(null=True, blank=True)
+    # When people who went were asked how it was.
+    feedback_requested_at = models.DateTimeField(null=True, blank=True)
+    # Shared by the occurrences of a recurring event.
+    series_id = models.UUIDField(null=True, blank=True, db_index=True)
+    co_hosts = models.ManyToManyField(
+        Profile, through="CoHost", blank=True, related_name="co_hosted_events"
+    )
+    # For events imported from a calendar feed: which one, and the event's ID there.
+    source = models.ForeignKey(
+        "CalendarSource", on_delete=models.SET_NULL, null=True, blank=True, related_name="events"
+    )
+    source_uid = models.CharField(max_length=500, blank=True)
 
     objects = EventQuerySet.as_manager()
 
@@ -41,13 +221,158 @@ class Event(models.Model):
         indexes = [
             models.Index(fields=["starts_at", "id"]),
             models.Index(fields=["ends_at"]),
+            # Typo-tolerant title search (search/views.py).
+            GinIndex(OpClass(Upper("title"), name="gin_trgm_ops"), name="event_title_trgm"),
         ]
         constraints = [
             models.CheckConstraint(
                 condition=models.Q(ends_at__gt=models.F("starts_at")),
                 name="event_ends_after_start",
             ),
+            models.UniqueConstraint(
+                fields=["source", "source_uid"],
+                condition=models.Q(source__isnull=False),
+                name="unique_event_per_source_uid",
+            ),
         ]
 
     def __str__(self):
         return self.title
+
+
+class AttendanceQuerySet(models.QuerySet):
+    def friends_going(self, viewer):
+        """Going RSVPs of profiles the viewer follows, unless they hide their attendance."""
+        return (
+            self.filter(
+                status=Attendance.Status.GOING,
+                profile__followed_by__follower=viewer,
+                profile__hide_attendance=False,
+                profile__removed_at__isnull=True,
+            )
+            .exclude(profile__in=hidden_profiles(viewer))
+            .select_related("profile__avatar")
+            .order_by("-updated_at")
+        )
+
+
+class Attendance(models.Model):
+    """Someone's RSVP to an event."""
+
+    class Status(models.TextChoices):
+        GOING = "going", _("Going")
+        INTERESTED = "interested", _("Interested")
+        # Wanted to go when the event was full; promoted in order when a spot opens.
+        WAITLISTED = "waitlisted", _("On the waitlist")
+
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="attendances")
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="attendances")
+    status = models.CharField(max_length=20, choices=Status.choices)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    objects = AttendanceQuerySet.as_manager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["event", "profile"], name="unique_attendance"),
+        ]
+        indexes = [models.Index(fields=["event", "status", "updated_at"])]
+
+    def __str__(self):
+        return f"{self.profile} {self.status} {self.event}"
+
+
+class CoHost(models.Model):
+    """Another profile running an event together with its organizer; shown once they accept."""
+
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="co_host_links")
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="co_host_links")
+    accepted_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["event", "profile"], name="unique_co_host"),
+        ]
+
+    def __str__(self):
+        return f"{self.profile} co-hosts {self.event}"
+
+
+class SavedEvent(models.Model):
+    """An event someone bookmarked. Private: unlike "interested", nobody else sees it."""
+
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="saved_events")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="saves")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["profile", "event"], name="unique_saved_event"),
+        ]
+
+    def __str__(self):
+        return f"{self.profile} saved {self.event}"
+
+
+class EventFeedback(models.Model):
+    """How someone who went rated an event. Hosts see ratings and comments without names."""
+
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="feedback")
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="event_feedback")
+    rating = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    comment = models.TextField(max_length=1000, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["event", "profile"], name="unique_event_feedback"),
+        ]
+
+    def __str__(self):
+        return f"{self.profile} rated {self.event} {self.rating}/5"
+
+
+class EventViewDay(models.Model):
+    """How many times an event's page was opened on one day (Helsinki time).
+
+    Only a count: who looked isn't stored. Hosts' own views aren't counted.
+    """
+
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="view_days")
+    date = models.DateField()
+    count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["event", "date"], name="unique_event_view_day"),
+        ]
+
+    def __str__(self):
+        return f"{self.event} on {self.date}: {self.count}"
+
+
+class CalendarSource(models.Model):
+    """An iCal feed (e.g. a Google Calendar's public address) kept in sync as a profile's events."""
+
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="calendar_sources")
+    url = models.URLField(max_length=2000)
+    added_by = models.ForeignKey(
+        "accounts.User", on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    synced_at = models.DateTimeField(null=True, blank=True)
+    # Why the last sync failed (a code from events.calendars.SyncError); empty when it worked.
+    error = models.CharField(max_length=20, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["profile", "url"], name="unique_calendar_source"),
+        ]
+
+    def __str__(self):
+        return f"{self.url} for {self.profile}"

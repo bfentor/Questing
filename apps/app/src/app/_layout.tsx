@@ -1,38 +1,143 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { meSettingsPartialUpdate } from '@sidequest/api';
+import { useQueryClient } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
-import { useState } from 'react';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { AuthProvider } from '@/auth/auth-provider';
-import { Colors } from '@/constants/theme';
+import { AuthProvider, useAuth } from '@/auth/auth-provider';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useTheme } from '@/hooks/use-theme';
+import { restoreAppearance } from '@/lib/appearance';
+import { createPersistOptions, createQueryClient } from '@/lib/query-cache';
+import { restoreThemeLab } from '@/lib/theme-lab';
+import { applyPreferredLanguage, type Language } from '@/i18n';
+import { HeaderActions } from '@/components/home-button';
+import { OnboardingGate } from '@/components/onboarding-gate';
+import { TermsGate } from '@/components/terms-gate';
+import { ThemeReady } from '@/components/theme-ready';
+import { NotificationHandler } from '@/notifications/notification-handler';
+
+// Phones keep the launch screen up until the chosen appearance is applied, so the app
+// doesn't open in the wrong one for a moment.
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const scheme = useColorScheme() === 'dark' ? 'dark' : 'light';
-  const [queryClient] = useState(() => new QueryClient());
+  const colors = useTheme();
+  const [queryClient] = useState(createQueryClient);
+  const [persistOptions] = useState(createPersistOptions);
 
   const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
   const navigationTheme = {
     ...base,
     colors: {
       ...base.colors,
-      primary: Colors[scheme].tint,
-      background: Colors[scheme].background,
-      card: Colors[scheme].background,
-      text: Colors[scheme].text,
+      primary: colors.tint,
+      background: colors.background,
+      card: colors.background,
+      text: colors.text,
     },
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
       <AuthProvider>
+        <LanguageSync />
+        <NotificationHandler />
         <ThemeProvider value={navigationTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="events/[id]" options={{ title: 'Event' }} />
-            <Stack.Screen name="sign-in" options={{ title: 'Sign in', presentation: 'modal' }} />
-          </Stack>
+          <ThemeReady />
+          <RootStack />
+          <TermsGate />
+          <OnboardingGate />
         </ThemeProvider>
       </AuthProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
+}
+
+function RootStack() {
+  const { t } = useTranslation();
+
+  return (
+    // Every screen with a header gets a way home; screens with their own buttons use HeaderActions.
+    <Stack screenOptions={{ headerRight: () => <HeaderActions /> }}>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="embed/[handle]" options={{ headerShown: false }} />
+      <Stack.Screen name="events/[id]/index" options={{ title: t('event.title') }} />
+      <Stack.Screen name="events/[id]/edit" options={{ title: t('eventForm.edit') }} />
+      <Stack.Screen name="events/[id]/attendees" options={{ title: t('attendees.title') }} />
+      <Stack.Screen name="events/[id]/announce" options={{ title: t('organizerTools.announce') }} />
+      <Stack.Screen name="events/[id]/feedback" options={{ title: t('feedback.results') }} />
+      <Stack.Screen name="events/new" options={{ title: t('eventForm.newEvent') }} />
+      <Stack.Screen name="posts/new" options={{ title: t('posts.new') }} />
+      <Stack.Screen name="posts/[id]/index" options={{ title: t('posts.title') }} />
+      <Stack.Screen name="posts/[id]/edit" options={{ title: t('posts.edit') }} />
+      <Stack.Screen name="my-events" options={{ title: t('myEvents.title') }} />
+      <Stack.Screen name="legal/[document]" options={{ title: '' }} />
+      <Stack.Screen name="verify-email" options={{ title: t('verifyEmail.title') }} />
+      <Stack.Screen name="forgot-password" options={{ title: t('forgotPassword.title') }} />
+      <Stack.Screen name="two-factor" options={{ title: t('twoFactor.title') }} />
+      <Stack.Screen name="search" options={{ title: t('search.title') }} />
+      <Stack.Screen name="hashtags/[tag]" options={{ title: '' }} />
+      <Stack.Screen name="profiles/[handle]/dashboard" options={{ title: t('dashboard.title') }} />
+      <Stack.Screen
+        name="profiles/[handle]/calendars"
+        options={{ title: t('calendarSync.title') }}
+      />
+      <Stack.Screen name="sign-in" options={{ title: t('common.signIn'), presentation: 'modal' }} />
+      <Stack.Screen name="sign-up" options={{ title: t('auth.signUp'), presentation: 'modal' }} />
+      <Stack.Screen name="settings" options={{ title: t('common.settings') }} />
+      <Stack.Screen name="edit-profile" options={{ title: t('profile.edit') }} />
+      <Stack.Screen name="follow-requests" options={{ title: t('followRequests.title') }} />
+      <Stack.Screen name="suggestions" options={{ title: t('suggestions.title') }} />
+      <Stack.Screen
+        name="onboarding"
+        // Leaving goes through the steps' own buttons, which mark onboarding as done.
+        options={{
+          title: t('onboarding.title'),
+          headerLeft: () => null,
+          headerRight: () => null,
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen name="organizations/index" options={{ title: t('organizations.title') }} />
+      <Stack.Screen name="organizations/new" options={{ title: t('organizations.create') }} />
+      {/* Development only: the screen redirects home in production builds. */}
+      <Stack.Screen name="theme-lab" options={{ title: 'Theme lab' }} />
+      <Stack.Screen
+        name="report"
+        options={{ title: t('moderation.report'), presentation: 'modal' }}
+      />
+    </Stack>
+  );
+}
+
+/**
+ * Applies the preferred language once mounted, refetches data when it changes,
+ * and tells the API, which writes push notifications in it.
+ */
+function LanguageSync() {
+  const { i18n } = useTranslation();
+  const queryClient = useQueryClient();
+  const { status } = useAuth();
+
+  useEffect(() => {
+    if (status === 'signed-in') {
+      meSettingsPartialUpdate({ body: { language: i18n.language as Language } });
+    }
+  }, [i18n.language, status]);
+
+  useEffect(() => {
+    applyPreferredLanguage();
+    Promise.all([restoreAppearance(), restoreThemeLab()]).finally(() => SplashScreen.hideAsync());
+  }, []);
+
+  useEffect(() => {
+    // Responses can contain server-translated text (e.g. error messages).
+    queryClient.invalidateQueries();
+  }, [i18n.language, queryClient]);
+
+  return null;
 }

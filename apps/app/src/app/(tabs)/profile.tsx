@@ -1,67 +1,52 @@
-import { meRetrieveOptions } from '@sidequest/api';
-import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
 import { Button } from '@/components/button';
+import { ProfileMenu } from '@/components/profile-menu';
+import { ProfileView } from '@/components/profile-view';
 import { Screen } from '@/components/screen';
+import { TabTitle } from '@/components/tab-title';
 import { ThemedText } from '@/components/themed-text';
-import { Spacing } from '@/constants/theme';
+import { useMe } from '@/hooks/use-me';
 
-export default function ProfileScreen() {
+export default function ProfileTab() {
   const { status } = useAuth();
+  const { t } = useTranslation();
+  const me = useMe();
+
+  if (me) {
+    return (
+      <ProfileView
+        handle={me.handle}
+        top={<TabTitle title={t('tabs.profile')} />}
+        actions={(profile) => (
+          <>
+            <Button
+              title={t('profile.edit')}
+              variant="secondary"
+              size="small"
+              onPress={() => router.push('/edit-profile')}
+            />
+            <ProfileMenu profile={profile} />
+          </>
+        )}
+      />
+    );
+  }
 
   return (
     <Screen>
-      <ThemedText type="subtitle">Profile</ThemedText>
-      {status === 'loading' ? (
-        <ActivityIndicator />
-      ) : status === 'signed-in' ? (
-        <MyProfile />
-      ) : (
+      <TabTitle title={t('tabs.profile')} />
+      {status === 'signed-out' ? (
         <>
-          <ThemedText themeColor="textSecondary">
-            Sign in to follow people and organizations, and to publish your own events.
-          </ThemedText>
-          <Button title="Sign in" onPress={() => router.push('/sign-in')} />
+          <ThemedText themeColor="textSecondary">{t('profile.signInPrompt')}</ThemedText>
+          <Button title={t('common.signIn')} onPress={() => router.push('/sign-in')} />
         </>
+      ) : (
+        <ActivityIndicator />
       )}
     </Screen>
   );
 }
-
-function MyProfile() {
-  const { signOut } = useAuth();
-  const { data: me, isPending } = useQuery(meRetrieveOptions());
-
-  if (isPending || !me) {
-    return <ActivityIndicator />;
-  }
-
-  return (
-    <>
-      <View>
-        <ThemedText type="heading">{me.display_name}</ThemedText>
-        <ThemedText themeColor="textSecondary">@{me.handle}</ThemedText>
-      </View>
-      {me.bio ? <ThemedText>{me.bio}</ThemedText> : null}
-      <View style={styles.stats}>
-        <ThemedText type="small">
-          <ThemedText type="smallBold">{me.follower_count}</ThemedText> followers
-        </ThemedText>
-        <ThemedText type="small">
-          <ThemedText type="smallBold">{me.following_count}</ThemedText> following
-        </ThemedText>
-      </View>
-      <Button title="Sign out" variant="secondary" onPress={signOut} />
-    </>
-  );
-}
-
-const styles = StyleSheet.create({
-  stats: {
-    flexDirection: 'row',
-    gap: Spacing.four,
-  },
-});

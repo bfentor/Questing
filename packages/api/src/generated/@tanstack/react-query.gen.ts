@@ -3,8 +3,76 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { eventsCreate, eventsDestroy, eventsPartialUpdate, eventsRetrieve, feedsFollowingList, feedsNearbyList, feedsUpcomingList, mePartialUpdate, meRetrieve, type Options, postsCreate, postsDestroy, postsRetrieve, profilesFollowCreate, profilesFollowDestroy, profilesRetrieve } from '../sdk.gen';
-import type { EventsCreateData, EventsCreateResponse, EventsDestroyData, EventsDestroyResponse, EventsPartialUpdateData, EventsPartialUpdateResponse, EventsRetrieveData, EventsRetrieveResponse, FeedsFollowingListData, FeedsFollowingListResponse, FeedsNearbyListData, FeedsNearbyListResponse, FeedsUpcomingListData, FeedsUpcomingListResponse, MePartialUpdateData, MePartialUpdateResponse, MeRetrieveData, MeRetrieveResponse, PostsCreateData, PostsCreateResponse, PostsDestroyData, PostsDestroyResponse, PostsRetrieveData, PostsRetrieveResponse, ProfilesFollowCreateData, ProfilesFollowCreateResponse, ProfilesFollowDestroyData, ProfilesFollowDestroyResponse, ProfilesRetrieveData, ProfilesRetrieveResponse } from '../types.gen';
+import { categoriesList, commentsDestroy, eventsAnnouncementsCreate, eventsAttendanceDestroy, eventsAttendanceUpdate, eventsAttendeesExportRetrieve, eventsAttendeesList, eventsCoHostCreate, eventsCoHostDestroy, eventsCoHostList, eventsCommentsCreate, eventsCommentsList, eventsCreate, eventsDestroy, eventsFeedbackMineRetrieve, eventsFeedbackMineUpdate, eventsFeedbackRetrieve, eventsPartialUpdate, eventsPhotosList, eventsRetrieve, eventsSaveDestroy, eventsSaveUpdate, eventsViewCreate, feedsFollowingList, feedsForYouList, feedsHashtagList, feedsNearbyList, feedsTrendingList, feedsUpcomingList, flagsRetrieve, geocodeList, imagesCreate, imagesCropCreate, imagesRetrieve, meAcceptTermsCreate, meAccountDeleteCreate, meAttendingList, meBlockedList, meEventsList, meExportRetrieve, meFollowRequestsCreate, meFollowRequestsDestroy, meFollowRequestsList, meInvitationsCreate, meInvitationsDestroy, meInvitationsList, meMutedList, mePartialUpdate, meProfilesList, meRetrieve, meSavedList, meSettingsPartialUpdate, meSettingsRetrieve, meStudentCreate, meStudentDestroy, meStudentRetrieve, meStudentVerifyCreate, meSuggestionsList, notificationsList, notificationsReadCreate, notificationsUnreadRetrieve, type Options, organizationsCreate, organizationsInvitationsList, organizationsMembersCreate, organizationsMembersDestroy, organizationsMembersList, organizationsMembersPartialUpdate, organizationsPartialUpdate, organizationsVerificationCreate, postsCommentsCreate, postsCommentsList, postsCreate, postsDestroy, postsLikeDestroy, postsLikeUpdate, postsPartialUpdate, postsRetrieve, profilesBlockCreate, profilesBlockDestroy, profilesCalendarsCreate, profilesCalendarsDestroy, profilesCalendarsList, profilesEventsList, profilesFollowCreate, profilesFollowDestroy, profilesFollowersList, profilesFollowingList, profilesMuteCreate, profilesMuteDestroy, profilesPostsList, profilesRetrieve, profilesStatsRetrieve, pushDevicesCreate, pushDevicesDestroy, reportsCreate, searchRetrieve, universitiesList } from '../sdk.gen';
+import type { CategoriesListData, CategoriesListResponse, CommentsDestroyData, CommentsDestroyResponse, EventsAnnouncementsCreateData, EventsAnnouncementsCreateResponse, EventsAttendanceDestroyData, EventsAttendanceDestroyResponse, EventsAttendanceUpdateData, EventsAttendanceUpdateResponse, EventsAttendeesExportRetrieveData, EventsAttendeesExportRetrieveResponse, EventsAttendeesListData, EventsAttendeesListResponse, EventsCoHostCreateData, EventsCoHostCreateResponse, EventsCoHostDestroyData, EventsCoHostDestroyResponse, EventsCoHostListData, EventsCoHostListResponse, EventsCommentsCreateData, EventsCommentsCreateResponse, EventsCommentsListData, EventsCommentsListResponse, EventsCreateData, EventsCreateResponse, EventsDestroyData, EventsDestroyResponse, EventsFeedbackMineRetrieveData, EventsFeedbackMineRetrieveResponse, EventsFeedbackMineUpdateData, EventsFeedbackMineUpdateResponse, EventsFeedbackRetrieveData, EventsFeedbackRetrieveResponse, EventsPartialUpdateData, EventsPartialUpdateResponse, EventsPhotosListData, EventsPhotosListResponse, EventsRetrieveData, EventsRetrieveResponse, EventsSaveDestroyData, EventsSaveDestroyResponse, EventsSaveUpdateData, EventsSaveUpdateResponse, EventsViewCreateData, EventsViewCreateResponse, FeedsFollowingListData, FeedsFollowingListResponse, FeedsForYouListData, FeedsForYouListResponse, FeedsHashtagListData, FeedsHashtagListResponse, FeedsNearbyListData, FeedsNearbyListResponse, FeedsTrendingListData, FeedsTrendingListResponse, FeedsUpcomingListData, FeedsUpcomingListResponse, FlagsRetrieveData, FlagsRetrieveResponse, GeocodeListData, GeocodeListResponse, ImagesCreateData, ImagesCreateResponse, ImagesCropCreateData, ImagesCropCreateResponse, ImagesRetrieveData, ImagesRetrieveResponse, MeAcceptTermsCreateData, MeAcceptTermsCreateResponse, MeAccountDeleteCreateData, MeAccountDeleteCreateResponse, MeAttendingListData, MeAttendingListResponse, MeBlockedListData, MeBlockedListResponse, MeEventsListData, MeEventsListResponse, MeExportRetrieveData, MeExportRetrieveResponse, MeFollowRequestsCreateData, MeFollowRequestsCreateResponse, MeFollowRequestsDestroyData, MeFollowRequestsDestroyResponse, MeFollowRequestsListData, MeFollowRequestsListResponse, MeInvitationsCreateData, MeInvitationsCreateResponse, MeInvitationsDestroyData, MeInvitationsDestroyResponse, MeInvitationsListData, MeInvitationsListResponse, MeMutedListData, MeMutedListResponse, MePartialUpdateData, MePartialUpdateResponse, MeProfilesListData, MeProfilesListResponse, MeRetrieveData, MeRetrieveResponse, MeSavedListData, MeSavedListResponse, MeSettingsPartialUpdateData, MeSettingsPartialUpdateResponse, MeSettingsRetrieveData, MeSettingsRetrieveResponse, MeStudentCreateData, MeStudentCreateResponse, MeStudentDestroyData, MeStudentDestroyResponse, MeStudentRetrieveData, MeStudentRetrieveResponse, MeStudentVerifyCreateData, MeStudentVerifyCreateResponse, MeSuggestionsListData, MeSuggestionsListResponse, NotificationsListData, NotificationsListResponse, NotificationsReadCreateData, NotificationsReadCreateResponse, NotificationsUnreadRetrieveData, NotificationsUnreadRetrieveResponse, OrganizationsCreateData, OrganizationsCreateResponse, OrganizationsInvitationsListData, OrganizationsInvitationsListResponse, OrganizationsMembersCreateData, OrganizationsMembersCreateResponse, OrganizationsMembersDestroyData, OrganizationsMembersDestroyResponse, OrganizationsMembersListData, OrganizationsMembersListResponse, OrganizationsMembersPartialUpdateData, OrganizationsMembersPartialUpdateResponse, OrganizationsPartialUpdateData, OrganizationsPartialUpdateResponse, OrganizationsVerificationCreateData, OrganizationsVerificationCreateResponse, PostsCommentsCreateData, PostsCommentsCreateResponse, PostsCommentsListData, PostsCommentsListResponse, PostsCreateData, PostsCreateResponse, PostsDestroyData, PostsDestroyResponse, PostsLikeDestroyData, PostsLikeDestroyResponse, PostsLikeUpdateData, PostsLikeUpdateResponse, PostsPartialUpdateData, PostsPartialUpdateResponse, PostsRetrieveData, PostsRetrieveResponse, ProfilesBlockCreateData, ProfilesBlockCreateResponse, ProfilesBlockDestroyData, ProfilesBlockDestroyResponse, ProfilesCalendarsCreateData, ProfilesCalendarsCreateResponse, ProfilesCalendarsDestroyData, ProfilesCalendarsDestroyResponse, ProfilesCalendarsListData, ProfilesCalendarsListResponse, ProfilesEventsListData, ProfilesEventsListResponse, ProfilesFollowCreateData, ProfilesFollowCreateResponse, ProfilesFollowDestroyData, ProfilesFollowDestroyResponse, ProfilesFollowersListData, ProfilesFollowersListResponse, ProfilesFollowingListData, ProfilesFollowingListResponse, ProfilesMuteCreateData, ProfilesMuteCreateResponse, ProfilesMuteDestroyData, ProfilesMuteDestroyResponse, ProfilesPostsListData, ProfilesPostsListResponse, ProfilesRetrieveData, ProfilesRetrieveResponse, ProfilesStatsRetrieveData, ProfilesStatsRetrieveResponse, PushDevicesCreateData, PushDevicesCreateResponse, PushDevicesDestroyData, PushDevicesDestroyResponse, ReportsCreateData, ReportsCreateResponse, SearchRetrieveData, SearchRetrieveResponse, UniversitiesListData, UniversitiesListResponse } from '../types.gen';
+
+export type QueryKey<TOptions extends Options> = [
+    Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
+        _id: string;
+        _infinite?: boolean;
+        tags?: ReadonlyArray<string>;
+    }
+];
+
+const createQueryKey = <TOptions extends Options>(id: string, options?: TOptions, infinite?: boolean, tags?: ReadonlyArray<string>): [
+    QueryKey<TOptions>[0]
+] => {
+    const params: QueryKey<TOptions>[0] = { _id: id, baseUrl: options?.baseUrl || (options?.client ?? client).getConfig().baseUrl } as QueryKey<TOptions>[0];
+    if (infinite) {
+        params._infinite = infinite;
+    }
+    if (tags) {
+        params.tags = tags;
+    }
+    if (options?.body) {
+        params.body = options.body;
+    }
+    if (options?.headers) {
+        params.headers = options.headers;
+    }
+    if (options?.path) {
+        params.path = options.path;
+    }
+    if (options?.query) {
+        params.query = options.query;
+    }
+    return [params];
+};
+
+export const categoriesListQueryKey = (options?: Options<CategoriesListData>) => createQueryKey('categoriesList', options);
+
+/**
+ * Every category, in display order, named in the request's language.
+ */
+export const categoriesListOptions = (options?: Options<CategoriesListData>) => queryOptions<CategoriesListResponse, DefaultError, CategoriesListResponse, ReturnType<typeof categoriesListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await categoriesList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: categoriesListQueryKey(options)
+});
+
+/**
+ * Delete a comment you wrote, or one on your post or event.
+ */
+export const commentsDestroyMutation = (options?: Partial<Options<CommentsDestroyData>>): UseMutationOptions<CommentsDestroyResponse, DefaultError, Options<CommentsDestroyData>> => {
+    const mutationOptions: UseMutationOptions<CommentsDestroyResponse, DefaultError, Options<CommentsDestroyData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await commentsDestroy({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
 
 /**
  * Create and manage single events. Listing happens through the feeds.
@@ -38,39 +106,6 @@ export const eventsDestroyMutation = (options?: Partial<Options<EventsDestroyDat
         }
     };
     return mutationOptions;
-};
-
-export type QueryKey<TOptions extends Options> = [
-    Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
-        _id: string;
-        _infinite?: boolean;
-        tags?: ReadonlyArray<string>;
-    }
-];
-
-const createQueryKey = <TOptions extends Options>(id: string, options?: TOptions, infinite?: boolean, tags?: ReadonlyArray<string>): [
-    QueryKey<TOptions>[0]
-] => {
-    const params: QueryKey<TOptions>[0] = { _id: id, baseUrl: options?.baseUrl || (options?.client ?? client).getConfig().baseUrl } as QueryKey<TOptions>[0];
-    if (infinite) {
-        params._infinite = infinite;
-    }
-    if (tags) {
-        params.tags = tags;
-    }
-    if (options?.body) {
-        params.body = options.body;
-    }
-    if (options?.headers) {
-        params.headers = options.headers;
-    }
-    if (options?.path) {
-        params.path = options.path;
-    }
-    if (options?.query) {
-        params.query = options.query;
-    }
-    return [params];
 };
 
 export const eventsRetrieveQueryKey = (options: Options<EventsRetrieveData>) => createQueryKey('eventsRetrieve', options);
@@ -108,14 +143,68 @@ export const eventsPartialUpdateMutation = (options?: Partial<Options<EventsPart
     return mutationOptions;
 };
 
-export const feedsFollowingListQueryKey = (options?: Options<FeedsFollowingListData>) => createQueryKey('feedsFollowingList', options);
+/**
+ * Send a message to everyone going, interested or waitlisted (hosts only).
+ */
+export const eventsAnnouncementsCreateMutation = (options?: Partial<Options<EventsAnnouncementsCreateData>>): UseMutationOptions<EventsAnnouncementsCreateResponse, DefaultError, Options<EventsAnnouncementsCreateData>> => {
+    const mutationOptions: UseMutationOptions<EventsAnnouncementsCreateResponse, DefaultError, Options<EventsAnnouncementsCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await eventsAnnouncementsCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
 
 /**
- * Posts from profiles the signed-in user follows (and their own), newest first.
+ * Withdraw your RSVP.
  */
-export const feedsFollowingListOptions = (options?: Options<FeedsFollowingListData>) => queryOptions<FeedsFollowingListResponse, DefaultError, FeedsFollowingListResponse, ReturnType<typeof feedsFollowingListQueryKey>>({
+export const eventsAttendanceDestroyMutation = (options?: Partial<Options<EventsAttendanceDestroyData>>): UseMutationOptions<EventsAttendanceDestroyResponse, DefaultError, Options<EventsAttendanceDestroyData>> => {
+    const mutationOptions: UseMutationOptions<EventsAttendanceDestroyResponse, DefaultError, Options<EventsAttendanceDestroyData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await eventsAttendanceDestroy({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * RSVP to the event.
+ */
+export const eventsAttendanceUpdateMutation = (options?: Partial<Options<EventsAttendanceUpdateData>>): UseMutationOptions<EventsAttendanceUpdateResponse, DefaultError, Options<EventsAttendanceUpdateData>> => {
+    const mutationOptions: UseMutationOptions<EventsAttendanceUpdateResponse, DefaultError, Options<EventsAttendanceUpdateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await eventsAttendanceUpdate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const eventsAttendeesListQueryKey = (options: Options<EventsAttendeesListData>) => createQueryKey('eventsAttendeesList', options);
+
+/**
+ * Who's going (or interested): people you follow first, then the latest RSVPs.
+ *
+ * Leaves out people who hide their attendance (except yourself), blocked
+ * profiles and private profiles you don't follow.
+ */
+export const eventsAttendeesListOptions = (options: Options<EventsAttendeesListData>) => queryOptions<EventsAttendeesListResponse, DefaultError, EventsAttendeesListResponse, ReturnType<typeof eventsAttendeesListQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
-        const { data } = await feedsFollowingList({
+        const { data } = await eventsAttendeesList({
             ...options,
             ...queryKey[0],
             signal,
@@ -123,7 +212,7 @@ export const feedsFollowingListOptions = (options?: Options<FeedsFollowingListDa
         });
         return data;
     },
-    queryKey: feedsFollowingListQueryKey(options)
+    queryKey: eventsAttendeesListQueryKey(options)
 });
 
 const createInfiniteParams = <K extends Pick<QueryKey<Options>[0], 'body' | 'headers' | 'path' | 'query'>>(queryKey: QueryKey<Options>, page: K) => {
@@ -155,10 +244,362 @@ const createInfiniteParams = <K extends Pick<QueryKey<Options>[0], 'body' | 'hea
     return params as unknown as typeof page;
 };
 
+export const eventsAttendeesListInfiniteQueryKey = (options: Options<EventsAttendeesListData>): QueryKey<Options<EventsAttendeesListData>> => createQueryKey('eventsAttendeesList', options, true);
+
+/**
+ * Who's going (or interested): people you follow first, then the latest RSVPs.
+ *
+ * Leaves out people who hide their attendance (except yourself), blocked
+ * profiles and private profiles you don't follow.
+ */
+export const eventsAttendeesListInfiniteOptions = (options: Options<EventsAttendeesListData>) => {
+    const opts = infiniteQueryOptions<EventsAttendeesListResponse, DefaultError, InfiniteData<EventsAttendeesListResponse>, QueryKey<Options<EventsAttendeesListData>>, number | Pick<QueryKey<Options<EventsAttendeesListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<EventsAttendeesListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    offset: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await eventsAttendeesList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: eventsAttendeesListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+export const eventsAttendeesExportRetrieveQueryKey = (options: Options<EventsAttendeesExportRetrieveData>) => createQueryKey('eventsAttendeesExportRetrieve', options);
+
+/**
+ * Everyone who answered, as CSV (hosts only). Includes people who hide their attendance.
+ */
+export const eventsAttendeesExportRetrieveOptions = (options: Options<EventsAttendeesExportRetrieveData>) => queryOptions<EventsAttendeesExportRetrieveResponse, DefaultError, EventsAttendeesExportRetrieveResponse, ReturnType<typeof eventsAttendeesExportRetrieveQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await eventsAttendeesExportRetrieve({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: eventsAttendeesExportRetrieveQueryKey(options)
+});
+
+export const eventsCoHostListQueryKey = (options: Options<EventsCoHostListData>) => createQueryKey('eventsCoHostList', options);
+
+/**
+ * Pending co-host invitations of this event for profiles you manage.
+ */
+export const eventsCoHostListOptions = (options: Options<EventsCoHostListData>) => queryOptions<EventsCoHostListResponse, DefaultError, EventsCoHostListResponse, ReturnType<typeof eventsCoHostListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await eventsCoHostList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: eventsCoHostListQueryKey(options)
+});
+
+/**
+ * Accept co-hosting as one of your profiles (POST), or decline or stop (DELETE).
+ *
+ * Answering for one date of a series answers for all of them.
+ */
+export const eventsCoHostDestroyMutation = (options?: Partial<Options<EventsCoHostDestroyData>>): UseMutationOptions<EventsCoHostDestroyResponse, DefaultError, Options<EventsCoHostDestroyData>> => {
+    const mutationOptions: UseMutationOptions<EventsCoHostDestroyResponse, DefaultError, Options<EventsCoHostDestroyData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await eventsCoHostDestroy({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Accept co-hosting as one of your profiles (POST), or decline or stop (DELETE).
+ *
+ * Answering for one date of a series answers for all of them.
+ */
+export const eventsCoHostCreateMutation = (options?: Partial<Options<EventsCoHostCreateData>>): UseMutationOptions<EventsCoHostCreateResponse, DefaultError, Options<EventsCoHostCreateData>> => {
+    const mutationOptions: UseMutationOptions<EventsCoHostCreateResponse, DefaultError, Options<EventsCoHostCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await eventsCoHostCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const eventsCommentsListQueryKey = (options: Options<EventsCommentsListData>) => createQueryKey('eventsCommentsList', options);
+
+/**
+ * Questions and comments on an event.
+ */
+export const eventsCommentsListOptions = (options: Options<EventsCommentsListData>) => queryOptions<EventsCommentsListResponse, DefaultError, EventsCommentsListResponse, ReturnType<typeof eventsCommentsListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await eventsCommentsList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: eventsCommentsListQueryKey(options)
+});
+
+export const eventsCommentsListInfiniteQueryKey = (options: Options<EventsCommentsListData>): QueryKey<Options<EventsCommentsListData>> => createQueryKey('eventsCommentsList', options, true);
+
+/**
+ * Questions and comments on an event.
+ */
+export const eventsCommentsListInfiniteOptions = (options: Options<EventsCommentsListData>) => {
+    const opts = infiniteQueryOptions<EventsCommentsListResponse, DefaultError, InfiniteData<EventsCommentsListResponse>, QueryKey<Options<EventsCommentsListData>>, string | Pick<QueryKey<Options<EventsCommentsListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<EventsCommentsListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    cursor: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await eventsCommentsList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: eventsCommentsListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+/**
+ * Questions and comments on an event.
+ */
+export const eventsCommentsCreateMutation = (options?: Partial<Options<EventsCommentsCreateData>>): UseMutationOptions<EventsCommentsCreateResponse, DefaultError, Options<EventsCommentsCreateData>> => {
+    const mutationOptions: UseMutationOptions<EventsCommentsCreateResponse, DefaultError, Options<EventsCommentsCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await eventsCommentsCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const eventsFeedbackRetrieveQueryKey = (options: Options<EventsFeedbackRetrieveData>) => createQueryKey('eventsFeedbackRetrieve', options);
+
+/**
+ * Ratings and comments from people who went, without names (hosts only).
+ */
+export const eventsFeedbackRetrieveOptions = (options: Options<EventsFeedbackRetrieveData>) => queryOptions<EventsFeedbackRetrieveResponse, DefaultError, EventsFeedbackRetrieveResponse, ReturnType<typeof eventsFeedbackRetrieveQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await eventsFeedbackRetrieve({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: eventsFeedbackRetrieveQueryKey(options)
+});
+
+export const eventsFeedbackMineRetrieveQueryKey = (options: Options<EventsFeedbackMineRetrieveData>) => createQueryKey('eventsFeedbackMineRetrieve', options);
+
+/**
+ * Your rating of the event (GET), or give or change it (PUT) once it has ended.
+ */
+export const eventsFeedbackMineRetrieveOptions = (options: Options<EventsFeedbackMineRetrieveData>) => queryOptions<EventsFeedbackMineRetrieveResponse, DefaultError, EventsFeedbackMineRetrieveResponse, ReturnType<typeof eventsFeedbackMineRetrieveQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await eventsFeedbackMineRetrieve({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: eventsFeedbackMineRetrieveQueryKey(options)
+});
+
+/**
+ * Your rating of the event (GET), or give or change it (PUT) once it has ended.
+ */
+export const eventsFeedbackMineUpdateMutation = (options?: Partial<Options<EventsFeedbackMineUpdateData>>): UseMutationOptions<EventsFeedbackMineUpdateResponse, DefaultError, Options<EventsFeedbackMineUpdateData>> => {
+    const mutationOptions: UseMutationOptions<EventsFeedbackMineUpdateResponse, DefaultError, Options<EventsFeedbackMineUpdateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await eventsFeedbackMineUpdate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const eventsPhotosListQueryKey = (options: Options<EventsPhotosListData>) => createQueryKey('eventsPhotosList', options);
+
+/**
+ * Pictures from posts sharing an event, newest first: the event's photo gallery.
+ *
+ * Adding a photo is posting it with the event attached, so photos can be
+ * liked, commented on and reported like any post.
+ */
+export const eventsPhotosListOptions = (options: Options<EventsPhotosListData>) => queryOptions<EventsPhotosListResponse, DefaultError, EventsPhotosListResponse, ReturnType<typeof eventsPhotosListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await eventsPhotosList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: eventsPhotosListQueryKey(options)
+});
+
+export const eventsPhotosListInfiniteQueryKey = (options: Options<EventsPhotosListData>): QueryKey<Options<EventsPhotosListData>> => createQueryKey('eventsPhotosList', options, true);
+
+/**
+ * Pictures from posts sharing an event, newest first: the event's photo gallery.
+ *
+ * Adding a photo is posting it with the event attached, so photos can be
+ * liked, commented on and reported like any post.
+ */
+export const eventsPhotosListInfiniteOptions = (options: Options<EventsPhotosListData>) => {
+    const opts = infiniteQueryOptions<EventsPhotosListResponse, DefaultError, InfiniteData<EventsPhotosListResponse>, QueryKey<Options<EventsPhotosListData>>, number | Pick<QueryKey<Options<EventsPhotosListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<EventsPhotosListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    offset: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await eventsPhotosList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: eventsPhotosListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+/**
+ * Save the event for later (PUT), or forget it (DELETE). Only you see what you saved.
+ */
+export const eventsSaveDestroyMutation = (options?: Partial<Options<EventsSaveDestroyData>>): UseMutationOptions<EventsSaveDestroyResponse, DefaultError, Options<EventsSaveDestroyData>> => {
+    const mutationOptions: UseMutationOptions<EventsSaveDestroyResponse, DefaultError, Options<EventsSaveDestroyData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await eventsSaveDestroy({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Save the event for later (PUT), or forget it (DELETE). Only you see what you saved.
+ */
+export const eventsSaveUpdateMutation = (options?: Partial<Options<EventsSaveUpdateData>>): UseMutationOptions<EventsSaveUpdateResponse, DefaultError, Options<EventsSaveUpdateData>> => {
+    const mutationOptions: UseMutationOptions<EventsSaveUpdateResponse, DefaultError, Options<EventsSaveUpdateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await eventsSaveUpdate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Count that someone opened the event's page (for its hosts' dashboard).
+ */
+export const eventsViewCreateMutation = (options?: Partial<Options<EventsViewCreateData>>): UseMutationOptions<EventsViewCreateResponse, DefaultError, Options<EventsViewCreateData>> => {
+    const mutationOptions: UseMutationOptions<EventsViewCreateResponse, DefaultError, Options<EventsViewCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await eventsViewCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const feedsFollowingListQueryKey = (options?: Options<FeedsFollowingListData>) => createQueryKey('feedsFollowingList', options);
+
+/**
+ * Posts from profiles the signed-in user follows (and their own), newest first.
+ *
+ * An event shared more than once shows only in its newest post.
+ */
+export const feedsFollowingListOptions = (options?: Options<FeedsFollowingListData>) => queryOptions<FeedsFollowingListResponse, DefaultError, FeedsFollowingListResponse, ReturnType<typeof feedsFollowingListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await feedsFollowingList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: feedsFollowingListQueryKey(options)
+});
+
 export const feedsFollowingListInfiniteQueryKey = (options?: Options<FeedsFollowingListData>): QueryKey<Options<FeedsFollowingListData>> => createQueryKey('feedsFollowingList', options, true);
 
 /**
  * Posts from profiles the signed-in user follows (and their own), newest first.
+ *
+ * An event shared more than once shows only in its newest post.
  */
 export const feedsFollowingListInfiniteOptions = (options?: Options<FeedsFollowingListData>) => {
     const opts = infiniteQueryOptions<FeedsFollowingListResponse, DefaultError, InfiniteData<FeedsFollowingListResponse>, QueryKey<Options<FeedsFollowingListData>>, string | Pick<QueryKey<Options<FeedsFollowingListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
@@ -181,6 +622,106 @@ export const feedsFollowingListInfiniteOptions = (options?: Options<FeedsFollowi
             return data;
         },
         queryKey: feedsFollowingListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+export const feedsForYouListQueryKey = (options?: Options<FeedsForYouListData>) => createQueryKey('feedsForYouList', options);
+
+/**
+ * Upcoming events picked for the signed-in user; see feeds.ranking.for_you.
+ *
+ * The optional position favours nearby events and is never stored.
+ */
+export const feedsForYouListOptions = (options?: Options<FeedsForYouListData>) => queryOptions<FeedsForYouListResponse, DefaultError, FeedsForYouListResponse, ReturnType<typeof feedsForYouListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await feedsForYouList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: feedsForYouListQueryKey(options)
+});
+
+export const feedsForYouListInfiniteQueryKey = (options?: Options<FeedsForYouListData>): QueryKey<Options<FeedsForYouListData>> => createQueryKey('feedsForYouList', options, true);
+
+/**
+ * Upcoming events picked for the signed-in user; see feeds.ranking.for_you.
+ *
+ * The optional position favours nearby events and is never stored.
+ */
+export const feedsForYouListInfiniteOptions = (options?: Options<FeedsForYouListData>) => {
+    const opts = infiniteQueryOptions<FeedsForYouListResponse, DefaultError, InfiniteData<FeedsForYouListResponse>, QueryKey<Options<FeedsForYouListData>>, number | Pick<QueryKey<Options<FeedsForYouListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<FeedsForYouListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    offset: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await feedsForYouList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: feedsForYouListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+export const feedsHashtagListQueryKey = (options: Options<FeedsHashtagListData>) => createQueryKey('feedsHashtagList', options);
+
+/**
+ * Posts with a #hashtag (without the #, any case), newest first.
+ */
+export const feedsHashtagListOptions = (options: Options<FeedsHashtagListData>) => queryOptions<FeedsHashtagListResponse, DefaultError, FeedsHashtagListResponse, ReturnType<typeof feedsHashtagListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await feedsHashtagList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: feedsHashtagListQueryKey(options)
+});
+
+export const feedsHashtagListInfiniteQueryKey = (options: Options<FeedsHashtagListData>): QueryKey<Options<FeedsHashtagListData>> => createQueryKey('feedsHashtagList', options, true);
+
+/**
+ * Posts with a #hashtag (without the #, any case), newest first.
+ */
+export const feedsHashtagListInfiniteOptions = (options: Options<FeedsHashtagListData>) => {
+    const opts = infiniteQueryOptions<FeedsHashtagListResponse, DefaultError, InfiniteData<FeedsHashtagListResponse>, QueryKey<Options<FeedsHashtagListData>>, string | Pick<QueryKey<Options<FeedsHashtagListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<FeedsHashtagListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    cursor: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await feedsHashtagList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: feedsHashtagListInfiniteQueryKey(options)
     });
     return opts as Omit<typeof opts, 'initialData'>;
 };
@@ -237,6 +778,54 @@ export const feedsNearbyListInfiniteOptions = (options: Options<FeedsNearbyListD
     return opts as Omit<typeof opts, 'initialData'>;
 };
 
+export const feedsTrendingListQueryKey = (options?: Options<FeedsTrendingListData>) => createQueryKey('feedsTrendingList', options);
+
+/**
+ * Upcoming events gaining the most RSVPs lately.
+ */
+export const feedsTrendingListOptions = (options?: Options<FeedsTrendingListData>) => queryOptions<FeedsTrendingListResponse, DefaultError, FeedsTrendingListResponse, ReturnType<typeof feedsTrendingListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await feedsTrendingList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: feedsTrendingListQueryKey(options)
+});
+
+export const feedsTrendingListInfiniteQueryKey = (options?: Options<FeedsTrendingListData>): QueryKey<Options<FeedsTrendingListData>> => createQueryKey('feedsTrendingList', options, true);
+
+/**
+ * Upcoming events gaining the most RSVPs lately.
+ */
+export const feedsTrendingListInfiniteOptions = (options?: Options<FeedsTrendingListData>) => {
+    const opts = infiniteQueryOptions<FeedsTrendingListResponse, DefaultError, InfiniteData<FeedsTrendingListResponse>, QueryKey<Options<FeedsTrendingListData>>, number | Pick<QueryKey<Options<FeedsTrendingListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<FeedsTrendingListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    offset: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await feedsTrendingList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: feedsTrendingListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
 export const feedsUpcomingListQueryKey = (options?: Options<FeedsUpcomingListData>) => createQueryKey('feedsUpcomingList', options);
 
 /**
@@ -285,6 +874,97 @@ export const feedsUpcomingListInfiniteOptions = (options?: Options<FeedsUpcoming
     return opts as Omit<typeof opts, 'initialData'>;
 };
 
+export const flagsRetrieveQueryKey = (options?: Options<FlagsRetrieveData>) => createQueryKey('flagsRetrieve', options);
+
+/**
+ * Which feature flags are on for you, as {"name": true}. Flags left out are off.
+ */
+export const flagsRetrieveOptions = (options?: Options<FlagsRetrieveData>) => queryOptions<FlagsRetrieveResponse, DefaultError, FlagsRetrieveResponse, ReturnType<typeof flagsRetrieveQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await flagsRetrieve({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: flagsRetrieveQueryKey(options)
+});
+
+export const geocodeListQueryKey = (options: Options<GeocodeListData>) => createQueryKey('geocodeList', options);
+
+/**
+ * Search for an address or place, for the event form's location.
+ */
+export const geocodeListOptions = (options: Options<GeocodeListData>) => queryOptions<GeocodeListResponse, DefaultError, GeocodeListResponse, ReturnType<typeof geocodeListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await geocodeList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: geocodeListQueryKey(options)
+});
+
+/**
+ * Upload a picture, to attach to a profile, event or post by its id.
+ */
+export const imagesCreateMutation = (options?: Partial<Options<ImagesCreateData>>): UseMutationOptions<ImagesCreateResponse, DefaultError, Options<ImagesCreateData>> => {
+    const mutationOptions: UseMutationOptions<ImagesCreateResponse, DefaultError, Options<ImagesCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await imagesCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const imagesRetrieveQueryKey = (options: Options<ImagesRetrieveData>) => createQueryKey('imagesRetrieve', options);
+
+/**
+ * A picture, with the original it was cropped from (if it's a crop).
+ */
+export const imagesRetrieveOptions = (options: Options<ImagesRetrieveData>) => queryOptions<ImagesRetrieveResponse, DefaultError, ImagesRetrieveResponse, ReturnType<typeof imagesRetrieveQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await imagesRetrieve({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: imagesRetrieveQueryKey(options)
+});
+
+/**
+ * Make a new picture from part of an uploaded one, e.g. to frame a profile picture.
+ *
+ * Cropping a crop starts again from its original, so a picture can be reframed (or zoomed
+ * back out) any number of times without losing quality.
+ */
+export const imagesCropCreateMutation = (options?: Partial<Options<ImagesCropCreateData>>): UseMutationOptions<ImagesCropCreateResponse, DefaultError, Options<ImagesCropCreateData>> => {
+    const mutationOptions: UseMutationOptions<ImagesCropCreateResponse, DefaultError, Options<ImagesCropCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await imagesCropCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
 export const meRetrieveQueryKey = (options?: Options<MeRetrieveData>) => createQueryKey('meRetrieve', options);
 
 /**
@@ -321,7 +1001,735 @@ export const mePartialUpdateMutation = (options?: Partial<Options<MePartialUpdat
 };
 
 /**
- * Create, view and delete single posts. Listing happens through the feeds.
+ * Accept the current terms of service and privacy policy.
+ */
+export const meAcceptTermsCreateMutation = (options?: Partial<Options<MeAcceptTermsCreateData>>): UseMutationOptions<MeAcceptTermsCreateResponse, DefaultError, Options<MeAcceptTermsCreateData>> => {
+    const mutationOptions: UseMutationOptions<MeAcceptTermsCreateResponse, DefaultError, Options<MeAcceptTermsCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await meAcceptTermsCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Permanently delete the signed-in user's account and everything personal in it.
+ */
+export const meAccountDeleteCreateMutation = (options?: Partial<Options<MeAccountDeleteCreateData>>): UseMutationOptions<MeAccountDeleteCreateResponse, DefaultError, Options<MeAccountDeleteCreateData>> => {
+    const mutationOptions: UseMutationOptions<MeAccountDeleteCreateResponse, DefaultError, Options<MeAccountDeleteCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await meAccountDeleteCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const meAttendingListQueryKey = (options?: Options<MeAttendingListData>) => createQueryKey('meAttendingList', options);
+
+/**
+ * Events the signed-in user is going to, interested in or waitlisted for.
+ */
+export const meAttendingListOptions = (options?: Options<MeAttendingListData>) => queryOptions<MeAttendingListResponse, DefaultError, MeAttendingListResponse, ReturnType<typeof meAttendingListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await meAttendingList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: meAttendingListQueryKey(options)
+});
+
+export const meAttendingListInfiniteQueryKey = (options?: Options<MeAttendingListData>): QueryKey<Options<MeAttendingListData>> => createQueryKey('meAttendingList', options, true);
+
+/**
+ * Events the signed-in user is going to, interested in or waitlisted for.
+ */
+export const meAttendingListInfiniteOptions = (options?: Options<MeAttendingListData>) => {
+    const opts = infiniteQueryOptions<MeAttendingListResponse, DefaultError, InfiniteData<MeAttendingListResponse>, QueryKey<Options<MeAttendingListData>>, number | Pick<QueryKey<Options<MeAttendingListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<MeAttendingListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    offset: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await meAttendingList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: meAttendingListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+export const meBlockedListQueryKey = (options?: Options<MeBlockedListData>) => createQueryKey('meBlockedList', options);
+
+/**
+ * Profiles the signed-in user has blocked.
+ */
+export const meBlockedListOptions = (options?: Options<MeBlockedListData>) => queryOptions<MeBlockedListResponse, DefaultError, MeBlockedListResponse, ReturnType<typeof meBlockedListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await meBlockedList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: meBlockedListQueryKey(options)
+});
+
+export const meEventsListQueryKey = (options?: Options<MeEventsListData>) => createQueryKey('meEventsList', options);
+
+/**
+ * Events organized by the signed-in user or their organizations, drafts included.
+ */
+export const meEventsListOptions = (options?: Options<MeEventsListData>) => queryOptions<MeEventsListResponse, DefaultError, MeEventsListResponse, ReturnType<typeof meEventsListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await meEventsList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: meEventsListQueryKey(options)
+});
+
+export const meEventsListInfiniteQueryKey = (options?: Options<MeEventsListData>): QueryKey<Options<MeEventsListData>> => createQueryKey('meEventsList', options, true);
+
+/**
+ * Events organized by the signed-in user or their organizations, drafts included.
+ */
+export const meEventsListInfiniteOptions = (options?: Options<MeEventsListData>) => {
+    const opts = infiniteQueryOptions<MeEventsListResponse, DefaultError, InfiniteData<MeEventsListResponse>, QueryKey<Options<MeEventsListData>>, number | Pick<QueryKey<Options<MeEventsListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<MeEventsListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    offset: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await meEventsList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: meEventsListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+export const meExportRetrieveQueryKey = (options?: Options<MeExportRetrieveData>) => createQueryKey('meExportRetrieve', options);
+
+/**
+ * Everything stored about the signed-in user, as a JSON file.
+ */
+export const meExportRetrieveOptions = (options?: Options<MeExportRetrieveData>) => queryOptions<MeExportRetrieveResponse, DefaultError, MeExportRetrieveResponse, ReturnType<typeof meExportRetrieveQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await meExportRetrieve({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: meExportRetrieveQueryKey(options)
+});
+
+export const meFollowRequestsListQueryKey = (options?: Options<MeFollowRequestsListData>) => createQueryKey('meFollowRequestsList', options);
+
+/**
+ * People asking to follow the signed-in user's private profile, newest first.
+ */
+export const meFollowRequestsListOptions = (options?: Options<MeFollowRequestsListData>) => queryOptions<MeFollowRequestsListResponse, DefaultError, MeFollowRequestsListResponse, ReturnType<typeof meFollowRequestsListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await meFollowRequestsList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: meFollowRequestsListQueryKey(options)
+});
+
+export const meFollowRequestsListInfiniteQueryKey = (options?: Options<MeFollowRequestsListData>): QueryKey<Options<MeFollowRequestsListData>> => createQueryKey('meFollowRequestsList', options, true);
+
+/**
+ * People asking to follow the signed-in user's private profile, newest first.
+ */
+export const meFollowRequestsListInfiniteOptions = (options?: Options<MeFollowRequestsListData>) => {
+    const opts = infiniteQueryOptions<MeFollowRequestsListResponse, DefaultError, InfiniteData<MeFollowRequestsListResponse>, QueryKey<Options<MeFollowRequestsListData>>, string | Pick<QueryKey<Options<MeFollowRequestsListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<MeFollowRequestsListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    cursor: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await meFollowRequestsList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: meFollowRequestsListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+/**
+ * Accept (POST) or decline (DELETE) someone's request to follow you.
+ */
+export const meFollowRequestsDestroyMutation = (options?: Partial<Options<MeFollowRequestsDestroyData>>): UseMutationOptions<MeFollowRequestsDestroyResponse, DefaultError, Options<MeFollowRequestsDestroyData>> => {
+    const mutationOptions: UseMutationOptions<MeFollowRequestsDestroyResponse, DefaultError, Options<MeFollowRequestsDestroyData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await meFollowRequestsDestroy({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Accept (POST) or decline (DELETE) someone's request to follow you.
+ */
+export const meFollowRequestsCreateMutation = (options?: Partial<Options<MeFollowRequestsCreateData>>): UseMutationOptions<MeFollowRequestsCreateResponse, DefaultError, Options<MeFollowRequestsCreateData>> => {
+    const mutationOptions: UseMutationOptions<MeFollowRequestsCreateResponse, DefaultError, Options<MeFollowRequestsCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await meFollowRequestsCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const meInvitationsListQueryKey = (options?: Options<MeInvitationsListData>) => createQueryKey('meInvitationsList', options);
+
+/**
+ * Invitations to organizations waiting for the signed-in user's answer.
+ */
+export const meInvitationsListOptions = (options?: Options<MeInvitationsListData>) => queryOptions<MeInvitationsListResponse, DefaultError, MeInvitationsListResponse, ReturnType<typeof meInvitationsListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await meInvitationsList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: meInvitationsListQueryKey(options)
+});
+
+/**
+ * Accept (POST) or decline (DELETE) an invitation.
+ */
+export const meInvitationsDestroyMutation = (options?: Partial<Options<MeInvitationsDestroyData>>): UseMutationOptions<MeInvitationsDestroyResponse, DefaultError, Options<MeInvitationsDestroyData>> => {
+    const mutationOptions: UseMutationOptions<MeInvitationsDestroyResponse, DefaultError, Options<MeInvitationsDestroyData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await meInvitationsDestroy({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Accept (POST) or decline (DELETE) an invitation.
+ */
+export const meInvitationsCreateMutation = (options?: Partial<Options<MeInvitationsCreateData>>): UseMutationOptions<MeInvitationsCreateResponse, DefaultError, Options<MeInvitationsCreateData>> => {
+    const mutationOptions: UseMutationOptions<MeInvitationsCreateResponse, DefaultError, Options<MeInvitationsCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await meInvitationsCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const meMutedListQueryKey = (options?: Options<MeMutedListData>) => createQueryKey('meMutedList', options);
+
+/**
+ * Profiles the signed-in user has muted.
+ */
+export const meMutedListOptions = (options?: Options<MeMutedListData>) => queryOptions<MeMutedListResponse, DefaultError, MeMutedListResponse, ReturnType<typeof meMutedListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await meMutedList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: meMutedListQueryKey(options)
+});
+
+export const meProfilesListQueryKey = (options?: Options<MeProfilesListData>) => createQueryKey('meProfilesList', options);
+
+/**
+ * Profiles the signed-in user can publish as: their own, then their organizations.
+ */
+export const meProfilesListOptions = (options?: Options<MeProfilesListData>) => queryOptions<MeProfilesListResponse, DefaultError, MeProfilesListResponse, ReturnType<typeof meProfilesListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await meProfilesList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: meProfilesListQueryKey(options)
+});
+
+export const meSavedListQueryKey = (options?: Options<MeSavedListData>) => createQueryKey('meSavedList', options);
+
+/**
+ * Events the signed-in user saved.
+ */
+export const meSavedListOptions = (options?: Options<MeSavedListData>) => queryOptions<MeSavedListResponse, DefaultError, MeSavedListResponse, ReturnType<typeof meSavedListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await meSavedList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: meSavedListQueryKey(options)
+});
+
+export const meSavedListInfiniteQueryKey = (options?: Options<MeSavedListData>): QueryKey<Options<MeSavedListData>> => createQueryKey('meSavedList', options, true);
+
+/**
+ * Events the signed-in user saved.
+ */
+export const meSavedListInfiniteOptions = (options?: Options<MeSavedListData>) => {
+    const opts = infiniteQueryOptions<MeSavedListResponse, DefaultError, InfiniteData<MeSavedListResponse>, QueryKey<Options<MeSavedListData>>, number | Pick<QueryKey<Options<MeSavedListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<MeSavedListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    offset: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await meSavedList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: meSavedListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+export const meSettingsRetrieveQueryKey = (options?: Options<MeSettingsRetrieveData>) => createQueryKey('meSettingsRetrieve', options);
+
+/**
+ * Account-level settings: language and which notifications are pushed.
+ */
+export const meSettingsRetrieveOptions = (options?: Options<MeSettingsRetrieveData>) => queryOptions<MeSettingsRetrieveResponse, DefaultError, MeSettingsRetrieveResponse, ReturnType<typeof meSettingsRetrieveQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await meSettingsRetrieve({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: meSettingsRetrieveQueryKey(options)
+});
+
+/**
+ * Account-level settings: language and which notifications are pushed.
+ */
+export const meSettingsPartialUpdateMutation = (options?: Partial<Options<MeSettingsPartialUpdateData>>): UseMutationOptions<MeSettingsPartialUpdateResponse, DefaultError, Options<MeSettingsPartialUpdateData>> => {
+    const mutationOptions: UseMutationOptions<MeSettingsPartialUpdateResponse, DefaultError, Options<MeSettingsPartialUpdateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await meSettingsPartialUpdate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Your student verification: see it (GET), send a code to a university
+ * address (POST), or remove it (DELETE).
+ */
+export const meStudentDestroyMutation = (options?: Partial<Options<MeStudentDestroyData>>): UseMutationOptions<MeStudentDestroyResponse, DefaultError, Options<MeStudentDestroyData>> => {
+    const mutationOptions: UseMutationOptions<MeStudentDestroyResponse, DefaultError, Options<MeStudentDestroyData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await meStudentDestroy({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const meStudentRetrieveQueryKey = (options?: Options<MeStudentRetrieveData>) => createQueryKey('meStudentRetrieve', options);
+
+/**
+ * Your student verification: see it (GET), send a code to a university
+ * address (POST), or remove it (DELETE).
+ */
+export const meStudentRetrieveOptions = (options?: Options<MeStudentRetrieveData>) => queryOptions<MeStudentRetrieveResponse, DefaultError, MeStudentRetrieveResponse, ReturnType<typeof meStudentRetrieveQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await meStudentRetrieve({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: meStudentRetrieveQueryKey(options)
+});
+
+/**
+ * Your student verification: see it (GET), send a code to a university
+ * address (POST), or remove it (DELETE).
+ */
+export const meStudentCreateMutation = (options?: Partial<Options<MeStudentCreateData>>): UseMutationOptions<MeStudentCreateResponse, DefaultError, Options<MeStudentCreateData>> => {
+    const mutationOptions: UseMutationOptions<MeStudentCreateResponse, DefaultError, Options<MeStudentCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await meStudentCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Confirm the code sent to your university address.
+ */
+export const meStudentVerifyCreateMutation = (options?: Partial<Options<MeStudentVerifyCreateData>>): UseMutationOptions<MeStudentVerifyCreateResponse, DefaultError, Options<MeStudentVerifyCreateData>> => {
+    const mutationOptions: UseMutationOptions<MeStudentVerifyCreateResponse, DefaultError, Options<MeStudentVerifyCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await meStudentVerifyCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const meSuggestionsListQueryKey = (options?: Options<MeSuggestionsListData>) => createQueryKey('meSuggestionsList', options);
+
+/**
+ * Up to ten profiles the signed-in user might want to follow.
+ */
+export const meSuggestionsListOptions = (options?: Options<MeSuggestionsListData>) => queryOptions<MeSuggestionsListResponse, DefaultError, MeSuggestionsListResponse, ReturnType<typeof meSuggestionsListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await meSuggestionsList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: meSuggestionsListQueryKey(options)
+});
+
+export const notificationsListQueryKey = (options?: Options<NotificationsListData>) => createQueryKey('notificationsList', options);
+
+/**
+ * The signed-in user's inbox, newest first.
+ */
+export const notificationsListOptions = (options?: Options<NotificationsListData>) => queryOptions<NotificationsListResponse, DefaultError, NotificationsListResponse, ReturnType<typeof notificationsListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await notificationsList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: notificationsListQueryKey(options)
+});
+
+export const notificationsListInfiniteQueryKey = (options?: Options<NotificationsListData>): QueryKey<Options<NotificationsListData>> => createQueryKey('notificationsList', options, true);
+
+/**
+ * The signed-in user's inbox, newest first.
+ */
+export const notificationsListInfiniteOptions = (options?: Options<NotificationsListData>) => {
+    const opts = infiniteQueryOptions<NotificationsListResponse, DefaultError, InfiniteData<NotificationsListResponse>, QueryKey<Options<NotificationsListData>>, string | Pick<QueryKey<Options<NotificationsListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<NotificationsListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    cursor: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await notificationsList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: notificationsListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+export const notificationsReadCreateMutation = (options?: Partial<Options<NotificationsReadCreateData>>): UseMutationOptions<NotificationsReadCreateResponse, DefaultError, Options<NotificationsReadCreateData>> => {
+    const mutationOptions: UseMutationOptions<NotificationsReadCreateResponse, DefaultError, Options<NotificationsReadCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await notificationsReadCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const notificationsUnreadRetrieveQueryKey = (options?: Options<NotificationsUnreadRetrieveData>) => createQueryKey('notificationsUnreadRetrieve', options);
+
+export const notificationsUnreadRetrieveOptions = (options?: Options<NotificationsUnreadRetrieveData>) => queryOptions<NotificationsUnreadRetrieveResponse, DefaultError, NotificationsUnreadRetrieveResponse, ReturnType<typeof notificationsUnreadRetrieveQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await notificationsUnreadRetrieve({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: notificationsUnreadRetrieveQueryKey(options)
+});
+
+/**
+ * Create organizations and manage them. They are shown like any profile (/api/profiles/).
+ */
+export const organizationsCreateMutation = (options?: Partial<Options<OrganizationsCreateData>>): UseMutationOptions<OrganizationsCreateResponse, DefaultError, Options<OrganizationsCreateData>> => {
+    const mutationOptions: UseMutationOptions<OrganizationsCreateResponse, DefaultError, Options<OrganizationsCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await organizationsCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Edit the organization's profile (admins).
+ */
+export const organizationsPartialUpdateMutation = (options?: Partial<Options<OrganizationsPartialUpdateData>>): UseMutationOptions<OrganizationsPartialUpdateResponse, DefaultError, Options<OrganizationsPartialUpdateData>> => {
+    const mutationOptions: UseMutationOptions<OrganizationsPartialUpdateResponse, DefaultError, Options<OrganizationsPartialUpdateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await organizationsPartialUpdate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const organizationsInvitationsListQueryKey = (options: Options<OrganizationsInvitationsListData>) => createQueryKey('organizationsInvitationsList', options);
+
+/**
+ * Invitations not answered yet (admins).
+ */
+export const organizationsInvitationsListOptions = (options: Options<OrganizationsInvitationsListData>) => queryOptions<OrganizationsInvitationsListResponse, DefaultError, OrganizationsInvitationsListResponse, ReturnType<typeof organizationsInvitationsListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await organizationsInvitationsList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: organizationsInvitationsListQueryKey(options)
+});
+
+export const organizationsMembersListQueryKey = (options: Options<OrganizationsMembersListData>) => createQueryKey('organizationsMembersList', options);
+
+/**
+ * List the members (GET), or invite someone by handle (POST, admins).
+ */
+export const organizationsMembersListOptions = (options: Options<OrganizationsMembersListData>) => queryOptions<OrganizationsMembersListResponse, DefaultError, OrganizationsMembersListResponse, ReturnType<typeof organizationsMembersListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await organizationsMembersList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: organizationsMembersListQueryKey(options)
+});
+
+/**
+ * List the members (GET), or invite someone by handle (POST, admins).
+ */
+export const organizationsMembersCreateMutation = (options?: Partial<Options<OrganizationsMembersCreateData>>): UseMutationOptions<OrganizationsMembersCreateResponse, DefaultError, Options<OrganizationsMembersCreateData>> => {
+    const mutationOptions: UseMutationOptions<OrganizationsMembersCreateResponse, DefaultError, Options<OrganizationsMembersCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await organizationsMembersCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Change a member's role (PATCH, admins), or remove them (DELETE, admins).
+ *
+ * Members can also DELETE themselves to leave.
+ */
+export const organizationsMembersDestroyMutation = (options?: Partial<Options<OrganizationsMembersDestroyData>>): UseMutationOptions<OrganizationsMembersDestroyResponse, DefaultError, Options<OrganizationsMembersDestroyData>> => {
+    const mutationOptions: UseMutationOptions<OrganizationsMembersDestroyResponse, DefaultError, Options<OrganizationsMembersDestroyData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await organizationsMembersDestroy({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Change a member's role (PATCH, admins), or remove them (DELETE, admins).
+ *
+ * Members can also DELETE themselves to leave.
+ */
+export const organizationsMembersPartialUpdateMutation = (options?: Partial<Options<OrganizationsMembersPartialUpdateData>>): UseMutationOptions<OrganizationsMembersPartialUpdateResponse, DefaultError, Options<OrganizationsMembersPartialUpdateData>> => {
+    const mutationOptions: UseMutationOptions<OrganizationsMembersPartialUpdateResponse, DefaultError, Options<OrganizationsMembersPartialUpdateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await organizationsMembersPartialUpdate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Ask moderators for the verified badge (admins).
+ */
+export const organizationsVerificationCreateMutation = (options?: Partial<Options<OrganizationsVerificationCreateData>>): UseMutationOptions<OrganizationsVerificationCreateResponse, DefaultError, Options<OrganizationsVerificationCreateData>> => {
+    const mutationOptions: UseMutationOptions<OrganizationsVerificationCreateResponse, DefaultError, Options<OrganizationsVerificationCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await organizationsVerificationCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Create, view, edit and delete single posts. Listing happens through the feeds.
  */
 export const postsCreateMutation = (options?: Partial<Options<PostsCreateData>>): UseMutationOptions<PostsCreateResponse, DefaultError, Options<PostsCreateData>> => {
     const mutationOptions: UseMutationOptions<PostsCreateResponse, DefaultError, Options<PostsCreateData>> = {
@@ -338,7 +1746,7 @@ export const postsCreateMutation = (options?: Partial<Options<PostsCreateData>>)
 };
 
 /**
- * Create, view and delete single posts. Listing happens through the feeds.
+ * Create, view, edit and delete single posts. Listing happens through the feeds.
  */
 export const postsDestroyMutation = (options?: Partial<Options<PostsDestroyData>>): UseMutationOptions<PostsDestroyResponse, DefaultError, Options<PostsDestroyData>> => {
     const mutationOptions: UseMutationOptions<PostsDestroyResponse, DefaultError, Options<PostsDestroyData>> = {
@@ -357,7 +1765,7 @@ export const postsDestroyMutation = (options?: Partial<Options<PostsDestroyData>
 export const postsRetrieveQueryKey = (options: Options<PostsRetrieveData>) => createQueryKey('postsRetrieve', options);
 
 /**
- * Create, view and delete single posts. Listing happens through the feeds.
+ * Create, view, edit and delete single posts. Listing happens through the feeds.
  */
 export const postsRetrieveOptions = (options: Options<PostsRetrieveData>) => queryOptions<PostsRetrieveResponse, DefaultError, PostsRetrieveResponse, ReturnType<typeof postsRetrieveQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
@@ -371,6 +1779,122 @@ export const postsRetrieveOptions = (options: Options<PostsRetrieveData>) => que
     },
     queryKey: postsRetrieveQueryKey(options)
 });
+
+/**
+ * Create, view, edit and delete single posts. Listing happens through the feeds.
+ */
+export const postsPartialUpdateMutation = (options?: Partial<Options<PostsPartialUpdateData>>): UseMutationOptions<PostsPartialUpdateResponse, DefaultError, Options<PostsPartialUpdateData>> => {
+    const mutationOptions: UseMutationOptions<PostsPartialUpdateResponse, DefaultError, Options<PostsPartialUpdateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await postsPartialUpdate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const postsCommentsListQueryKey = (options: Options<PostsCommentsListData>) => createQueryKey('postsCommentsList', options);
+
+/**
+ * Base for the comments on one post or event, oldest first; writing needs sign-in.
+ */
+export const postsCommentsListOptions = (options: Options<PostsCommentsListData>) => queryOptions<PostsCommentsListResponse, DefaultError, PostsCommentsListResponse, ReturnType<typeof postsCommentsListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await postsCommentsList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: postsCommentsListQueryKey(options)
+});
+
+export const postsCommentsListInfiniteQueryKey = (options: Options<PostsCommentsListData>): QueryKey<Options<PostsCommentsListData>> => createQueryKey('postsCommentsList', options, true);
+
+/**
+ * Base for the comments on one post or event, oldest first; writing needs sign-in.
+ */
+export const postsCommentsListInfiniteOptions = (options: Options<PostsCommentsListData>) => {
+    const opts = infiniteQueryOptions<PostsCommentsListResponse, DefaultError, InfiniteData<PostsCommentsListResponse>, QueryKey<Options<PostsCommentsListData>>, string | Pick<QueryKey<Options<PostsCommentsListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<PostsCommentsListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    cursor: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await postsCommentsList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: postsCommentsListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+/**
+ * Base for the comments on one post or event, oldest first; writing needs sign-in.
+ */
+export const postsCommentsCreateMutation = (options?: Partial<Options<PostsCommentsCreateData>>): UseMutationOptions<PostsCommentsCreateResponse, DefaultError, Options<PostsCommentsCreateData>> => {
+    const mutationOptions: UseMutationOptions<PostsCommentsCreateResponse, DefaultError, Options<PostsCommentsCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await postsCommentsCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Like (PUT) or unlike (DELETE). The author hears about the first like only.
+ */
+export const postsLikeDestroyMutation = (options?: Partial<Options<PostsLikeDestroyData>>): UseMutationOptions<PostsLikeDestroyResponse, DefaultError, Options<PostsLikeDestroyData>> => {
+    const mutationOptions: UseMutationOptions<PostsLikeDestroyResponse, DefaultError, Options<PostsLikeDestroyData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await postsLikeDestroy({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Like (PUT) or unlike (DELETE). The author hears about the first like only.
+ */
+export const postsLikeUpdateMutation = (options?: Partial<Options<PostsLikeUpdateData>>): UseMutationOptions<PostsLikeUpdateResponse, DefaultError, Options<PostsLikeUpdateData>> => {
+    const mutationOptions: UseMutationOptions<PostsLikeUpdateResponse, DefaultError, Options<PostsLikeUpdateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await postsLikeUpdate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
 
 export const profilesRetrieveQueryKey = (options: Options<ProfilesRetrieveData>) => createQueryKey('profilesRetrieve', options);
 
@@ -387,6 +1911,151 @@ export const profilesRetrieveOptions = (options: Options<ProfilesRetrieveData>) 
     queryKey: profilesRetrieveQueryKey(options)
 });
 
+/**
+ * POST to start blocking/muting a profile, DELETE to stop.
+ */
+export const profilesBlockDestroyMutation = (options?: Partial<Options<ProfilesBlockDestroyData>>): UseMutationOptions<ProfilesBlockDestroyResponse, DefaultError, Options<ProfilesBlockDestroyData>> => {
+    const mutationOptions: UseMutationOptions<ProfilesBlockDestroyResponse, DefaultError, Options<ProfilesBlockDestroyData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await profilesBlockDestroy({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * POST to start blocking/muting a profile, DELETE to stop.
+ */
+export const profilesBlockCreateMutation = (options?: Partial<Options<ProfilesBlockCreateData>>): UseMutationOptions<ProfilesBlockCreateResponse, DefaultError, Options<ProfilesBlockCreateData>> => {
+    const mutationOptions: UseMutationOptions<ProfilesBlockCreateResponse, DefaultError, Options<ProfilesBlockCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await profilesBlockCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const profilesCalendarsListQueryKey = (options: Options<ProfilesCalendarsListData>) => createQueryKey('profilesCalendarsList', options);
+
+/**
+ * Calendars (iCal feeds) whose events a profile you act for imports and keeps in sync.
+ *
+ * Adding one syncs it straight away; after that it syncs every hour. Events
+ * changed in Sidequest are overwritten by the next sync, so edit them in the
+ * calendar.
+ */
+export const profilesCalendarsListOptions = (options: Options<ProfilesCalendarsListData>) => queryOptions<ProfilesCalendarsListResponse, DefaultError, ProfilesCalendarsListResponse, ReturnType<typeof profilesCalendarsListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await profilesCalendarsList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: profilesCalendarsListQueryKey(options)
+});
+
+/**
+ * Calendars (iCal feeds) whose events a profile you act for imports and keeps in sync.
+ *
+ * Adding one syncs it straight away; after that it syncs every hour. Events
+ * changed in Sidequest are overwritten by the next sync, so edit them in the
+ * calendar.
+ */
+export const profilesCalendarsCreateMutation = (options?: Partial<Options<ProfilesCalendarsCreateData>>): UseMutationOptions<ProfilesCalendarsCreateResponse, DefaultError, Options<ProfilesCalendarsCreateData>> => {
+    const mutationOptions: UseMutationOptions<ProfilesCalendarsCreateResponse, DefaultError, Options<ProfilesCalendarsCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await profilesCalendarsCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Stop syncing a calendar. Events already imported stay, as ordinary events.
+ */
+export const profilesCalendarsDestroyMutation = (options?: Partial<Options<ProfilesCalendarsDestroyData>>): UseMutationOptions<ProfilesCalendarsDestroyResponse, DefaultError, Options<ProfilesCalendarsDestroyData>> => {
+    const mutationOptions: UseMutationOptions<ProfilesCalendarsDestroyResponse, DefaultError, Options<ProfilesCalendarsDestroyData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await profilesCalendarsDestroy({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const profilesEventsListQueryKey = (options: Options<ProfilesEventsListData>) => createQueryKey('profilesEventsList', options);
+
+/**
+ * Events this profile organizes: upcoming soonest first, or past newest first.
+ */
+export const profilesEventsListOptions = (options: Options<ProfilesEventsListData>) => queryOptions<ProfilesEventsListResponse, DefaultError, ProfilesEventsListResponse, ReturnType<typeof profilesEventsListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await profilesEventsList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: profilesEventsListQueryKey(options)
+});
+
+export const profilesEventsListInfiniteQueryKey = (options: Options<ProfilesEventsListData>): QueryKey<Options<ProfilesEventsListData>> => createQueryKey('profilesEventsList', options, true);
+
+/**
+ * Events this profile organizes: upcoming soonest first, or past newest first.
+ */
+export const profilesEventsListInfiniteOptions = (options: Options<ProfilesEventsListData>) => {
+    const opts = infiniteQueryOptions<ProfilesEventsListResponse, DefaultError, InfiniteData<ProfilesEventsListResponse>, QueryKey<Options<ProfilesEventsListData>>, number | Pick<QueryKey<Options<ProfilesEventsListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<ProfilesEventsListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    offset: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await profilesEventsList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: profilesEventsListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+/**
+ * Follow (POST) or unfollow (DELETE). Private profiles get a follow request instead.
+ */
 export const profilesFollowDestroyMutation = (options?: Partial<Options<ProfilesFollowDestroyData>>): UseMutationOptions<ProfilesFollowDestroyResponse, DefaultError, Options<ProfilesFollowDestroyData>> => {
     const mutationOptions: UseMutationOptions<ProfilesFollowDestroyResponse, DefaultError, Options<ProfilesFollowDestroyData>> = {
         mutationFn: async (fnOptions) => {
@@ -401,6 +2070,9 @@ export const profilesFollowDestroyMutation = (options?: Partial<Options<Profiles
     return mutationOptions;
 };
 
+/**
+ * Follow (POST) or unfollow (DELETE). Private profiles get a follow request instead.
+ */
 export const profilesFollowCreateMutation = (options?: Partial<Options<ProfilesFollowCreateData>>): UseMutationOptions<ProfilesFollowCreateResponse, DefaultError, Options<ProfilesFollowCreateData>> => {
     const mutationOptions: UseMutationOptions<ProfilesFollowCreateResponse, DefaultError, Options<ProfilesFollowCreateData>> = {
         mutationFn: async (fnOptions) => {
@@ -414,3 +2086,283 @@ export const profilesFollowCreateMutation = (options?: Partial<Options<ProfilesF
     };
     return mutationOptions;
 };
+
+export const profilesFollowersListQueryKey = (options: Options<ProfilesFollowersListData>) => createQueryKey('profilesFollowersList', options);
+
+/**
+ * Profiles following this one, most recent first.
+ */
+export const profilesFollowersListOptions = (options: Options<ProfilesFollowersListData>) => queryOptions<ProfilesFollowersListResponse, DefaultError, ProfilesFollowersListResponse, ReturnType<typeof profilesFollowersListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await profilesFollowersList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: profilesFollowersListQueryKey(options)
+});
+
+export const profilesFollowersListInfiniteQueryKey = (options: Options<ProfilesFollowersListData>): QueryKey<Options<ProfilesFollowersListData>> => createQueryKey('profilesFollowersList', options, true);
+
+/**
+ * Profiles following this one, most recent first.
+ */
+export const profilesFollowersListInfiniteOptions = (options: Options<ProfilesFollowersListData>) => {
+    const opts = infiniteQueryOptions<ProfilesFollowersListResponse, DefaultError, InfiniteData<ProfilesFollowersListResponse>, QueryKey<Options<ProfilesFollowersListData>>, string | Pick<QueryKey<Options<ProfilesFollowersListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<ProfilesFollowersListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    cursor: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await profilesFollowersList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: profilesFollowersListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+export const profilesFollowingListQueryKey = (options: Options<ProfilesFollowingListData>) => createQueryKey('profilesFollowingList', options);
+
+/**
+ * Profiles this one follows, most recent first.
+ */
+export const profilesFollowingListOptions = (options: Options<ProfilesFollowingListData>) => queryOptions<ProfilesFollowingListResponse, DefaultError, ProfilesFollowingListResponse, ReturnType<typeof profilesFollowingListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await profilesFollowingList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: profilesFollowingListQueryKey(options)
+});
+
+export const profilesFollowingListInfiniteQueryKey = (options: Options<ProfilesFollowingListData>): QueryKey<Options<ProfilesFollowingListData>> => createQueryKey('profilesFollowingList', options, true);
+
+/**
+ * Profiles this one follows, most recent first.
+ */
+export const profilesFollowingListInfiniteOptions = (options: Options<ProfilesFollowingListData>) => {
+    const opts = infiniteQueryOptions<ProfilesFollowingListResponse, DefaultError, InfiniteData<ProfilesFollowingListResponse>, QueryKey<Options<ProfilesFollowingListData>>, string | Pick<QueryKey<Options<ProfilesFollowingListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<ProfilesFollowingListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    cursor: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await profilesFollowingList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: profilesFollowingListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+/**
+ * POST to start blocking/muting a profile, DELETE to stop.
+ */
+export const profilesMuteDestroyMutation = (options?: Partial<Options<ProfilesMuteDestroyData>>): UseMutationOptions<ProfilesMuteDestroyResponse, DefaultError, Options<ProfilesMuteDestroyData>> => {
+    const mutationOptions: UseMutationOptions<ProfilesMuteDestroyResponse, DefaultError, Options<ProfilesMuteDestroyData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await profilesMuteDestroy({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * POST to start blocking/muting a profile, DELETE to stop.
+ */
+export const profilesMuteCreateMutation = (options?: Partial<Options<ProfilesMuteCreateData>>): UseMutationOptions<ProfilesMuteCreateResponse, DefaultError, Options<ProfilesMuteCreateData>> => {
+    const mutationOptions: UseMutationOptions<ProfilesMuteCreateResponse, DefaultError, Options<ProfilesMuteCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await profilesMuteCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const profilesPostsListQueryKey = (options: Options<ProfilesPostsListData>) => createQueryKey('profilesPostsList', options);
+
+/**
+ * This profile's posts, newest first.
+ */
+export const profilesPostsListOptions = (options: Options<ProfilesPostsListData>) => queryOptions<ProfilesPostsListResponse, DefaultError, ProfilesPostsListResponse, ReturnType<typeof profilesPostsListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await profilesPostsList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: profilesPostsListQueryKey(options)
+});
+
+export const profilesPostsListInfiniteQueryKey = (options: Options<ProfilesPostsListData>): QueryKey<Options<ProfilesPostsListData>> => createQueryKey('profilesPostsList', options, true);
+
+/**
+ * This profile's posts, newest first.
+ */
+export const profilesPostsListInfiniteOptions = (options: Options<ProfilesPostsListData>) => {
+    const opts = infiniteQueryOptions<ProfilesPostsListResponse, DefaultError, InfiniteData<ProfilesPostsListResponse>, QueryKey<Options<ProfilesPostsListData>>, string | Pick<QueryKey<Options<ProfilesPostsListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<ProfilesPostsListData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    cursor: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await profilesPostsList({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: profilesPostsListInfiniteQueryKey(options)
+    });
+    return opts as Omit<typeof opts, 'initialData'>;
+};
+
+export const profilesStatsRetrieveQueryKey = (options: Options<ProfilesStatsRetrieveData>) => createQueryKey('profilesStatsRetrieve', options);
+
+/**
+ * Views, RSVPs and follower growth for a profile you act for, over the last 30 days.
+ */
+export const profilesStatsRetrieveOptions = (options: Options<ProfilesStatsRetrieveData>) => queryOptions<ProfilesStatsRetrieveResponse, DefaultError, ProfilesStatsRetrieveResponse, ReturnType<typeof profilesStatsRetrieveQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await profilesStatsRetrieve({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: profilesStatsRetrieveQueryKey(options)
+});
+
+/**
+ * Register this device for push notifications.
+ */
+export const pushDevicesCreateMutation = (options?: Partial<Options<PushDevicesCreateData>>): UseMutationOptions<PushDevicesCreateResponse, DefaultError, Options<PushDevicesCreateData>> => {
+    const mutationOptions: UseMutationOptions<PushDevicesCreateResponse, DefaultError, Options<PushDevicesCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await pushDevicesCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Stop push notifications to a device, e.g. when signing out on it.
+ */
+export const pushDevicesDestroyMutation = (options?: Partial<Options<PushDevicesDestroyData>>): UseMutationOptions<PushDevicesDestroyResponse, DefaultError, Options<PushDevicesDestroyData>> => {
+    const mutationOptions: UseMutationOptions<PushDevicesDestroyResponse, DefaultError, Options<PushDevicesDestroyData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await pushDevicesDestroy({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Report a post, event or profile to the moderators.
+ */
+export const reportsCreateMutation = (options?: Partial<Options<ReportsCreateData>>): UseMutationOptions<ReportsCreateResponse, DefaultError, Options<ReportsCreateData>> => {
+    const mutationOptions: UseMutationOptions<ReportsCreateResponse, DefaultError, Options<ReportsCreateData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await reportsCreate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const searchRetrieveQueryKey = (options: Options<SearchRetrieveData>) => createQueryKey('searchRetrieve', options);
+
+/**
+ * Events and profiles matching a search, best matches first.
+ */
+export const searchRetrieveOptions = (options: Options<SearchRetrieveData>) => queryOptions<SearchRetrieveResponse, DefaultError, SearchRetrieveResponse, ReturnType<typeof searchRetrieveQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await searchRetrieve({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: searchRetrieveQueryKey(options)
+});
+
+export const universitiesListQueryKey = (options?: Options<UniversitiesListData>) => createQueryKey('universitiesList', options);
+
+export const universitiesListOptions = (options?: Options<UniversitiesListData>) => queryOptions<UniversitiesListResponse, DefaultError, UniversitiesListResponse, ReturnType<typeof universitiesListQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await universitiesList({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: universitiesListQueryKey(options)
+});

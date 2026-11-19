@@ -14,7 +14,9 @@ The app has three feeds:
 
 ```
 apps/app/          Expo (React Native) app: iOS, Android and web
+apps/web-server/   Node server for the exported web build (production only)
 packages/api/      Typed API client, generated from the backend's OpenAPI schema
+e2e/               End-to-end tests (Playwright): the web build and the API, in a browser
 backend/           Django + Django REST Framework + PostGIS
 docker-compose.yml PostGIS and the API for local development
 ```
@@ -30,6 +32,7 @@ Each Django app has a single responsibility:
 | `events` | `Event`, with an optional geographic `location`. Publishing an event also creates an announcement `Post`, so followers see it. |
 | `posts` | `Post`: a text update, a linked event, or both. |
 | `feeds` | The three feed endpoints. No models. |
+| `flags` | Feature flags, managed in the admin: switch a feature on for testers, staff, a share of people or everyone. The app asks with `useFlag('name')`. |
 
 Authorship and following always point at a `Profile`, so people and organizations behave the same everywhere. Clients choose which profile to act as with `organizer_handle` / `author_handle`, which defaults to your own profile. They may use any profile they manage.
 
@@ -69,6 +72,8 @@ cp .env.example .env
 uv sync
 uv run python manage.py migrate
 uv run python manage.py seed_demo           # optional: demo@sidequest.test / sidequest-demo
+uv run python manage.py seed_showcase       # optional: lots more, to try every feature as demo
+                                            #   (also admin › Sample data, which can delete it all)
 uv run python manage.py createsuperuser     # optional: for /admin/
 uv run python manage.py runserver
 cd ..
@@ -77,6 +82,10 @@ cd ..
 cp apps/app/.env.example apps/app/.env.local
 npm run app                                 # w = web, i = iOS simulator, a = Android emulator
 ```
+
+After the first setup, `npm run dev` starts both in one terminal: it applies migrations, runs the API in the background (its lines start with `api │`) and Expo in the foreground, so `w`, `i` and `a` work as usual. Ctrl+C stops both. Arguments go to `expo start`, e.g. `npm run dev -- --web`.
+
+The app opens in a development build by default (`expo-dev-client`); press `s` in the terminal to switch to Expo Go. A development build for your phone: `cd apps/app && npx eas-cli build --profile development`.
 
 You can also run `docker compose up` to start both PostGIS and the API in containers.
 
@@ -94,6 +103,13 @@ Useful URLs while the backend runs:
 - http://localhost:8000/_allauth/openapi.html: auth API docs
 - http://localhost:8000/admin/: Django admin
 
+## Translations
+
+The app and the API are in English, Finnish and Swedish. Every new user-facing string gets all three in the same change.
+
+- **App:** `apps/app/src/i18n/locales/{en,fi,sv}.json`, used with `const { t } = useTranslation()`. TypeScript reports keys missing from the Finnish or Swedish file, and unknown keys passed to `t()`. Dates and numbers go through `useFormat()` (`src/lib/format.ts`).
+- **API:** messages wrapped in `gettext` / `gettext_lazy`. After adding some, run `uv run python manage.py makemessages -l fi -l sv --ignore=.venv --no-location`, translate them in `backend/locale/*/LC_MESSAGES/django.po`, and compile with `uv run python manage.py compilemessages --ignore=.venv` (the `.mo` files are built in CI and the Docker image, not committed). The app sends its language as `Accept-Language`.
+
 ## Changing the API
 
 1. Change models, serializers and views in `backend/`, then run `uv run python manage.py makemigrations`.
@@ -107,20 +123,37 @@ CI fails if `openapi.yaml` or the generated client is out of date.
 
 ```sh
 cd backend && uv run pytest && uv run ruff check . && uv run ruff format --check .
-npm run typecheck && npm run lint
+npm run format:check && npm run typecheck && npm run lint
 ```
+
+TypeScript, JSON and YAML are formatted with Prettier (`npm run format`); Python with ruff (`uv run ruff format .`).
+
+### End-to-end tests
+
+`e2e/` drives the exported web app against the API with the demo data, on a desktop and a phone-sized screen. CI runs them on every pull request. To run them locally, with the API on port 8000 (`DJANGO_DEBUG=1`, `CORS_ALLOWED_ORIGINS=http://localhost:3000`, and `manage.py seed_demo` done), preferably on a database of its own:
+
+```sh
+cd apps/app && EXPO_PUBLIC_API_URL=http://localhost:8000 EXPO_PUBLIC_WEB_URL=http://localhost:3000 npx expo export -p web && cd ../..
+PORT=3000 node apps/web-server/server.js &
+npx playwright install chromium   # once
+npm run e2e
+```
+
+## Releasing
+
+Commit messages follow [Conventional Commits](https://www.conventionalcommits.org): `feat(events): add RSVP buttons`, `fix: crash on sign out`, `docs: …`. `scripts/git-ship` (set up once with `git config alias.ship '!scripts/git-ship'`) asks for the type, scope and description, commits, and ships your branch to `testing`:
+
+1. Coolify notices the change to `testing` and deploys staging: it builds on the server and switches over once the new version is healthy (see DEPLOYMENT.md, kept outside the repository).
+2. When it's time for a release, run **Actions › Release › Run workflow**: release-please opens a pull request titled `chore: release X.Y.Z`. It bumps the version in every file that holds it and adds the changes to `CHANGELOG.md`. `fix` bumps the patch version, `feat` the minor version, and a breaking change (`feat!: …`) the major version. Before 1.0.0, breaking changes bump the minor version instead.
+3. Merging that pull request tags `vX.Y.Z` and creates a GitHub Release.
+
+Pull requests are squash-merged, so their title is the commit message; CI checks that it follows the format.
 
 ## Shipping
 
-- **iOS and Android:** use [EAS](https://docs.expo.dev/eas/). `npx eas-cli@latest build:configure` creates `eas.json` and asks for bundle identifiers. After that, `eas build` and `eas submit` build and submit the apps, and `eas update` pushes over-the-air JS updates.
-- **Web:** `app.json` uses `"web": { "output": "server" }`, so the web build includes a server for server-side rendering. You can [deploy it with EAS Hosting](https://docs.expo.dev/eas/hosting/introduction/) or any Node host. Set `EXPO_PUBLIC_API_URL` at build time.
-- **Backend:** build the image from `backend/Dockerfile` and deploy it next to a managed PostgreSQL that has PostGIS. Host in the EU for GDPR. Before going live, run `python manage.py check --deploy`, configure a real `MAILERS` backend, and set up static files and media storage.
+- **iOS and Android:** built with [EAS](https://docs.expo.dev/eas/). `apps/app/eas.json` has three profiles, `development`, `staging` and `production`; `app.config.ts` gives each its own name and app ID (`hu.fentorweb.sidequest[.dev|.staging]`). Link the project once with `cd apps/app && npx eas-cli init`. When `testing` changes, `.github/workflows/eas-update.yml` publishes the JavaScript to the `staging` update channel; when native code changes, make a new build with `npx eas-cli build --profile staging`.
+- **API and web app:** deployed to staging with Coolify; see [DEPLOYMENT.md](DEPLOYMENT.md). Scheduled jobs are listed in [CRONJOBS.md](CRONJOBS.md).
 
 ## Next steps
 
-- Email verification (`ACCOUNT_EMAIL_VERIFICATION=mandatory`), optionally limited to university email domains.
-- Sign in with Apple and Google. Apple requires Sign in with Apple if you offer other social logins.
-- Screens for creating events and posts, and profile pages with follow buttons. The API endpoints already exist.
-- Reporting and blocking. Both app stores require moderation tools for user-generated content.
-- Push notifications (`expo-notifications`) and a background worker for reminders.
-- A map view for the nearby feed.
+See [TODO.md](TODO.md).

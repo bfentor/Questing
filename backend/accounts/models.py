@@ -1,5 +1,9 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.utils import timezone
+
+from .signup import age_on
 
 
 class UserManager(BaseUserManager):
@@ -33,6 +37,24 @@ class User(AbstractUser):
 
     username = None
     email = models.EmailField("email address", unique=True)
+    # The app's language, for things sent outside the app (push notifications, emails).
+    language = models.CharField(
+        max_length=8, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE
+    )
+    birth_date = models.DateField(null=True, blank=True)
+    # Which version of the terms of service (settings.TERMS_VERSION) they accepted, and when.
+    terms_version = models.CharField(max_length=20, blank=True)
+    terms_accepted_at = models.DateTimeField(null=True, blank=True)
+    # When they finished (or skipped) the app's first-run steps; None shows them again.
+    onboarded_at = models.DateTimeField(null=True, blank=True)
+    # The weekly email of upcoming events: opt-in, and when it last went out.
+    email_digest = models.BooleanField(default=False)
+    digest_sent_at = models.DateTimeField(null=True, blank=True)
+
+    @property
+    def age(self):
+        """Age in whole years, or None when the birth date isn't known."""
+        return age_on(self.birth_date, timezone.localdate()) if self.birth_date else None
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
