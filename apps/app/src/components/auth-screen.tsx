@@ -98,8 +98,10 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
             />
             <View style={styles.field}>
               <TextField
-                id="sign-up-username"
+                // Not "username", which password managers take for the sign-in name.
+                id="sign-up-handle"
                 label={t('auth.username')}
+                notALogin
                 value={handle}
                 // Handles are lowercase and shown after an @, so neither needs typing.
                 onChangeText={(text) => setHandle(text.replace(/^@/, '').toLowerCase())}
