@@ -15,7 +15,7 @@ import { Link, router } from 'expo-router';
 import type { TFunction } from 'i18next';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Linking, Pressable, StyleSheet, View } from 'react-native';
+import { Linking, Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
 import { Spacing } from '@/constants/theme';
@@ -32,6 +32,8 @@ import { EventActions } from './event-actions';
 import { EventFeedback } from './event-feedback';
 import { EventPhotos } from './event-photos';
 import { FriendsGoing } from './friends-going';
+import { LocationPin } from './location-pin';
+import { directionsUrl } from './location-pin.shared';
 import { RemoteImage } from './remote-image';
 import { RsvpBar } from './rsvp-bar';
 import { SaveButton } from './save-button';
@@ -222,6 +224,22 @@ export function EventDetails({ id }: { id: number }) {
           {event.venue_name || event.address ? (
             <ThemedText>{[event.venue_name, event.address].filter(Boolean).join(', ')}</ThemedText>
           ) : null}
+          {event.location ? (
+            <View style={styles.place}>
+              <LocationPin
+                value={event.location}
+                center={event.location}
+                label={t('event.mapLabel')}
+              />
+              <Pressable
+                role="link"
+                onPress={() =>
+                  event.location && Linking.openURL(directionsUrl(event.location, onApple()))
+                }>
+                <ThemedText themeColor="tint">{t('event.directions')}</ThemedText>
+              </Pressable>
+            </View>
+          ) : null}
           {event.online_url ? (
             <Pressable role="link" onPress={() => Linking.openURL(event.online_url ?? '')}>
               <ThemedText themeColor="tint">{t('event.joinOnline')}</ThemedText>
@@ -316,7 +334,16 @@ function CoHostInvitation({ eventId }: { eventId: number }) {
   ));
 }
 
+/** iPhones and iPads (the app, or the website on one): directions open in Apple Maps. */
+function onApple() {
+  if (Platform.OS === 'ios') return true;
+  return Platform.OS === 'web' && /iPhone|iPad|iPod/.test(globalThis.navigator?.userAgent ?? '');
+}
+
 const styles = StyleSheet.create({
+  place: {
+    gap: Spacing.two,
+  },
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',

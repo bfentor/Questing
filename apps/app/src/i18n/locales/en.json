@@ -101,7 +101,9 @@
     "coHostInvite": "{{name}} is invited to co-host this event.",
     "minAge": "{{age}}+",
     "openPage": "Open as a page",
-    "closePanel": "Close"
+    "closePanel": "Close",
+    "directions": "Directions",
+    "mapLabel": "Map of where the event is"
   },
   "auth": {
     "signInTitle": "Welcome back",

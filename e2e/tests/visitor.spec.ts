@@ -80,3 +80,14 @@ test('the toolbar colour follows the appearance chosen in Settings', async ({ pa
   await page.getByText('Light', { exact: true }).click();
   await expect(themeColor).toHaveAttribute('content', '#f8fafc');
 });
+
+test('event pages show where the event is on a map', async ({ page }) => {
+  await page.goto('/upcoming');
+  await openEvent(page, 'Morning run by the lake');
+  const map = page.getByRole('img', { name: 'Map of where the event is' });
+  await expect(map).toBeVisible();
+  // The map's tiles and its pin have loaded.
+  await expect(map.locator('.leaflet-tile-loaded').first()).toBeVisible();
+  await expect(map.locator('path.leaflet-interactive')).toHaveCount(1);
+  await expect(page.getByRole('link', { name: 'Directions' })).toBeVisible();
+});

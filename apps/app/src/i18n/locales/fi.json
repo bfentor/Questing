@@ -101,7 +101,9 @@
     "coHostInvite": "{{name}} on kutsuttu tapahtuman yhteisjärjestäjäksi.",
     "minAge": "K{{age}}",
     "openPage": "Avaa omana sivunaan",
-    "closePanel": "Sulje"
+    "closePanel": "Sulje",
+    "directions": "Reittiohjeet",
+    "mapLabel": "Kartta tapahtumapaikasta"
   },
   "auth": {
     "signInTitle": "Tervetuloa takaisin",

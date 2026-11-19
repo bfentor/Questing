@@ -101,7 +101,9 @@
     "coHostInvite": "{{name}} är inbjuden som medarrangör.",
     "minAge": "{{age}}+",
     "openPage": "Öppna som egen sida",
-    "closePanel": "Stäng"
+    "closePanel": "Stäng",
+    "directions": "Vägbeskrivning",
+    "mapLabel": "Karta över var evenemanget är"
   },
   "auth": {
     "signInTitle": "Välkommen tillbaka",
