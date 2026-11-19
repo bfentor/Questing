@@ -176,7 +176,7 @@
     "title": "Post",
     "picture": "Picture {{number}} of {{count}} in {{name}}'s post",
     "quickLabel": "Quick post",
-    "quickPlaceholder": "A quick thought or an event idea?",
+    "quickPlaceholder": "Write a post…",
     "moreOptions": "Add pictures and more",
     "posted": "Posted"
   },

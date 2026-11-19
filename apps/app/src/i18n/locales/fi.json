@@ -176,7 +176,7 @@
     "title": "Julkaisu",
     "picture": "Kuva {{number}}/{{count}} käyttäjän {{name}} julkaisussa",
     "quickLabel": "Pikajulkaisu",
-    "quickPlaceholder": "Nopea ajatus tai tapahtumaidea?",
+    "quickPlaceholder": "Kirjoita julkaisu…",
     "moreOptions": "Lisää kuvia ja muuta",
     "posted": "Julkaistu"
   },
