@@ -26,7 +26,7 @@ function isTyping(event: KeyboardEvent) {
 }
 
 /**
- * Keyboard shortcuts for the website (used by app-tabs.web.tsx only): / search, n new event, 1–5 the tabs,
+ * Keyboard shortcuts for the website (used by web-shell.web.tsx only): / search, n new event, 1–5 the tabs,
  * Esc closes the side panel, ? lists them all.
  */
 export function KeyboardShortcuts({ onEscape }: { onEscape: () => void }) {
