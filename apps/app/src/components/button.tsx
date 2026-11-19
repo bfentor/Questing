@@ -10,7 +10,8 @@ import { ThemedText } from './themed-text';
 type ButtonProps = {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'danger';
+  /** `outline` is the accent colour as a border and label, beside a filled primary Button. */
+  variant?: 'primary' | 'secondary' | 'danger' | 'outline';
   /** `small` is a compact pill, e.g. Follow or Edit profile beside a profile picture. */
   size?: 'regular' | 'small';
   disabled?: boolean;
@@ -34,8 +35,15 @@ export function Button({
     primary: theme.tint,
     secondary: theme.backgroundElement,
     danger: theme.danger,
+    outline: 'transparent',
   }[variant];
-  const foreground = variant === 'secondary' ? theme.text : theme.onTint;
+  const foreground = {
+    primary: theme.onTint,
+    secondary: theme.text,
+    danger: theme.onTint,
+    outline: theme.tint,
+  }[variant];
+  const filled = variant !== 'secondary' && variant !== 'outline';
 
   return (
     <Pressable
@@ -47,7 +55,8 @@ export function Button({
         shape.button,
         size === 'small' && styles.small,
         icon && styles.withIcon,
-        variant !== 'secondary' && shape.raised,
+        filled && shape.raised,
+        variant === 'outline' && [styles.outline, { borderColor: theme.tint }],
         { backgroundColor: background },
         (pressed || disabled) && styles.dimmed,
       ]}>
@@ -88,6 +97,9 @@ const styles = StyleSheet.create({
   withIcon: {
     flexDirection: 'row',
     gap: Spacing.one,
+  },
+  outline: {
+    borderWidth: 2,
   },
   dimmed: {
     opacity: 0.6,

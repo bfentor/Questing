@@ -56,3 +56,38 @@ test('posts a quick thought from the home page', async ({ page }) => {
   await expect(page.getByLabel('Quick post')).toHaveValue('');
   await expect(page.getByText(thought)).toBeVisible();
 });
+
+test('the home page has a New event button beside New post', async ({ page }) => {
+  await signIn(page);
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: 'New post' })).toBeVisible();
+  await page.getByRole('button', { name: 'New event' }).click();
+  await expect(page).toHaveURL(/\/events\/new/);
+});
+
+test('event cards show your answer at a glance', async ({ page }) => {
+  const title = 'Morning run by the lake';
+  await signIn(page);
+  await page.goto('/upcoming');
+  const card = page.getByRole('link').filter({ hasText: title }).first();
+  await expect(card).toBeVisible();
+  await expect(card).not.toContainText('Interested');
+
+  // Answers on the event's page, then goes back to the list without reloading the app, so
+  // its cache stays in step with the server.
+  const toggleInterested = async (method: 'PUT' | 'DELETE') => {
+    await openEvent(page, title);
+    const saved = page.waitForResponse((response) => /\/attendance\/$/.test(response.url()));
+    await page.getByRole('button', { name: 'Interested', exact: true }).click();
+    const response = await saved;
+    expect(response.request().method()).toBe(method);
+    expect(response.ok()).toBe(true);
+    await page.goBack();
+  };
+
+  await toggleInterested('PUT');
+  await expect(card).toContainText('Interested');
+  // Undo, so the test can run again.
+  await toggleInterested('DELETE');
+  await expect(card).not.toContainText('Interested');
+});
