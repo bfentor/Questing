@@ -194,7 +194,9 @@
     "quickLabel": "Pikajulkaisu",
     "quickPlaceholder": "Kirjoita julkaisu…",
     "moreOptions": "Lisää kuvia ja muuta",
-    "posted": "Julkaistu"
+    "posted": "Julkaistu",
+    "pasteImage": "Liitä kuva",
+    "pasteHint": "Voit myös liittää kuvia ja GIFejä."
   },
   "moderation": {
     "report": "Ilmoita",

@@ -194,7 +194,9 @@
     "quickLabel": "Snabbinlägg",
     "quickPlaceholder": "Skriv ett inlägg…",
     "moreOptions": "Lägg till bilder och mer",
-    "posted": "Publicerat"
+    "posted": "Publicerat",
+    "pasteImage": "Klistra in bild",
+    "pasteHint": "Du kan också klistra in bilder och GIF:ar."
   },
   "moderation": {
     "report": "Anmäl",

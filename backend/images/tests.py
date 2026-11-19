@@ -136,3 +136,34 @@ def test_crops_keep_their_original_from_being_cleaned_up(auth_client, user):
     # The crop isn't used by anything yet; its original is, by the crop.
     assert cropped["id"] in orphans
     assert original["id"] not in orphans
+
+
+def test_gifs_stay_animated(auth_client):
+    colours = ["red", "green", "blue"]
+    frames = [PILImage.new("RGB", (1200, 600), colour) for colour in colours]
+    buffer = BytesIO()
+    frames[0].save(
+        buffer, format="GIF", save_all=True, append_images=frames[1:], duration=120, loop=0
+    )
+    gif = SimpleUploadedFile("party.gif", buffer.getvalue(), content_type="image/gif")
+
+    response = upload(auth_client, gif)
+
+    assert response.status_code == 201, response.json()
+    assert (response.json()["width"], response.json()["height"]) == (800, 400)
+    with PILImage.open(Image.objects.get(pk=response.json()["id"]).file) as stored:
+        assert stored.format == "WEBP"
+        assert stored.is_animated
+        assert stored.n_frames == 3
+        stored.seek(1)
+        stored.load()
+        assert stored.info["duration"] == 120
+
+
+def test_a_single_frame_gif_is_a_still(auth_client):
+    buffer = BytesIO()
+    PILImage.new("RGB", (100, 50), "orange").save(buffer, format="GIF")
+    gif = SimpleUploadedFile("still.gif", buffer.getvalue(), content_type="image/gif")
+    response = upload(auth_client, gif)
+    with PILImage.open(Image.objects.get(pk=response.json()["id"]).file) as stored:
+        assert not getattr(stored, "is_animated", False)

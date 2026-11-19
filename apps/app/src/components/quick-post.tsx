@@ -1,11 +1,13 @@
-import { postsCreate } from '@sidequest/api';
+import { postsCreate, uploadImage } from '@sidequest/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { Platform, StyleSheet, TextInput, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
+import { useImagePaste } from '@/hooks/use-image-paste';
+import type { PastedImage } from '@/hooks/use-image-paste.shared';
 import { useMe } from '@/hooks/use-me';
 import { useShape } from '@/hooks/use-shape';
 import { useTheme } from '@/hooks/use-theme';
@@ -13,14 +15,14 @@ import { useTheme } from '@/hooks/use-theme';
 import { Avatar } from './avatar';
 import { Button } from './button';
 import { IconButton } from './icon-button';
-import type { PostFieldErrors } from './post-form';
+import { MAX_POST_IMAGES, type PostFieldErrors } from './post-form';
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 
 /**
  * A text box on the home page for a quick thought or event idea, posted as yourself without
  * leaving the page. Pictures and posting as an organization open the full composer, keeping
- * what's been typed.
+ * what's been typed; on the website, pasting a picture there opens it with the picture added.
  */
 export function QuickPost() {
   const { t } = useTranslation();
@@ -31,6 +33,35 @@ export function QuickPost() {
   const [body, setBody] = useState('');
   const [errors, setErrors] = useState<string[]>([]);
   const [posted, setPosted] = useState(false);
+  // Home stays open under other pages on the website: only take pastes while it's in view.
+  const [focused, setFocused] = useState(false);
+  useFocusEffect(
+    useCallback(() => {
+      setFocused(true);
+      return () => setFocused(false);
+    }, []),
+  );
+
+  // Uploads pasted pictures, then hands them and the text to the full composer.
+  const withPictures = useMutation({
+    mutationFn: async (pictures: PastedImage[]) => {
+      const results = await Promise.all(
+        pictures.slice(0, MAX_POST_IMAGES).map((picture) => uploadImage(picture.file)),
+      );
+      const failed = results.find((result) => result.status === 'error');
+      if (failed?.status === 'error') {
+        setErrors([failed.message ?? t('errors.unexpected')]);
+        throw new Error('upload');
+      }
+      return results.flatMap((result) => (result.status === 'ok' ? [result.image.id] : []));
+    },
+    onSuccess: (ids) => {
+      router.push({ pathname: '/posts/new', params: { body, images: ids.join(',') } });
+      setBody('');
+      setErrors([]);
+    },
+  });
+  useImagePaste(withPictures.mutate, Platform.OS === 'web' && focused);
 
   const submit = useMutation({
     mutationFn: async () => {
@@ -87,7 +118,11 @@ export function QuickPost() {
           onPress={() => router.push({ pathname: '/posts/new', params: { body } })}
         />
         <View style={styles.spacer}>
-          {posted ? (
+          {withPictures.isPending ? (
+            <ThemedText type="small" themeColor="textSecondary">
+              {t('eventForm.uploading')}
+            </ThemedText>
+          ) : posted ? (
             <ThemedText type="small" themeColor="textSecondary">
               {t('posts.posted')}
             </ThemedText>

@@ -2,6 +2,8 @@ import { uploadImage, type UploadResult } from '@sidequest/api';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 
+import type { PastedImage } from './use-image-paste.shared';
+
 type PickOptions = {
   /** Crop to this aspect ratio, e.g. [1, 1] for avatars. */
   aspect?: [number, number];
@@ -42,4 +44,30 @@ export function useImageUpload() {
   }
 
   return { pickAndUpload, uploading };
+}
+
+/**
+ * Lets the user pick up to `limit` pictures (GIFs too) without uploading them yet: each comes
+ * with a local preview, to show while it uploads. Resolves to [] if they cancelled.
+ */
+export async function pickImages(limit: number): Promise<PastedImage[]> {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ['images'],
+    allowsMultipleSelection: limit > 1,
+    selectionLimit: limit,
+    quality: 0.9,
+    preferredAssetRepresentationMode:
+      ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Compatible,
+  });
+  if (result.canceled) {
+    return [];
+  }
+  return result.assets.slice(0, limit).map((asset) => ({
+    file: asset.file ?? {
+      uri: asset.uri,
+      name: asset.fileName ?? 'photo.jpg',
+      type: asset.mimeType ?? 'image/jpeg',
+    },
+    preview: asset.uri,
+  }));
 }

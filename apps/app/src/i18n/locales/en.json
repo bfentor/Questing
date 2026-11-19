@@ -194,7 +194,9 @@
     "quickLabel": "Quick post",
     "quickPlaceholder": "Write a post…",
     "moreOptions": "Add pictures and more",
-    "posted": "Posted"
+    "posted": "Posted",
+    "pasteImage": "Paste picture",
+    "pasteHint": "You can also paste pictures and GIFs."
   },
   "moderation": {
     "report": "Report",

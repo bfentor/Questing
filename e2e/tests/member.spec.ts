@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import { openEvent, signIn } from './helpers';
 
@@ -221,4 +221,53 @@ test('see the events you go to on a calendar', async ({ page }) => {
   await page.reload();
   await expect(page.getByText(month.format(now), { exact: true })).toBeVisible();
   await page.getByRole('tab', { name: 'List' }).click();
+});
+
+/** Pastes a small picture, as Ctrl/⌘+V would after copying one. */
+async function pastePicture(page: Page) {
+  await page.evaluate(async () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 48;
+    const context = canvas.getContext('2d');
+    if (context) {
+      context.fillStyle = 'teal';
+      context.fillRect(0, 0, 64, 48);
+    }
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+    const transfer = new DataTransfer();
+    transfer.items.add(new File([blob ?? new Blob()], 'copied.png', { type: 'image/png' }));
+    document.dispatchEvent(new ClipboardEvent('paste', { clipboardData: transfer }));
+  });
+}
+
+test('paste a picture into a post', async ({ page }) => {
+  const text = `Look at this ${Date.now()}`;
+  await signIn(page);
+  await page.goto('/posts/new');
+  await page.getByLabel("What's happening?").fill(text);
+  await pastePicture(page);
+  // Shown straight away, and removable.
+  await expect(page.getByRole('button', { name: 'Remove picture' })).toHaveCount(1);
+  await pastePicture(page);
+  await expect(page.getByRole('button', { name: 'Remove picture' })).toHaveCount(2);
+  await page.getByRole('button', { name: 'Remove picture' }).last().click();
+  await expect(page.getByRole('button', { name: 'Remove picture' })).toHaveCount(1);
+
+  const post = page.getByRole('button', { name: 'Post', exact: true });
+  await expect(post).toBeEnabled();
+  await post.click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByText(text)).toBeVisible();
+});
+
+test('paste a picture into the home page post box', async ({ page }) => {
+  await signIn(page);
+  await page.goto('/');
+  await page.getByLabel('Quick post').fill('With a picture');
+  await pastePicture(page);
+  // The full composer opens with the text and the picture.
+  await expect(page).toHaveURL(/\/posts\/new\?.*images=\d+/);
+  await expect(page.getByLabel("What's happening?")).toHaveValue('With a picture');
+  await expect(page.getByRole('button', { name: 'Remove picture' })).toHaveCount(1);
 });
