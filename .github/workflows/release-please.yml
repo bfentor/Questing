@@ -30,7 +30,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v4
+        id: release
         with:
           target-branch: testing
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      # The lockfiles record the version too, and release-please doesn't update them: without
+      # this, the release's uv sync --locked (the API's image, CI) refuses to build. Runs
+      # whenever release-please (re)writes its pull request's branch.
+      - if: steps.release.outputs.prs_created == 'true'
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ fromJSON(steps.release.outputs.pr).headBranchName }}
+      - if: steps.release.outputs.prs_created == 'true'
+        uses: astral-sh/setup-uv@v6
+      - if: steps.release.outputs.prs_created == 'true'
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Update the lockfiles to the new version
+        if: steps.release.outputs.prs_created == 'true'
+        run: |
+          (cd backend && uv lock)
+          npm install --package-lock-only --ignore-scripts
+          if git diff --quiet; then
+            echo "The lockfiles already match."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --all --message "chore: lockfiles at the release's version"
+          git push
