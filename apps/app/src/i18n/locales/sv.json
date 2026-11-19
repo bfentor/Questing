@@ -31,7 +31,7 @@
   },
   "upcoming": {
     "empty": "Inga kommande evenemang än.",
-    "soonest": "Snart",
+    "all": "Alla",
     "forYou": "För dig",
     "trending": "Populärt",
     "forYouEmpty": "Inget valt åt dig än. Lägg till intressen i din profil och följ arrangörer för att få förslag.",
@@ -463,8 +463,8 @@
   },
   "filters": {
     "today": "I dag",
-    "tonight": "I kväll",
-    "weekend": "I helgen",
+    "tomorrow": "I morgon",
+    "week": "Den här veckan",
     "free": "Gratis",
     "categories": "Kategorier",
     "nothing": "Inga evenemang matchar filtren."

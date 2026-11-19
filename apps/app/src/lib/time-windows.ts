@@ -1,5 +1,5 @@
 /** Quick time filters for the feeds, in the device's local time. */
-export type TimeWindow = 'any' | 'today' | 'tonight' | 'weekend';
+export type TimeWindow = 'any' | 'today' | 'tomorrow' | 'week';
 
 function at(day: Date, hours: number) {
   const date = new Date(day);
@@ -20,18 +20,12 @@ export function timeWindow(window: TimeWindow, now: Date): [Date, Date] | null {
       return null;
     case 'today':
       return [now, at(addDays(now, 1), 0)];
-    case 'tonight': {
-      // From 17:00 (or now, if later) until 04:00.
-      const evening = at(now, 17);
-      return [now > evening ? now : evening, at(addDays(now, 1), 4)];
-    }
-    case 'weekend': {
-      // Saturday 00:00 (or now, during the weekend) until Monday 00:00.
-      const day = now.getDay(); // 0 = Sunday, 6 = Saturday
-      const untilSaturday = day === 6 || day === 0 ? 0 : 6 - day;
-      const saturday = at(addDays(now, untilSaturday), 0);
-      const monday = at(addDays(now, day === 0 ? 1 : untilSaturday + 2), 0);
-      return [now > saturday ? now : saturday, monday];
+    case 'tomorrow':
+      return [at(addDays(now, 1), 0), at(addDays(now, 2), 0)];
+    case 'week': {
+      // The rest of the week, which (as in Finland) ends on Sunday: until Monday 00:00.
+      const daysToMonday = (8 - now.getDay()) % 7 || 7; // getDay(): 0 = Sunday, 1 = Monday
+      return [now, at(addDays(now, daysToMonday), 0)];
     }
   }
 }

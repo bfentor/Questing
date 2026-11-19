@@ -105,7 +105,7 @@ export function FeedFilterBar({
   const { t } = useTranslation();
   const { categories: all } = useCategories();
   const [showCategories, setShowCategories] = useState(false);
-  const windows = ['today', 'tonight', 'weekend'] as const;
+  const windows = ['today', 'tomorrow', 'week'] as const;
 
   return (
     <View style={styles.bar}>

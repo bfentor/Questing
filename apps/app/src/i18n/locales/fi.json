@@ -31,7 +31,7 @@
   },
   "upcoming": {
     "empty": "Tulevia tapahtumia ei vielä ole.",
-    "soonest": "Pian",
+    "all": "Kaikki",
     "forYou": "Sinulle",
     "trending": "Suosittua",
     "forYouEmpty": "Sinulle ei ole vielä poimittu mitään. Lisää kiinnostuksen kohteita profiiliisi ja seuraa järjestäjiä, niin saat ehdotuksia.",
@@ -463,8 +463,8 @@
   },
   "filters": {
     "today": "Tänään",
-    "tonight": "Tänä iltana",
-    "weekend": "Viikonloppuna",
+    "tomorrow": "Huomenna",
+    "week": "Tällä viikolla",
     "free": "Maksuton",
     "categories": "Kategoriat",
     "nothing": "Mikään tapahtuma ei vastaa suodattimia."
