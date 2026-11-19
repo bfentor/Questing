@@ -17,9 +17,11 @@ type EventCardProps = {
   event: Event;
   /** Shown in the nearby feed. */
   distanceM?: number;
+  /** Stretch to the height of its container, e.g. to match the card beside it. */
+  fill?: boolean;
 };
 
-export function EventCard({ event, distanceM }: EventCardProps) {
+export function EventCard({ event, distanceM, fill }: EventCardProps) {
   const { t } = useTranslation();
   const format = useFormat();
   const place = [event.venue_name, distanceM !== undefined && format.distance(distanceM)]
@@ -36,6 +38,7 @@ export function EventCard({ event, distanceM }: EventCardProps) {
       type="backgroundElement"
       style={[
         styles.card,
+        fill && styles.fill,
         shape.box,
         {
           borderWidth: Math.max(2, shape.border),
@@ -81,14 +84,20 @@ export function EventCard({ event, distanceM }: EventCardProps) {
         role="link"
         aria-current={selected}
         onPress={() => panel.open(event.id)}
-        style={({ pressed }) => pressed && styles.pressed}>
+        style={({ pressed }) => [fill && styles.fill, pressed && styles.pressed]}>
         {card}
       </Pressable>
     );
   }
   return (
-    <Link href={{ pathname: '/events/[id]', params: { id: event.id } }} asChild>
-      <Pressable role="link" style={({ pressed }) => pressed && styles.pressed}>
+    // On the web, Link hands its child its own style and drops the child's style function.
+    <Link
+      href={{ pathname: '/events/[id]', params: { id: event.id } }}
+      asChild
+      style={fill ? styles.fill : undefined}>
+      <Pressable
+        role="link"
+        style={({ pressed }) => [fill && styles.fill, pressed && styles.pressed]}>
         {card}
       </Pressable>
     </Link>
@@ -102,5 +111,8 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.7,
+  },
+  fill: {
+    flexGrow: 1,
   },
 });

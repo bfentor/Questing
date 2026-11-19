@@ -992,6 +992,64 @@ paths:
               schema:
                 $ref: '#/components/schemas/ImageUpload'
           description: ''
+  /api/images/{id}/:
+    get:
+      operationId: images_retrieve
+      description: A picture, with the original it was cropped from (if it's a crop).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - images
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageDetail'
+          description: ''
+  /api/images/{id}/crop/:
+    post:
+      operationId: images_crop_create
+      description: |-
+        Make a new picture from part of an uploaded one, e.g. to frame a profile picture.
+
+        Cropping a crop starts again from its original, so a picture can be reframed (or zoomed
+        back out) any number of times without losing quality.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - images
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CropRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CropRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CropRequest'
+        required: true
+      security:
+      - XSessionTokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageDetail'
+          description: ''
   /api/me/:
     get:
       operationId: me_retrieve
@@ -2728,6 +2786,66 @@ components:
           maxLength: 1000
       required:
       - body
+    Crop:
+      type: object
+      description: Part of a picture, as fractions of its width and height (0 to 1,
+        from the top left).
+      properties:
+        x:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0
+        y:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0
+        width:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0.01
+        height:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0.01
+      required:
+      - height
+      - width
+      - x
+      - y
+    CropRequest:
+      type: object
+      description: Part of a picture, as fractions of its width and height (0 to 1,
+        from the top left).
+      properties:
+        x:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0
+        y:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0
+        width:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0.01
+        height:
+          type: number
+          format: double
+          maximum: 1
+          minimum: 0.01
+      required:
+      - height
+      - width
+      - x
+      - y
     Event:
       type: object
       properties:
@@ -3136,6 +3254,39 @@ components:
       required:
       - height
       - id
+      - url
+      - width
+    ImageDetail:
+      type: object
+      description: An image with what it was cropped from, for reframing it.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        width:
+          type: integer
+          readOnly: true
+        height:
+          type: integer
+          readOnly: true
+        original:
+          allOf:
+          - $ref: '#/components/schemas/OriginalImage'
+          readOnly: true
+          nullable: true
+        crop:
+          allOf:
+          - $ref: '#/components/schemas/Crop'
+          readOnly: true
+          nullable: true
+      required:
+      - crop
+      - height
+      - id
+      - original
       - url
       - width
     ImageUpload:
@@ -3590,6 +3741,27 @@ components:
       required:
       - display_name
       - handle
+    OriginalImage:
+      type: object
+      description: The whole picture a crop was made from.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        width:
+          type: integer
+          readOnly: true
+        height:
+          type: integer
+          readOnly: true
+      required:
+      - height
+      - id
+      - url
+      - width
     PaginatedCommentList:
       type: object
       required:

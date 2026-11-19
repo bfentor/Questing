@@ -88,6 +88,8 @@ def test_university_signup_address_counts(api_client, db):
             "password": "a-long-passphrase",
             "birth_date": "2000-01-01",
             "accept_terms": True,
+            "display_name": "New Person",
+            "handle": "new_person",
         },
         format="json",
     )

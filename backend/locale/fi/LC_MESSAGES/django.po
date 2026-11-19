@@ -339,3 +339,19 @@ msgstr "Koodi on väärä."
 
 #~ msgid "Choose admin or editor."
 #~ msgstr "Valitse ylläpitäjä tai muokkaaja."
+
+#: accounts/signup.py:35
+msgid "Enter your name."
+msgstr "Kirjoita nimesi."
+
+#: accounts/signup.py:42
+msgid "Use at most 30 characters."
+msgstr "Käytä enintään 30 merkkiä."
+
+#: accounts/signup.py:45
+msgid "That username is taken. Try another one."
+msgstr "Käyttäjänimi on jo käytössä. Kokeile toista."
+
+#: images/serializers.py
+msgid "The crop has to stay inside the picture."
+msgstr "Rajauksen täytyy pysyä kuvan sisällä."

@@ -2,7 +2,7 @@ import type { AuthResult } from '@sidequest/api';
 import { Link, router } from 'expo-router';
 import type { TFunction } from 'i18next';
 import { useRef, useState } from 'react';
-import { Platform } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/auth/auth-provider';
@@ -13,6 +13,7 @@ import { DateTimeField } from '@/components/date-time-field';
 import { Screen } from '@/components/screen';
 import { TextField } from '@/components/text-field';
 import { ThemedText } from '@/components/themed-text';
+import { Spacing } from '@/constants/theme';
 import { toIsoDate } from '@/lib/dates';
 import { authErrorMessage } from '@/lib/errors';
 import { goBack } from '@/lib/navigation';
@@ -43,6 +44,8 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [handle, setHandle] = useState('');
   // A plausible starting point for the birth date picker; people adjust it.
   const [birthDate, setBirthDate] = useState(() => new Date(2005, 0, 1));
   const [acceptTerms, setAcceptTerms] = useState(false);
@@ -59,6 +62,8 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
         : await signUp({
             email,
             password,
+            display_name: displayName,
+            handle,
             birth_date: toIsoDate(birthDate),
             accept_terms: acceptTerms,
           });
@@ -80,6 +85,35 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
         {mode === 'sign-in' ? t('auth.signInTitle') : t('auth.signUpTitle')}
       </ThemedText>
       <AuthForm ref={form} onSubmit={submit}>
+        {mode === 'sign-up' ? (
+          <>
+            <TextField
+              id="sign-up-name"
+              label={t('auth.name')}
+              value={displayName}
+              onChangeText={setDisplayName}
+              autoComplete="name"
+              textContentType="name"
+              maxLength={80}
+            />
+            <View style={styles.field}>
+              <TextField
+                id="sign-up-username"
+                label={t('auth.username')}
+                value={handle}
+                // Handles are lowercase and shown after an @, so neither needs typing.
+                onChangeText={(text) => setHandle(text.replace(/^@/, '').toLowerCase())}
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="off"
+                maxLength={30}
+              />
+              <ThemedText type="small" themeColor="textSecondary">
+                {t('auth.usernameHint')}
+              </ThemedText>
+            </View>
+          </>
+        ) : null}
         <TextField
           id="sign-in-email"
           label={t('auth.email')}
@@ -139,7 +173,11 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
           title={mode === 'sign-in' ? t('common.signIn') : t('auth.signUp')}
           onPress={() => form.current?.submit()}
           loading={submitting}
-          disabled={!email || !password || (mode === 'sign-up' && !acceptTerms)}
+          disabled={
+            !email ||
+            !password ||
+            (mode === 'sign-up' && (!acceptTerms || !displayName.trim() || !handle))
+          }
         />
       </AuthForm>
       {mode === 'sign-in' ? (
@@ -158,3 +196,9 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  field: {
+    gap: Spacing.one,
+  },
+});

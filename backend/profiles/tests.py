@@ -19,6 +19,8 @@ def test_sign_up_and_use_session_token(api_client, db, settings):
             "password": "a-long-passphrase",
             "birth_date": "2004-05-06",
             "accept_terms": True,
+            "display_name": "New Person",
+            "handle": "new_person",
         },
         format="json",
     )
@@ -27,7 +29,8 @@ def test_sign_up_and_use_session_token(api_client, db, settings):
 
     response = api_client.get("/api/me/", headers={"X-Session-Token": token})
     assert response.status_code == 200
-    assert response.json()["handle"] == "new"
+    assert response.json()["handle"] == "new_person"
+    assert response.json()["display_name"] == "New Person"
 
 
 def test_follow_and_unfollow(auth_client, user, make_organization):

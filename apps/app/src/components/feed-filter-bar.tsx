@@ -1,37 +1,14 @@
 import type { FeedFilters } from '@sidequest/api';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useCategories } from '@/hooks/use-categories';
-import { useTheme } from '@/hooks/use-theme';
-import { useShape } from '@/hooks/use-shape';
 import { timeWindow, type TimeWindow } from '@/lib/time-windows';
 
-import { ThemedText } from './themed-text';
-
-type ChipProps = { label: string; selected: boolean; onPress: () => void };
-
-function Chip({ label, selected, onPress }: ChipProps) {
-  const shape = useShape();
-  const theme = useTheme();
-  return (
-    <Pressable
-      role="checkbox"
-      aria-checked={selected}
-      onPress={onPress}
-      style={[
-        styles.chip,
-        shape.selector,
-        { backgroundColor: selected ? theme.tint : theme.backgroundElement },
-      ]}>
-      <ThemedText type="small" style={selected && { color: theme.onTint }}>
-        {label}
-      </ThemedText>
-    </Pressable>
-  );
-}
+import { CategoryChip } from './category-chip';
+import { Chip } from './chip';
 
 /** Filter state for a feed, turned into API filters. */
 export function useFeedFilters() {
@@ -71,7 +48,10 @@ export function useFeedFilters() {
 
 type FeedFilterBarProps = ReturnType<typeof useFeedFilters>;
 
-/** Quick time filters, free only, and categories, in two scrollable rows. */
+/**
+ * Quick time filters, free only, and a chip that shows the categories under them. The chips
+ * wrap onto more lines rather than scrolling sideways.
+ */
 export function FeedFilterBar({
   when,
   setWhen,
@@ -82,14 +62,12 @@ export function FeedFilterBar({
 }: FeedFilterBarProps) {
   const { t } = useTranslation();
   const { categories: all } = useCategories();
-  const windows = ['today', 'tonight', 'weekend'] as const;
+  const [showCategories, setShowCategories] = useState(false);
+  const windows = ['today', 'tomorrow', 'week'] as const;
 
   return (
     <View style={styles.bar}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.row}>
+      <View style={styles.row}>
         {windows.map((window) => (
           <Chip
             key={window}
@@ -99,20 +77,29 @@ export function FeedFilterBar({
           />
         ))}
         <Chip label={t('filters.free')} selected={free} onPress={() => setFree(!free)} />
-      </ScrollView>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.row}>
-        {all.map((category) => (
-          <Chip
-            key={category.slug}
-            label={category.name}
-            selected={categories.includes(category.slug)}
-            onPress={() => toggleCategory(category.slug)}
-          />
-        ))}
-      </ScrollView>
+        <Chip
+          label={
+            categories.length
+              ? `${t('filters.categories')} · ${categories.length}`
+              : t('filters.categories')
+          }
+          selected={categories.length > 0}
+          expanded={showCategories}
+          onPress={() => setShowCategories(!showCategories)}
+        />
+      </View>
+      {showCategories ? (
+        <View style={styles.row}>
+          {all.map((category) => (
+            <CategoryChip
+              key={category.slug}
+              category={category}
+              selected={categories.includes(category.slug)}
+              onPress={() => toggleCategory(category.slug)}
+            />
+          ))}
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -122,10 +109,8 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   row: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Spacing.two,
-  },
-  chip: {
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.one + 2,
   },
 });

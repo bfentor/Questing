@@ -31,7 +31,7 @@
   },
   "upcoming": {
     "empty": "Tulevia tapahtumia ei vielä ole.",
-    "soonest": "Pian",
+    "all": "Kaikki",
     "forYou": "Sinulle",
     "trending": "Suosittua",
     "forYouEmpty": "Sinulle ei ole vielä poimittu mitään. Lisää kiinnostuksen kohteita profiiliisi ja seuraa järjestäjiä, niin saat ehdotuksia.",
@@ -63,7 +63,6 @@
     "follow": "Seuraa",
     "followingButton": "Seurataan",
     "verified": "Vahvistettu",
-    "studyYear": "{{year}}. vuosi",
     "notFound": "Profiili ei ole saatavilla.",
     "tabs": {
       "posts": "Julkaisut",
@@ -100,6 +99,9 @@
     "signUpTitle": "Luo tili",
     "email": "Sähköposti",
     "password": "Salasana",
+    "name": "Nimi",
+    "username": "Käyttäjänimi",
+    "usernameHint": "Sinut löytää sillä, @-merkin jälkeen. Pieniä kirjaimia, numeroita ja alaviivoja.",
     "signUp": "Rekisteröidy",
     "switchToSignUp": "Uusi täällä? Luo tili",
     "switchToSignIn": "Onko sinulla jo tili? Kirjaudu sisään",
@@ -238,9 +240,6 @@
     "handle": "Käyttäjänimi",
     "bio": "Esittely",
     "pronouns": "Pronominit",
-    "university": "Yliopisto",
-    "faculty": "Tiedekunta tai koulutusohjelma",
-    "studyYear": "Vuosikurssi",
     "website": "Verkkosivusto",
     "instagram": "Instagram-käyttäjänimi",
     "interests": "Kiinnostuksen kohteet",
@@ -248,7 +247,16 @@
     "isPrivate": "Yksityinen tili",
     "isPrivateHint": "Seuraajien täytyy saada hyväksyntäsi, ja vain seuraajasi näkevät julkaisusi ja tapahtumasi.",
     "hideFollowers": "Piilota seuraajani ja seurattavani",
-    "hideAttendance": "Älä näytä minua tapahtumien osallistujissa"
+    "hideAttendance": "Älä näytä minua tapahtumien osallistujissa",
+    "avatarMenu": "Profiilikuva",
+    "coverMenu": "Kansikuva",
+    "reframe": "Rajaa uudelleen",
+    "removeCover": "Poista kansikuva",
+    "uploading": "Ladataan…",
+    "pronounsNone": "Ei mitään",
+    "pronounsCustom": "Oma",
+    "pronounsCustomLabel": "Pronominisi",
+    "pronounOptions": ["hän", "she/her", "he/him", "they/them"]
   },
   "followRequests": {
     "title": "Seuraamispyynnöt",
@@ -463,9 +471,10 @@
   },
   "filters": {
     "today": "Tänään",
-    "tonight": "Tänä iltana",
-    "weekend": "Viikonloppuna",
+    "tomorrow": "Huomenna",
+    "week": "Tällä viikolla",
     "free": "Maksuton",
+    "categories": "Kategoriat",
     "nothing": "Mikään tapahtuma ei vastaa suodattimia."
   },
   "suggestions": {
@@ -622,5 +631,13 @@
     "open": "Avaa valikko",
     "close": "Sulje valikko",
     "title": "Valikko"
+  },
+  "crop": {
+    "title": "Rajaa kuva",
+    "hint": "Siirrä kuvaa vetämällä ja sovita se zoomaamalla.",
+    "zoom": "Zoomaus",
+    "zoomIn": "Lähennä",
+    "zoomOut": "Loitonna",
+    "done": "Käytä tätä"
   }
 }

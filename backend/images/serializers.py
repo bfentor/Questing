@@ -7,6 +7,44 @@ from .models import Image
 from .processing import MAX_UPLOAD_BYTES, normalize
 
 
+class CropSerializer(serializers.Serializer):
+    """Part of a picture, as fractions of its width and height (0 to 1, from the top left)."""
+
+    x = serializers.FloatField(min_value=0, max_value=1)
+    y = serializers.FloatField(min_value=0, max_value=1)
+    width = serializers.FloatField(min_value=0.01, max_value=1)
+    height = serializers.FloatField(min_value=0.01, max_value=1)
+
+    def validate(self, crop):
+        # A little slack for rounding on the client.
+        if crop["x"] + crop["width"] > 1.001 or crop["y"] + crop["height"] > 1.001:
+            raise serializers.ValidationError(_("The crop has to stay inside the picture."))
+        return {
+            **crop,
+            "width": min(crop["width"], 1 - crop["x"]),
+            "height": min(crop["height"], 1 - crop["y"]),
+        }
+
+
+def absolute_url(image, context):
+    request = context.get("request")
+    return request.build_absolute_uri(image.file.url) if request else image.file.url
+
+
+class OriginalImageSerializer(serializers.ModelSerializer):
+    """The whole picture a crop was made from."""
+
+    url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Image
+        fields = ["id", "url", "width", "height"]
+        read_only_fields = fields
+
+    def get_url(self, image) -> str:
+        return absolute_url(image, self.context)
+
+
 class ImageSerializer(serializers.ModelSerializer):
     """How images appear inside other resources."""
 
@@ -18,9 +56,18 @@ class ImageSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_url(self, image) -> str:
-        url = image.file.url
-        request = self.context.get("request")
-        return request.build_absolute_uri(url) if request else url
+        return absolute_url(image, self.context)
+
+
+class ImageDetailSerializer(ImageSerializer):
+    """An image with what it was cropped from, for reframing it."""
+
+    original = OriginalImageSerializer(source="source", read_only=True, allow_null=True)
+    crop = CropSerializer(read_only=True, allow_null=True)
+
+    class Meta(ImageSerializer.Meta):
+        fields = [*ImageSerializer.Meta.fields, "original", "crop"]
+        read_only_fields = fields
 
 
 class ImageUploadSerializer(ImageSerializer):

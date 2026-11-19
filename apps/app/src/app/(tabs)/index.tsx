@@ -10,7 +10,7 @@ import {
 import { Link, router, type Href } from 'expo-router';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
 import { Button } from '@/components/button';
@@ -30,8 +30,8 @@ import { useCurrentPosition } from '@/hooks/use-current-position';
 import { useShape } from '@/hooks/use-shape';
 import { useBooleanPreference } from '@/lib/preferences';
 
-// How many events each row on the home page shows before "See all".
-const PER_ROW = 6;
+// From this window width, the home page's event sections have two columns.
+const TWO_COLUMNS_MIN_WIDTH = 600;
 // Nearby, for the home page's row: a short walk or ride.
 const NEAR_KM = 10;
 
@@ -163,25 +163,29 @@ function WithNearby({ position, exclude }: { position: LatLng; exclude: number[]
  */
 function EventRows({ nearby, exclude }: { nearby: Event[]; exclude: number[] }) {
   const { t } = useTranslation();
+  const { width } = useWindowDimensions();
   const upcoming = useUpcomingFeed();
   const trending = useTrendingFeed();
+  // Two rows of two side by side, or three under each other.
+  const columns = width >= TWO_COLUMNS_MIN_WIDTH ? 2 : 1;
+  const count = columns === 2 ? 4 : 3;
   const shown = new Set(exclude);
-  const near = unseen(nearby, shown);
-  const soon = unseen(firstPage(upcoming.data), shown);
-  const hot = unseen(firstPage(trending.data), shown);
+  const near = unseen(nearby, shown, count);
+  const soon = unseen(firstPage(upcoming.data), shown, count);
+  const hot = unseen(firstPage(trending.data), shown, count);
 
   return (
     <>
-      <EventRow title={t('home.nearYou')} seeAll="/nearby" events={near} />
-      <EventRow title={t('home.comingUp')} seeAll="/upcoming" events={soon} />
-      <EventRow title={t('upcoming.trending')} seeAll="/upcoming" events={hot} />
+      <EventGrid title={t('home.nearYou')} seeAll="/nearby" events={near} columns={columns} />
+      <EventGrid title={t('home.comingUp')} seeAll="/upcoming" events={soon} columns={columns} />
+      <EventGrid title={t('upcoming.trending')} seeAll="/upcoming" events={hot} columns={columns} />
     </>
   );
 }
 
-/** Up to a row's worth of `events` not in `shown`, adding them to it. */
-function unseen(events: Event[], shown: Set<number>) {
-  const row = events.filter((event) => !shown.has(event.id)).slice(0, PER_ROW);
+/** Up to `count` of `events` not in `shown`, adding them to it. */
+function unseen(events: Event[], shown: Set<number>, count: number) {
+  const row = events.filter((event) => !shown.has(event.id)).slice(0, count);
   row.forEach((event) => shown.add(event.id));
   return row;
 }
@@ -190,21 +194,36 @@ function firstPage(data: { pages: { results: Event[] }[] } | undefined) {
   return data?.pages[0]?.results ?? [];
 }
 
-/** Events side by side, scrolling sideways, so a row stays one card tall. */
-function EventRow({ title, seeAll, events }: { title: string; seeAll: Href; events: Event[] }) {
+/** Events in rows of `columns`, the cards in a row as tall as each other. */
+function EventGrid({
+  title,
+  seeAll,
+  events,
+  columns,
+}: {
+  title: string;
+  seeAll: Href;
+  events: Event[];
+  columns: number;
+}) {
   if (events.length === 0) return null;
+  const rows: Event[][] = [];
+  for (let start = 0; start < events.length; start += columns) {
+    rows.push(events.slice(start, start + columns));
+  }
   return (
     <Section title={title} seeAll={seeAll}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.row}>
-        {events.map((event) => (
-          <View key={event.id} style={styles.rowItem}>
-            <EventCard event={event} />
-          </View>
-        ))}
-      </ScrollView>
+      {rows.map((row) => (
+        <View key={row[0].id} style={styles.row}>
+          {row.map((event) => (
+            <View key={event.id} style={styles.cell}>
+              <EventCard event={event} fill />
+            </View>
+          ))}
+          {/* Keeps a lone last card as wide as the others. */}
+          {row.length < columns ? <View style={styles.cell} /> : null}
+        </View>
+      ))}
     </Section>
   );
 }
@@ -266,10 +285,11 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   row: {
+    flexDirection: 'row',
     gap: Spacing.two,
   },
-  rowItem: {
-    width: 280,
+  cell: {
+    flex: 1,
   },
   suggestions: {
     gap: Spacing.three,

@@ -27,9 +27,6 @@ export function ProfileHeader({ profile, actions }: ProfileHeaderProps) {
   const details = [
     profile.student_of ? t('student.badge', { university: profile.student_of.short_name }) : null,
     profile.pronouns,
-    profile.university,
-    profile.faculty,
-    profile.study_year ? t('profile.studyYear', { year: profile.study_year }) : null,
   ].filter(Boolean);
 
   return (
@@ -92,7 +89,11 @@ export function ProfileHeader({ profile, actions }: ProfileHeaderProps) {
   );
 }
 
+/** An organization's website and Instagram; people's profiles don't have them. */
 function Links({ profile }: { profile: Profile }) {
+  if (profile.kind !== 'organization') {
+    return null;
+  }
   const links = [
     profile.website
       ? { label: profile.website.replace(/^https?:\/\//, ''), url: profile.website }

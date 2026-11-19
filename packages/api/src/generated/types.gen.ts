@@ -141,6 +141,26 @@ export type CommentRequest = {
     body: string;
 };
 
+/**
+ * Part of a picture, as fractions of its width and height (0 to 1, from the top left).
+ */
+export type Crop = {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+};
+
+/**
+ * Part of a picture, as fractions of its width and height (0 to 1, from the top left).
+ */
+export type CropRequest = {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+};
+
 export type Event = {
     readonly id: number;
     organizer: ProfileSummary;
@@ -308,6 +328,18 @@ export type Image = {
     readonly url: string;
     readonly width: number;
     readonly height: number;
+};
+
+/**
+ * An image with what it was cropped from, for reframing it.
+ */
+export type ImageDetail = {
+    readonly id: number;
+    readonly url: string;
+    readonly width: number;
+    readonly height: number;
+    original: OriginalImage | null;
+    crop: Crop | null;
 };
 
 /**
@@ -490,6 +522,16 @@ export type OrganizationCreateRequest = {
     handle: string;
     display_name: string;
     bio?: string;
+};
+
+/**
+ * The whole picture a crop was made from.
+ */
+export type OriginalImage = {
+    readonly id: number;
+    readonly url: string;
+    readonly width: number;
+    readonly height: number;
 };
 
 export type PaginatedCommentList = {
@@ -974,6 +1016,13 @@ export type EventRequestWritable = {
      * Create a series of dates. Only on create.
      */
     repeat?: RepeatRequest;
+};
+
+/**
+ * An image with what it was cropped from, for reframing it.
+ */
+export type ImageDetailWritable = {
+    [key: string]: unknown;
 };
 
 export type MemberWritable = {
@@ -1882,6 +1931,36 @@ export type ImagesCreateResponses = {
 };
 
 export type ImagesCreateResponse = ImagesCreateResponses[keyof ImagesCreateResponses];
+
+export type ImagesRetrieveData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/api/images/{id}/';
+};
+
+export type ImagesRetrieveResponses = {
+    200: ImageDetail;
+};
+
+export type ImagesRetrieveResponse = ImagesRetrieveResponses[keyof ImagesRetrieveResponses];
+
+export type ImagesCropCreateData = {
+    body: CropRequest;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/api/images/{id}/crop/';
+};
+
+export type ImagesCropCreateResponses = {
+    201: ImageDetail;
+};
+
+export type ImagesCropCreateResponse = ImagesCropCreateResponses[keyof ImagesCropCreateResponses];
 
 export type MeRetrieveData = {
     body?: never;

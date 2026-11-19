@@ -31,7 +31,7 @@
   },
   "upcoming": {
     "empty": "Inga kommande evenemang än.",
-    "soonest": "Snart",
+    "all": "Alla",
     "forYou": "För dig",
     "trending": "Populärt",
     "forYouEmpty": "Inget valt åt dig än. Lägg till intressen i din profil och följ arrangörer för att få förslag.",
@@ -63,7 +63,6 @@
     "follow": "Följ",
     "followingButton": "Följer",
     "verified": "Verifierad",
-    "studyYear": "Årskurs {{year}}",
     "notFound": "Den här profilen är inte tillgänglig.",
     "tabs": {
       "posts": "Inlägg",
@@ -100,6 +99,9 @@
     "signUpTitle": "Skapa ditt konto",
     "email": "E-post",
     "password": "Lösenord",
+    "name": "Namn",
+    "username": "Användarnamn",
+    "usernameHint": "Andra hittar dig med det, efter ett @. Små bokstäver, siffror och understreck.",
     "signUp": "Registrera dig",
     "switchToSignUp": "Ny här? Skapa ett konto",
     "switchToSignIn": "Har du ett konto? Logga in",
@@ -238,9 +240,6 @@
     "handle": "Användarnamn",
     "bio": "Om mig",
     "pronouns": "Pronomen",
-    "university": "Universitet",
-    "faculty": "Fakultet eller utbildningsprogram",
-    "studyYear": "Årskurs",
     "website": "Webbplats",
     "instagram": "Instagram-användarnamn",
     "interests": "Intressen",
@@ -248,7 +247,16 @@
     "isPrivate": "Privat konto",
     "isPrivateHint": "Den som vill följa dig behöver ditt godkännande, och bara dina följare ser dina inlägg och evenemang.",
     "hideFollowers": "Dölj mina följare och vilka jag följer",
-    "hideAttendance": "Visa mig inte bland dem som går på evenemang"
+    "hideAttendance": "Visa mig inte bland dem som går på evenemang",
+    "avatarMenu": "Profilbild",
+    "coverMenu": "Omslagsbild",
+    "reframe": "Beskär igen",
+    "removeCover": "Ta bort omslagsbild",
+    "uploading": "Laddar upp…",
+    "pronounsNone": "Inga",
+    "pronounsCustom": "Egna",
+    "pronounsCustomLabel": "Dina pronomen",
+    "pronounOptions": ["hon/henne", "han/honom", "hen/hen", "she/her", "he/him", "they/them"]
   },
   "followRequests": {
     "title": "Följarförfrågningar",
@@ -463,9 +471,10 @@
   },
   "filters": {
     "today": "I dag",
-    "tonight": "I kväll",
-    "weekend": "I helgen",
+    "tomorrow": "I morgon",
+    "week": "Den här veckan",
     "free": "Gratis",
+    "categories": "Kategorier",
     "nothing": "Inga evenemang matchar filtren."
   },
   "suggestions": {
@@ -622,5 +631,13 @@
     "open": "Öppna menyn",
     "close": "Stäng menyn",
     "title": "Meny"
+  },
+  "crop": {
+    "title": "Beskär bilden",
+    "hint": "Dra för att flytta den och zooma för att passa.",
+    "zoom": "Zoom",
+    "zoomIn": "Zooma in",
+    "zoomOut": "Zooma ut",
+    "done": "Använd den här"
   }
 }

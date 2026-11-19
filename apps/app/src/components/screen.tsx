@@ -4,6 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
+import { useColumnStyle } from './column';
+
 type ScreenProps = ScrollViewProps & {
   /** Set when a navigation header already handles the top inset. */
   hasHeader?: boolean;
@@ -13,6 +15,7 @@ type ScreenProps = ScrollViewProps & {
 export function Screen({ hasHeader, contentContainerStyle, children, ...props }: ScreenProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+  const column = useColumnStyle();
 
   return (
     <ScrollView
@@ -23,6 +26,7 @@ export function Screen({ hasHeader, contentContainerStyle, children, ...props }:
           paddingTop: (hasHeader ? 0 : insets.top) + Spacing.four,
           paddingBottom: insets.bottom + BottomTabInset + Spacing.four,
         },
+        column,
         contentContainerStyle,
       ]}
       {...props}>

@@ -22,3 +22,19 @@ def normalize(upload) -> ContentFile:
         buffer = BytesIO()
         image.save(buffer, format="WEBP", quality=85)
     return ContentFile(buffer.getvalue(), name=f"{uuid.uuid4().hex}.webp")
+
+
+def crop(source, x, y, width, height) -> ContentFile:
+    """The part of a stored picture given as fractions of its size, re-encoded like an upload."""
+    with PILImage.open(source) as image:
+        image.load()
+    box = (
+        round(x * image.width),
+        round(y * image.height),
+        round((x + width) * image.width),
+        round((y + height) * image.height),
+    )
+    buffer = BytesIO()
+    image.crop(box).save(buffer, format="PNG")
+    buffer.seek(0)
+    return normalize(buffer)

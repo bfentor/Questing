@@ -82,3 +82,57 @@ def test_orphan_images_are_deleted_after_a_day(auth_client, user):
 
     assert set(Image.objects.values_list("pk", flat=True)) == {attached.pk, recent.pk}
     assert not os.path.exists(orphan_file)
+
+
+def halves(size=(400, 200)):
+    """A PNG whose left half is red and right half is blue."""
+    image = PILImage.new("RGB", size, "red")
+    image.paste((0, 0, 255), (size[0] // 2, 0, size[0], size[1]))
+    buffer = BytesIO()
+    image.save(buffer, format="PNG")
+    return SimpleUploadedFile("halves.png", buffer.getvalue(), content_type="image/png")
+
+
+def crop(client, image_id, **rect):
+    return client.post(f"/api/images/{image_id}/crop/", rect, format="json")
+
+
+def test_crop_cuts_out_part_and_reframing_starts_from_the_original(auth_client, user):
+    original = upload(auth_client, halves()).json()
+
+    right = crop(auth_client, original["id"], x=0.5, y=0, width=0.5, height=1)
+    assert right.status_code == 201, right.json()
+    body = right.json()
+    assert (body["width"], body["height"]) == (200, 200)
+    assert body["original"]["id"] == original["id"]
+    assert body["crop"] == {"x": 0.5, "y": 0, "width": 0.5, "height": 1}
+    with Image.objects.get(pk=body["id"]).file.open("rb") as file:
+        assert PILImage.open(file).convert("RGB").getpixel((100, 100))[2] > 200  # blue
+
+    # Reframing the crop crops the original again, so the left half is still there.
+    left = crop(auth_client, body["id"], x=0, y=0, width=0.5, height=1).json()
+    assert left["original"]["id"] == original["id"]
+    with Image.objects.get(pk=left["id"]).file.open("rb") as file:
+        assert PILImage.open(file).convert("RGB").getpixel((100, 100))[0] > 200  # red
+
+    detail = auth_client.get(f"/api/images/{left['id']}/").json()
+    assert detail["original"]["url"] == original["url"]
+
+
+def test_crop_has_to_stay_inside_the_picture(auth_client, user):
+    original = upload(auth_client, halves()).json()
+
+    assert crop(auth_client, original["id"], x=0.6, y=0, width=0.5, height=1).status_code == 400
+    assert crop(auth_client, original["id"], x=0, y=0, width=0, height=1).status_code == 400
+    assert crop(auth_client, 999999, x=0, y=0, width=1, height=1).status_code == 404
+
+
+def test_crops_keep_their_original_from_being_cleaned_up(auth_client, user):
+    original = upload(auth_client, halves()).json()
+    cropped = crop(auth_client, original["id"], x=0, y=0, width=0.5, height=1).json()
+
+    orphans = set(Image.orphans().values_list("pk", flat=True))
+
+    # The crop isn't used by anything yet; its original is, by the crop.
+    assert cropped["id"] in orphans
+    assert original["id"] not in orphans

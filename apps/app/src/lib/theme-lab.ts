@@ -119,6 +119,22 @@ export function isColorChanged(scheme: Scheme, token: ThemeColor, value: string)
  * The look as `Colors` and `Shape` blocks to paste into constants/theme.ts. Takes the look as an
  * argument (from useLook) so the React Compiler re-runs it when it changes.
  */
+// What each shape token is for, written above it in the generated code (as in theme.ts).
+const SHAPE_COMMENTS: Record<ShapeToken, string> = {
+  boxRadius: 'Cards, panels and pictures (dialogs are 1.5×, small pictures ½×).',
+  buttonRadius: 'Buttons and segmented controls.',
+  fieldRadius: 'Text inputs and date fields.',
+  selectorRadius: 'Chips, pills and progress bars (checkboxes stop at 6). 999 is fully round.',
+  border: 'Outline width around cards, dialogs and inputs; 0 for none.',
+  depth: 'Shadow under cards, dialogs and filled buttons: 0 flat, 1 subtle, 2 raised.',
+  controlHeight:
+    'Height of buttons and single-line inputs; 44 is the smallest comfortable touch target.',
+};
+
+/**
+ * The look as source code: everything in constants/theme.ts from `export const Colors` to
+ * `export type ShapeValues`, types and comments included, so it can be pasted over that part.
+ */
 export function lookAsCode({ light, dark, shape }: Look) {
   const colors = (palette: Palette) =>
     THEME_TOKENS.map((token) => `    ${token}: '${palette[token]}',`).join('\n');
@@ -132,9 +148,21 @@ export function lookAsCode({ light, dark, shape }: Look) {
     '  },',
     '} as const;',
     '',
+    'export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;',
+    '',
+    '/**',
+    " * The app's shape: how round, outlined and raised things are. Components read it through",
+    ' * useShape(); in development the Theme lab (Settings → Theme lab) edits it live.',
+    ' */',
     'export const Shape = {',
-    ...SHAPE_TOKENS.map((token) => `  ${token}: ${shape[token]},`),
+    ...SHAPE_TOKENS.flatMap((token) => [
+      `  /** ${SHAPE_COMMENTS[token]} */`,
+      `  ${token}: ${shape[token]},`,
+    ]),
     '} as const;',
+    '',
+    'export type ShapeToken = keyof typeof Shape;',
+    'export type ShapeValues = Record<ShapeToken, number>;',
   ].join('\n');
 }
 

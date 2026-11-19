@@ -46,6 +46,9 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:8081")
 # Where this API is reachable from outside; used for links in emails that the API answers itself.
 API_URL = env("API_URL", default="http://localhost:8000")
+# Whether made-up people, events and posts can be generated (admin → Sample data). Never in
+# production: the sample accounts share a password that's in this repository.
+SAMPLE_DATA_ENABLED = env.bool("SAMPLE_DATA_ENABLED", default=DEBUG)
 
 
 # Applications
@@ -82,6 +85,7 @@ INSTALLED_APPS = [
     "students",
     "search",
     "flags",
+    "sampledata",
 ]
 
 MIDDLEWARE = [
@@ -291,6 +295,8 @@ STORAGES = {
 WHITENOISE_MANIFEST_STRICT = False
 
 # Uploaded files go to S3-compatible object storage when a bucket is configured.
+# Without one they're stored under MEDIA_ROOT and the API serves them itself (config/media.py).
+SERVE_MEDIA = env.bool("SERVE_MEDIA", default=not env("AWS_STORAGE_BUCKET_NAME", default=""))
 if env("AWS_STORAGE_BUCKET_NAME", default=""):
     STORAGES["default"] = {
         "BACKEND": "storages.backends.s3.S3Storage",
