@@ -113,9 +113,11 @@ function NavBar({ children }: TabListProps) {
     <div className={classes.navArea}>
       <nav className={classes.nav}>
         <div className={classes.brand}>
-          <ThemedText type="subtitle" themeColor="tint" style={styles.brand}>
-            Sidequest
-          </ThemedText>
+          <Link href="/">
+            <ThemedText type="subtitle" themeColor="tint" style={styles.brand}>
+              Sidequest
+            </ThemedText>
+          </Link>
         </div>
         {children}
         <SidebarLinks />
