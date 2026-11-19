@@ -255,8 +255,7 @@
     "uploading": "Ladataan…",
     "pronounsNone": "Ei mitään",
     "pronounsCustom": "Oma",
-    "pronounsCustomLabel": "Pronominisi",
-    "pronounOptions": ["hän", "she/her", "he/him", "they/them"]
+    "pronounsCustomLabel": "Pronominisi"
   },
   "followRequests": {
     "title": "Seuraamispyynnöt",

@@ -255,8 +255,7 @@
     "uploading": "Uploading…",
     "pronounsNone": "None",
     "pronounsCustom": "Custom",
-    "pronounsCustomLabel": "Your pronouns",
-    "pronounOptions": ["she/her", "he/him", "they/them", "she/they", "he/they"]
+    "pronounsCustomLabel": "Your pronouns"
   },
   "followRequests": {
     "title": "Follow requests",

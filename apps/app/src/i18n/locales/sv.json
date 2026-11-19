@@ -255,8 +255,7 @@
     "uploading": "Laddar upp…",
     "pronounsNone": "Inga",
     "pronounsCustom": "Egna",
-    "pronounsCustomLabel": "Dina pronomen",
-    "pronounOptions": ["hon/henne", "han/honom", "hen/hen", "she/her", "he/him", "they/them"]
+    "pronounsCustomLabel": "Dina pronomen"
   },
   "followRequests": {
     "title": "Följarförfrågningar",
