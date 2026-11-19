@@ -25,3 +25,26 @@ def test_healthz_reports_version_and_commit(api_client, db, settings):
     settings.APP_COMMIT = "abc1234"
     response = api_client.get("/healthz")
     assert response.json() == {"status": "ok", "version": settings.APP_VERSION, "commit": "abc1234"}
+
+
+def test_uploaded_pictures_are_served_with_the_api(client, user, settings, tmp_path):
+    from io import BytesIO
+
+    from PIL import Image as PILImage
+
+    from images.models import Image
+    from images.processing import normalize
+
+    settings.MEDIA_ROOT = tmp_path
+    buffer = BytesIO()
+    PILImage.new("RGB", (20, 20), "red").save(buffer, format="PNG")
+    buffer.seek(0)
+    image = Image.objects.create(uploader=user, file=normalize(buffer))
+
+    response = client.get(image.file.url)
+
+    assert response.status_code == 200
+    assert response["Content-Type"].startswith("image/")
+    assert "max-age" in response["Cache-Control"]
+    assert client.get("/media/../config/settings.py").status_code in (400, 404)
+    assert client.get("/media/images/missing.jpg").status_code == 404

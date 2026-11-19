@@ -295,6 +295,8 @@ STORAGES = {
 WHITENOISE_MANIFEST_STRICT = False
 
 # Uploaded files go to S3-compatible object storage when a bucket is configured.
+# Without one they're stored under MEDIA_ROOT and the API serves them itself (config/media.py).
+SERVE_MEDIA = env.bool("SERVE_MEDIA", default=not env("AWS_STORAGE_BUCKET_NAME", default=""))
 if env("AWS_STORAGE_BUCKET_NAME", default=""):
     STORAGES["default"] = {
         "BACKEND": "storages.backends.s3.S3Storage",
