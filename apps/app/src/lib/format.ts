@@ -17,6 +17,13 @@ function createFormatters(locale: string) {
     month: 'long',
     year: 'numeric',
   });
+  const monthYear = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' });
+  const weekdayShort = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+  const dayLong = new Intl.DateTimeFormat(locale, {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
   const decimal = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
   const euros = new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' });
 
@@ -33,6 +40,18 @@ function createFormatters(locale: string) {
     },
     date(value: string | Date) {
       return dateOnly.format(new Date(value));
+    },
+    /** "November 2026", e.g. a calendar's title. */
+    month(value: Date) {
+      return monthYear.format(value);
+    },
+    /** "Mon", for a calendar's column headings. */
+    weekday(value: Date) {
+      return weekdayShort.format(value);
+    },
+    /** "Thursday 20 November". */
+    day(value: Date) {
+      return dayLong.format(value);
     },
     /** A decimal string from the API, e.g. "12.50" → "12,50 €". */
     price(amount: string) {

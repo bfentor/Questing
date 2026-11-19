@@ -689,5 +689,15 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
     "done": "Use this"
+  },
+  "calendar": {
+    "list": "List",
+    "calendar": "Calendar",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "today": "Today",
+    "nothing": "Nothing planned on this day.",
+    "dayLabel_one": "{{date}}, {{count}} event",
+    "dayLabel_other": "{{date}}, {{count}} events"
   }
 }

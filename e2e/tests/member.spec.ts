@@ -199,3 +199,26 @@ test.describe('with location shared', () => {
     await expect(ten).toBeHidden();
   });
 });
+
+test('see the events you go to on a calendar', async ({ page }) => {
+  await signIn(page);
+  await page.goto('/my-events');
+  await page.getByRole('tab', { name: 'Calendar' }).click();
+
+  const month = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' });
+  const now = new Date();
+  await expect(page.getByText(month.format(now), { exact: true })).toBeVisible();
+  // The demo account is going to (or interested in) something this month.
+  await expect(page.getByRole('button', { name: /, \d+ events?$/ }).first()).toBeVisible();
+
+  await page.getByRole('button', { name: 'Next month' }).click();
+  const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  await expect(page.getByText(month.format(next), { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Today' }).click();
+  await expect(page.getByText(month.format(now), { exact: true })).toBeVisible();
+
+  // Remembered, and back to the list for the other tests.
+  await page.reload();
+  await expect(page.getByText(month.format(now), { exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: 'List' }).click();
+});

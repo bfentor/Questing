@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sidequest\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 16:06+0200\n"
+"POT-Creation-Date: 2026-11-19 16:13+0200\n"
 "PO-Revision-Date: 2026-11-02 20:52+0200\n"
 "Last-Translator: Sidequest <dev@sidequest.invalid>\n"
 "Language-Team: Finnish\n"
@@ -93,6 +93,12 @@ msgstr "Tämä kalenteri synkronoidaan jo."
 
 msgid "This profile wasn't invited to co-host."
 msgstr "Tätä profiilia ei kutsuttu yhteisjärjestäjäksi."
+
+msgid "Give both ends_after and starts_before."
+msgstr "Anna sekä ends_after että starts_before."
+
+msgid "Ask for at most two months at a time."
+msgstr "Pyydä enintään kaksi kuukautta kerrallaan."
 
 msgid "The crop has to stay inside the picture."
 msgstr "Rajauksen täytyy pysyä kuvan sisällä."

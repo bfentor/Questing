@@ -360,3 +360,35 @@ def test_who_went_is_hidden_once_events_end(api_client, make_user, make_event):
     api_client.force_authenticate(went.user)
     attendees = api_client.get(f"/api/events/{past.pk}/attendees/").json()["results"]
     assert went.handle in [p["handle"] for p in attendees]
+
+
+def test_my_events_in_a_window(auth_client, user, make_user, make_event):
+    from datetime import timedelta
+
+    from django.utils import timezone
+
+    from events.models import Attendance
+
+    host = make_user().profile
+    now = timezone.now()
+    early = make_event(host, title="early", starts_in=timedelta(days=-3))
+    soon = make_event(host, title="soon", starts_in=timedelta(days=2))
+    later = make_event(host, title="later", starts_in=timedelta(days=40))
+    for event, status in ((early, "going"), (soon, "interested"), (later, "going")):
+        Attendance.objects.create(event=event, profile=user.profile, status=status)
+
+    window = {
+        "ends_after": (now - timedelta(days=7)).isoformat(),
+        "starts_before": (now + timedelta(days=7)).isoformat(),
+    }
+    events = auth_client.get("/api/me/attending/", window).json()["results"]
+    # Past and upcoming alike, soonest first, with your answer.
+    assert [(e["title"], e["attendance"]["mine"]) for e in events] == [
+        ("early", "going"),
+        ("soon", "interested"),
+    ]
+
+    only_one_end = {"ends_after": window["ends_after"]}
+    assert auth_client.get("/api/me/attending/", only_one_end).status_code == 400
+    too_long = {**window, "starts_before": (now + timedelta(days=90)).isoformat()}
+    assert auth_client.get("/api/me/attending/", too_long).status_code == 400

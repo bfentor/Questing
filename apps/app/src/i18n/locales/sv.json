@@ -689,5 +689,15 @@
     "zoomIn": "Zooma in",
     "zoomOut": "Zooma ut",
     "done": "Använd den här"
+  },
+  "calendar": {
+    "list": "Lista",
+    "calendar": "Kalender",
+    "previousMonth": "Föregående månad",
+    "nextMonth": "Nästa månad",
+    "today": "Idag",
+    "nothing": "Inget planerat den här dagen.",
+    "dayLabel_one": "{{date}}, {{count}} evenemang",
+    "dayLabel_other": "{{date}}, {{count}} evenemang"
   }
 }

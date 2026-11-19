@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sidequest\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 16:06+0200\n"
+"POT-Creation-Date: 2026-11-19 16:13+0200\n"
 "PO-Revision-Date: 2026-11-02 20:52+0200\n"
 "Last-Translator: Sidequest <dev@sidequest.invalid>\n"
 "Language-Team: Swedish\n"
@@ -93,6 +93,12 @@ msgstr "Den här kalendern synkroniseras redan."
 
 msgid "This profile wasn't invited to co-host."
 msgstr "Den här profilen bjöds inte in som medarrangör."
+
+msgid "Give both ends_after and starts_before."
+msgstr "Ange både ends_after och starts_before."
+
+msgid "Ask for at most two months at a time."
+msgstr "Be om högst två månader åt gången."
 
 msgid "The crop has to stay inside the picture."
 msgstr "Beskärningen måste hålla sig inom bilden."

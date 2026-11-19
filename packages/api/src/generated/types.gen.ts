@@ -2158,6 +2158,10 @@ export type MeAttendingListData = {
     path?: never;
     query?: {
         /**
+         * With starts_before: events overlapping that window, soonest first, past or not (e.g. a calendar's month). Replaces `when`.
+         */
+        ends_after?: string;
+        /**
          * Number of results to return per page.
          */
         limit?: number;
@@ -2165,6 +2169,7 @@ export type MeAttendingListData = {
          * The initial index from which to return the results.
          */
         offset?: number;
+        starts_before?: string;
         when?: 'past' | 'upcoming';
     };
     url: '/api/me/attending/';
@@ -2194,6 +2199,10 @@ export type MeEventsListData = {
     path?: never;
     query?: {
         /**
+         * With starts_before: events overlapping that window, soonest first, past or not (e.g. a calendar's month). Replaces `when`.
+         */
+        ends_after?: string;
+        /**
          * Number of results to return per page.
          */
         limit?: number;
@@ -2201,6 +2210,7 @@ export type MeEventsListData = {
          * The initial index from which to return the results.
          */
         offset?: number;
+        starts_before?: string;
         when?: 'past' | 'upcoming';
     };
     url: '/api/me/events/';
@@ -2361,6 +2371,10 @@ export type MeSavedListData = {
     path?: never;
     query?: {
         /**
+         * With starts_before: events overlapping that window, soonest first, past or not (e.g. a calendar's month). Replaces `when`.
+         */
+        ends_after?: string;
+        /**
          * Number of results to return per page.
          */
         limit?: number;
@@ -2368,6 +2382,7 @@ export type MeSavedListData = {
          * The initial index from which to return the results.
          */
         offset?: number;
+        starts_before?: string;
         when?: 'past' | 'upcoming';
     };
     url: '/api/me/saved/';

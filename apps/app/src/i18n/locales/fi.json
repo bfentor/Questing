@@ -689,5 +689,15 @@
     "zoomIn": "Lähennä",
     "zoomOut": "Loitonna",
     "done": "Käytä tätä"
+  },
+  "calendar": {
+    "list": "Lista",
+    "calendar": "Kalenteri",
+    "previousMonth": "Edellinen kuukausi",
+    "nextMonth": "Seuraava kuukausi",
+    "today": "Tänään",
+    "nothing": "Ei suunnitelmia tälle päivälle.",
+    "dayLabel_one": "{{date}}, {{count}} tapahtuma",
+    "dayLabel_other": "{{date}}, {{count}} tapahtumaa"
   }
 }

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
+import { useAnswerColors } from '@/hooks/use-answer-colors';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useTheme } from '@/hooks/use-theme';
 import { useShape } from '@/hooks/use-shape';
@@ -134,20 +135,21 @@ const ANSWER_ICONS: Record<
 
 /**
  * Your answer to the event, as a small label in its corner: filled with the accent if you're
- * going, a paler one if you're interested or on the waitlist.
+ * going, pale amber if you're interested, pale grey on the waitlist (as on the calendar).
  */
 function MyAnswer({ answer }: { answer: 'going' | 'interested' | 'waitlisted' }) {
   const { t } = useTranslation();
   const theme = useTheme();
   const shape = useShape();
+  const colors = useAnswerColors();
   const going = answer === 'going';
-  const color = going ? theme.onTint : theme.tint;
+  const color = going ? theme.onTint : colors[answer];
   return (
     <View
       style={[
         styles.answer,
         shape.selector,
-        { backgroundColor: going ? theme.tint : withAlpha(theme.tint, 0.16) },
+        { backgroundColor: going ? theme.tint : withAlpha(colors[answer], 0.16) },
       ]}>
       <SymbolView
         name={{

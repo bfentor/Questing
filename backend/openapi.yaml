@@ -1132,6 +1132,13 @@ paths:
       description: Events the signed-in user is going to, interested in or waitlisted
         for.
       parameters:
+      - in: query
+        name: ends_after
+        schema:
+          type: string
+          format: date-time
+        description: 'With starts_before: events overlapping that window, soonest
+          first, past or not (e.g. a calendar''s month). Replaces `when`.'
       - name: limit
         required: false
         in: query
@@ -1144,6 +1151,11 @@ paths:
         description: The initial index from which to return the results.
         schema:
           type: integer
+      - in: query
+        name: starts_before
+        schema:
+          type: string
+          format: date-time
       - in: query
         name: when
         schema:
@@ -1186,6 +1198,13 @@ paths:
       description: Events organized by the signed-in user or their organizations,
         drafts included.
       parameters:
+      - in: query
+        name: ends_after
+        schema:
+          type: string
+          format: date-time
+        description: 'With starts_before: events overlapping that window, soonest
+          first, past or not (e.g. a calendar''s month). Replaces `when`.'
       - name: limit
         required: false
         in: query
@@ -1198,6 +1217,11 @@ paths:
         description: The initial index from which to return the results.
         schema:
           type: integer
+      - in: query
+        name: starts_before
+        schema:
+          type: string
+          format: date-time
       - in: query
         name: when
         schema:
@@ -1379,6 +1403,13 @@ paths:
       operationId: me_saved_list
       description: Events the signed-in user saved.
       parameters:
+      - in: query
+        name: ends_after
+        schema:
+          type: string
+          format: date-time
+        description: 'With starts_before: events overlapping that window, soonest
+          first, past or not (e.g. a calendar''s month). Replaces `when`.'
       - name: limit
         required: false
         in: query
@@ -1391,6 +1422,11 @@ paths:
         description: The initial index from which to return the results.
         schema:
           type: integer
+      - in: query
+        name: starts_before
+        schema:
+          type: string
+          format: date-time
       - in: query
         name: when
         schema:
