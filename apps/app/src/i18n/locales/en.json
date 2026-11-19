@@ -63,7 +63,6 @@
     "follow": "Follow",
     "followingButton": "Following",
     "verified": "Verified",
-    "studyYear": "Year {{year}}",
     "notFound": "This profile isn't available.",
     "tabs": {
       "posts": "Posts",
@@ -241,9 +240,6 @@
     "handle": "Username",
     "bio": "Bio",
     "pronouns": "Pronouns",
-    "university": "University",
-    "faculty": "Faculty or programme",
-    "studyYear": "Year of study",
     "website": "Website",
     "instagram": "Instagram username",
     "interests": "Interests",
@@ -251,7 +247,16 @@
     "isPrivate": "Private account",
     "isPrivateHint": "People need your approval to follow you, and only followers see your posts and events.",
     "hideFollowers": "Hide my followers and who I follow",
-    "hideAttendance": "Don't show me in who's going to events"
+    "hideAttendance": "Don't show me in who's going to events",
+    "avatarMenu": "Profile picture",
+    "coverMenu": "Cover picture",
+    "reframe": "Reframe",
+    "removeCover": "Remove cover picture",
+    "uploading": "Uploading…",
+    "pronounsNone": "None",
+    "pronounsCustom": "Custom",
+    "pronounsCustomLabel": "Your pronouns",
+    "pronounOptions": ["she/her", "he/him", "they/them", "she/they", "he/they"]
   },
   "followRequests": {
     "title": "Follow requests",
@@ -626,5 +631,13 @@
     "open": "Open menu",
     "close": "Close menu",
     "title": "Menu"
+  },
+  "crop": {
+    "title": "Frame the picture",
+    "hint": "Drag to move it, and zoom to fit.",
+    "zoom": "Zoom",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "done": "Use this"
   }
 }

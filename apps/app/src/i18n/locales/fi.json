@@ -63,7 +63,6 @@
     "follow": "Seuraa",
     "followingButton": "Seurataan",
     "verified": "Vahvistettu",
-    "studyYear": "{{year}}. vuosi",
     "notFound": "Profiili ei ole saatavilla.",
     "tabs": {
       "posts": "Julkaisut",
@@ -241,9 +240,6 @@
     "handle": "Käyttäjänimi",
     "bio": "Esittely",
     "pronouns": "Pronominit",
-    "university": "Yliopisto",
-    "faculty": "Tiedekunta tai koulutusohjelma",
-    "studyYear": "Vuosikurssi",
     "website": "Verkkosivusto",
     "instagram": "Instagram-käyttäjänimi",
     "interests": "Kiinnostuksen kohteet",
@@ -251,7 +247,16 @@
     "isPrivate": "Yksityinen tili",
     "isPrivateHint": "Seuraajien täytyy saada hyväksyntäsi, ja vain seuraajasi näkevät julkaisusi ja tapahtumasi.",
     "hideFollowers": "Piilota seuraajani ja seurattavani",
-    "hideAttendance": "Älä näytä minua tapahtumien osallistujissa"
+    "hideAttendance": "Älä näytä minua tapahtumien osallistujissa",
+    "avatarMenu": "Profiilikuva",
+    "coverMenu": "Kansikuva",
+    "reframe": "Rajaa uudelleen",
+    "removeCover": "Poista kansikuva",
+    "uploading": "Ladataan…",
+    "pronounsNone": "Ei mitään",
+    "pronounsCustom": "Oma",
+    "pronounsCustomLabel": "Pronominisi",
+    "pronounOptions": ["hän", "she/her", "he/him", "they/them"]
   },
   "followRequests": {
     "title": "Seuraamispyynnöt",
@@ -626,5 +631,13 @@
     "open": "Avaa valikko",
     "close": "Sulje valikko",
     "title": "Valikko"
+  },
+  "crop": {
+    "title": "Rajaa kuva",
+    "hint": "Siirrä kuvaa vetämällä ja sovita se zoomaamalla.",
+    "zoom": "Zoomaus",
+    "zoomIn": "Lähennä",
+    "zoomOut": "Loitonna",
+    "done": "Käytä tätä"
   }
 }

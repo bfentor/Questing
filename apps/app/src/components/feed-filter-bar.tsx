@@ -1,57 +1,14 @@
 import type { FeedFilters } from '@sidequest/api';
-import { SymbolView } from 'expo-symbols';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useCategories } from '@/hooks/use-categories';
-import { useTheme } from '@/hooks/use-theme';
-import { useShape } from '@/hooks/use-shape';
 import { timeWindow, type TimeWindow } from '@/lib/time-windows';
 
 import { CategoryChip } from './category-chip';
-import { ThemedText } from './themed-text';
-
-type ChipProps = {
-  label: string;
-  selected: boolean;
-  onPress: () => void;
-  /** For a chip that shows or hides more chips, rather than one that filters. */
-  expanded?: boolean;
-};
-
-function Chip({ label, selected, onPress, expanded }: ChipProps) {
-  const shape = useShape();
-  const theme = useTheme();
-  return (
-    <Pressable
-      role={expanded === undefined ? 'checkbox' : 'button'}
-      aria-checked={expanded === undefined ? selected : undefined}
-      aria-expanded={expanded}
-      onPress={onPress}
-      style={[
-        styles.chip,
-        shape.selector,
-        { backgroundColor: selected ? theme.tint : theme.backgroundElement },
-      ]}>
-      <ThemedText type="small" style={selected && { color: theme.onTint }}>
-        {label}
-      </ThemedText>
-      {expanded === undefined ? null : (
-        <SymbolView
-          name={{
-            ios: expanded ? 'chevron.up' : 'chevron.down',
-            android: expanded ? 'expand_less' : 'expand_more',
-            web: expanded ? 'expand_less' : 'expand_more',
-          }}
-          size={16}
-          tintColor={selected ? theme.onTint : theme.textSecondary}
-        />
-      )}
-    </Pressable>
-  );
-}
+import { Chip } from './chip';
 
 /** Filter state for a feed, turned into API filters. */
 export function useFeedFilters() {
@@ -155,12 +112,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Spacing.two,
-  },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.one,
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.one + 2,
   },
 });
