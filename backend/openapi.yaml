@@ -233,8 +233,9 @@ paths:
       description: |-
         Who's going (or interested): people you follow first, then the latest RSVPs.
 
-        Leaves out people who hide their attendance (except yourself), blocked
-        profiles and private profiles you don't follow.
+        Leaves out people who don't share their RSVPs with you (you always see yourself) or,
+        once the event is over, who went; blocked profiles; and private profiles you don't
+        follow.
       parameters:
       - in: path
         name: id
@@ -2683,6 +2684,16 @@ components:
       - is_full
       - mine
       - waitlisted
+    AttendanceVisibilityEnum:
+      enum:
+      - everyone
+      - followers
+      - nobody
+      type: string
+      description: |-
+        * `everyone` - Everyone
+        * `followers` - Followers
+        * `nobody` - Nobody
     BlankEnum:
       enum:
       - ''
@@ -4160,7 +4171,9 @@ components:
           type: boolean
         hide_followers:
           type: boolean
-        hide_attendance:
+        attendance_visibility:
+          $ref: '#/components/schemas/AttendanceVisibilityEnum'
+        show_past_attendance:
           type: boolean
         interests:
           type: array
@@ -4333,7 +4346,9 @@ components:
           type: boolean
         hide_followers:
           type: boolean
-        hide_attendance:
+        attendance_visibility:
+          $ref: '#/components/schemas/AttendanceVisibilityEnum'
+        show_past_attendance:
           type: boolean
         interests:
           type: array

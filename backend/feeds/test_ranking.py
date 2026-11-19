@@ -44,7 +44,7 @@ def test_for_you_weighs_interests_follows_and_friends(
     me.interests.add(Category.objects.get(slug="games"))
     friend = make_user().profile
     shy_friend = make_user().profile
-    shy_friend.hide_attendance = True
+    shy_friend.attendance_visibility = "nobody"
     shy_friend.save()
     for followee in (friend, shy_friend, host):
         Follow.objects.create(follower=me, followee=followee)

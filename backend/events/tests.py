@@ -216,7 +216,7 @@ def test_friends_going_and_attendees(api_client, auth_client, user, make_user, m
     host = make_user().profile
     event = make_event(host, title="party")
     friend, shy_friend, stranger, blocker, private = (make_user().profile for _ in range(5))
-    shy_friend.hide_attendance = True
+    shy_friend.attendance_visibility = "nobody"
     shy_friend.save()
     private.is_private = True
     private.save()
@@ -280,7 +280,7 @@ def test_hosts_announce_and_export(auth_client, api_client, user, make_user, mak
     event = make_event(user.profile, title="party")
     going, curious = make_user(), make_user()
     going.profile.display_name = "Äijä Öberg"
-    going.profile.hide_attendance = True
+    going.profile.attendance_visibility = "nobody"
     going.profile.save()
     Attendance.objects.create(event=event, profile=going.profile, status="going")
     Attendance.objects.create(event=event, profile=curious.profile, status="interested")
@@ -305,3 +305,58 @@ def test_hosts_announce_and_export(auth_client, api_client, user, make_user, mak
         f"/api/events/{event.pk}/announcements/", {"message": "spam"}, format="json"
     )
     assert response.status_code == 403
+
+
+def test_attendance_shared_with_followers_only(api_client, make_user, make_event):
+    from events.models import Attendance
+    from profiles.models import Follow
+
+    host, fan, stranger = (make_user().profile for _ in range(3))
+    event = make_event(host)
+    fan_user = fan.user
+    shy = make_user().profile
+    shy.attendance_visibility = "followers"
+    shy.save()
+    Follow.objects.create(follower=fan, followee=shy)
+    Attendance.objects.create(event=event, profile=shy, status="going")
+
+    def going(viewer):
+        api_client.force_authenticate(viewer)
+        response = api_client.get(f"/api/events/{event.pk}/attendees/").json()
+        return [p["handle"] for p in response["results"]]
+
+    assert going(fan_user) == [shy.handle]
+    assert going(stranger.user) == []
+    assert going(shy.user) == [shy.handle]
+    assert going(None) == []
+    api_client.force_authenticate(fan_user)
+    attendance = api_client.get(f"/api/events/{event.pk}/").json()["attendance"]
+    assert [p["handle"] for p in attendance["friends_going"]] == [shy.handle]
+
+
+def test_who_went_is_hidden_once_events_end(api_client, make_user, make_event):
+    from datetime import timedelta
+
+    from events.models import Attendance
+    from profiles.models import Follow
+
+    host, viewer, went, open_book = (make_user().profile for _ in range(4))
+    open_book.show_past_attendance = True
+    open_book.save()
+    past = make_event(host, starts_in=-timedelta(days=2))
+    for profile in (went, open_book):
+        Follow.objects.create(follower=viewer, followee=profile)
+        Attendance.objects.create(event=past, profile=profile, status="going")
+
+    api_client.force_authenticate(viewer.user)
+    attendees = api_client.get(f"/api/events/{past.pk}/attendees/").json()["results"]
+    assert [p["handle"] for p in attendees] == [open_book.handle]
+    attendance = api_client.get(f"/api/events/{past.pk}/").json()["attendance"]
+    assert [p["handle"] for p in attendance["friends_going"]] == [open_book.handle]
+    # The counts still include everyone.
+    assert attendance["going"] == 2
+
+    # You always see yourself.
+    api_client.force_authenticate(went.user)
+    attendees = api_client.get(f"/api/events/{past.pk}/attendees/").json()["results"]
+    assert went.handle in [p["handle"] for p in attendees]

@@ -2,7 +2,7 @@
 
 from django.db.models import Q
 
-from profiles.models import Profile
+from profiles.models import Follow, Profile
 
 from .models import Block, Mute
 
@@ -36,3 +36,24 @@ def muted_profiles(viewer: Profile | None):
 def is_blocked_by(viewer: Profile | None, profile: Profile):
     """Whether `profile` has blocked the viewer (so the viewer may not see it)."""
     return viewer is not None and Block.objects.filter(blocker=profile, blocked=viewer).exists()
+
+
+def shares_attendance(viewer: Profile | None, prefix: str = ""):
+    """Profiles whose RSVPs the viewer may see: those shared with everyone, followers-only
+    ones the viewer follows, and the viewer's own. `prefix` reaches them through a relation,
+    e.g. "profile__" from attendances."""
+    visibility = Profile.AttendanceVisibility
+    everyone = Q(**{f"{prefix}attendance_visibility": visibility.EVERYONE})
+    if viewer is None:
+        return everyone
+    followed = Follow.objects.filter(follower=viewer).values("followee")
+    followers = Q(
+        **{f"{prefix}attendance_visibility": visibility.FOLLOWERS, f"{prefix}pk__in": followed}
+    )
+    return everyone | followers | Q(**{f"{prefix}pk": viewer.pk})
+
+
+def shares_past_attendance(viewer: Profile | None, prefix: str = ""):
+    """Profiles who stay in who went once an event is over (the viewer always sees their own)."""
+    shown = Q(**{f"{prefix}show_past_attendance": True})
+    return shown | Q(**{f"{prefix}pk": viewer.pk}) if viewer else shown

@@ -118,3 +118,31 @@ test('gender is private until you show it on your profile', async ({ page }) => 
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(page).not.toHaveURL(/edit-profile/);
 });
+
+test('choose who sees the events you go to, and hide past ones', async ({ page }) => {
+  await signIn(page);
+  await page.goto('/edit-profile');
+  const past = page.getByRole('switch', { name: "Show events I've been to" });
+  // Past events are hidden unless you show them.
+  await expect(past).toHaveAttribute('aria-checked', 'false');
+  await page.getByRole('radio', { name: 'Your followers' }).click();
+  await past.click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page).not.toHaveURL(/edit-profile/);
+
+  await page.goto('/edit-profile');
+  await expect(page.getByRole('radio', { name: 'Your followers' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await expect(past).toHaveAttribute('aria-checked', 'true');
+  // "Only you" leaves nothing to show afterwards either.
+  await page.getByRole('radio', { name: 'Only you' }).click();
+  await expect(past).toBeHidden();
+
+  // Back as it was, so the test can run again.
+  await page.getByRole('radio', { name: 'Everyone' }).click();
+  await past.click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page).not.toHaveURL(/edit-profile/);
+});

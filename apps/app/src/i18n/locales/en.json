@@ -262,7 +262,6 @@
     "isPrivate": "Private account",
     "isPrivateHint": "People need your approval to follow you, and only followers see your posts and events.",
     "hideFollowers": "Hide my followers and who I follow",
-    "hideAttendance": "Don't show me in who's going to events",
     "avatarMenu": "Profile picture",
     "coverMenu": "Cover picture",
     "reframe": "Reframe",
@@ -282,7 +281,13 @@
     "showGender": "Show my gender on my profile",
     "showGenderHint": "Otherwise only you can see it.",
     "genderShortWoman": "Woman",
-    "genderShortMan": "Man"
+    "genderShortMan": "Man",
+    "attendanceVisibility": "Who can see which events you're going to",
+    "attendanceEveryone": "Everyone",
+    "attendanceFollowers": "Your followers",
+    "attendanceNobody": "Only you",
+    "showPastAttendance": "Show events I've been to",
+    "showPastAttendanceHint": "Otherwise, once an event is over, you're left out of who went."
   },
   "followRequests": {
     "title": "Follow requests",

@@ -262,7 +262,6 @@
     "isPrivate": "Yksityinen tili",
     "isPrivateHint": "Seuraajien täytyy saada hyväksyntäsi, ja vain seuraajasi näkevät julkaisusi ja tapahtumasi.",
     "hideFollowers": "Piilota seuraajani ja seurattavani",
-    "hideAttendance": "Älä näytä minua tapahtumien osallistujissa",
     "avatarMenu": "Profiilikuva",
     "coverMenu": "Kansikuva",
     "reframe": "Rajaa uudelleen",
@@ -282,7 +281,13 @@
     "showGender": "Näytä sukupuoleni profiilissani",
     "showGenderHint": "Muuten vain sinä näet sen.",
     "genderShortWoman": "Nainen",
-    "genderShortMan": "Mies"
+    "genderShortMan": "Mies",
+    "attendanceVisibility": "Kuka näkee, mihin tapahtumiin olet menossa",
+    "attendanceEveryone": "Kaikki",
+    "attendanceFollowers": "Seuraajasi",
+    "attendanceNobody": "Vain sinä",
+    "showPastAttendance": "Näytä tapahtumat, joissa olen käynyt",
+    "showPastAttendanceHint": "Muuten sinua ei näytetä osallistujissa tapahtuman päätyttyä."
   },
   "followRequests": {
     "title": "Seuraamispyynnöt",

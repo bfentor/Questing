@@ -199,8 +199,9 @@ export const eventsAttendeesListQueryKey = (options: Options<EventsAttendeesList
 /**
  * Who's going (or interested): people you follow first, then the latest RSVPs.
  *
- * Leaves out people who hide their attendance (except yourself), blocked
- * profiles and private profiles you don't follow.
+ * Leaves out people who don't share their RSVPs with you (you always see yourself) or,
+ * once the event is over, who went; blocked profiles; and private profiles you don't
+ * follow.
  */
 export const eventsAttendeesListOptions = (options: Options<EventsAttendeesListData>) => queryOptions<EventsAttendeesListResponse, DefaultError, EventsAttendeesListResponse, ReturnType<typeof eventsAttendeesListQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
@@ -249,8 +250,9 @@ export const eventsAttendeesListInfiniteQueryKey = (options: Options<EventsAtten
 /**
  * Who's going (or interested): people you follow first, then the latest RSVPs.
  *
- * Leaves out people who hide their attendance (except yourself), blocked
- * profiles and private profiles you don't follow.
+ * Leaves out people who don't share their RSVPs with you (you always see yourself) or,
+ * once the event is over, who went; blocked profiles; and private profiles you don't
+ * follow.
  */
 export const eventsAttendeesListInfiniteOptions = (options: Options<EventsAttendeesListData>) => {
     const opts = infiniteQueryOptions<EventsAttendeesListResponse, DefaultError, InfiniteData<EventsAttendeesListResponse>, QueryKey<Options<EventsAttendeesListData>>, number | Pick<QueryKey<Options<EventsAttendeesListData>>[0], 'body' | 'headers' | 'path' | 'query'>>(

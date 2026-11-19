@@ -118,8 +118,9 @@ export const eventsAttendanceUpdate = <ThrowOnError extends boolean = false>(opt
 /**
  * Who's going (or interested): people you follow first, then the latest RSVPs.
  *
- * Leaves out people who hide their attendance (except yourself), blocked
- * profiles and private profiles you don't follow.
+ * Leaves out people who don't share their RSVPs with you (you always see yourself) or,
+ * once the event is over, who went; blocked profiles; and private profiles you don't
+ * follow.
  */
 export const eventsAttendeesList = <ThrowOnError extends boolean = false>(options: Options<EventsAttendeesListData, ThrowOnError>): RequestResult<EventsAttendeesListResponses, unknown, ThrowOnError> => (options.client ?? client).get<EventsAttendeesListResponses, unknown, ThrowOnError>({
     security: [{ name: 'X-Session-Token', type: 'apiKey' }],

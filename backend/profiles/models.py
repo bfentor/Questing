@@ -75,6 +75,11 @@ class Profile(models.Model):
         PERSON = "person"
         ORGANIZATION = "organization"
 
+    class AttendanceVisibility(models.TextChoices):
+        EVERYONE = "everyone"
+        FOLLOWERS = "followers"
+        NOBODY = "nobody"
+
     class Gender(models.TextChoices):
         WOMAN = "woman", _("Woman/female")
         MAN = "man", _("Man/male")
@@ -113,8 +118,13 @@ class Profile(models.Model):
     # posts and events.
     is_private = models.BooleanField(default=False)
     hide_followers = models.BooleanField(default=False)
-    # Leave this profile out of the lists of who's going to events.
-    hide_attendance = models.BooleanField(default=False)
+    # Who sees this profile in who's going to events, and among friends going.
+    attendance_visibility = models.CharField(
+        max_length=20, choices=AttendanceVisibility.choices, default=AttendanceVisibility.EVERYONE
+    )
+    # Whether it stays in those lists once an event is over: off, so nobody can look back
+    # through every event someone went to.
+    show_past_attendance = models.BooleanField(default=False)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

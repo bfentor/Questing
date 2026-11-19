@@ -262,7 +262,6 @@
     "isPrivate": "Privat konto",
     "isPrivateHint": "Den som vill följa dig behöver ditt godkännande, och bara dina följare ser dina inlägg och evenemang.",
     "hideFollowers": "Dölj mina följare och vilka jag följer",
-    "hideAttendance": "Visa mig inte bland dem som går på evenemang",
     "avatarMenu": "Profilbild",
     "coverMenu": "Omslagsbild",
     "reframe": "Beskär igen",
@@ -282,7 +281,13 @@
     "showGender": "Visa mitt kön på min profil",
     "showGenderHint": "Annars ser bara du det.",
     "genderShortWoman": "Kvinna",
-    "genderShortMan": "Man"
+    "genderShortMan": "Man",
+    "attendanceVisibility": "Vem kan se vilka evenemang du går på",
+    "attendanceEveryone": "Alla",
+    "attendanceFollowers": "Dina följare",
+    "attendanceNobody": "Bara du",
+    "showPastAttendance": "Visa evenemang jag har varit på",
+    "showPastAttendanceHint": "Annars syns du inte bland deltagarna när ett evenemang är över."
   },
   "followRequests": {
     "title": "Följarförfrågningar",

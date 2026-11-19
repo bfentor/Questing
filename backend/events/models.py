@@ -9,7 +9,13 @@ from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
-from moderation.visibility import hidden_profiles, muted_profiles, private_profiles
+from moderation.visibility import (
+    hidden_profiles,
+    muted_profiles,
+    private_profiles,
+    shares_attendance,
+    shares_past_attendance,
+)
 from profiles.models import Profile
 
 
@@ -242,13 +248,18 @@ class Event(models.Model):
 
 class AttendanceQuerySet(models.QuerySet):
     def friends_going(self, viewer):
-        """Going RSVPs of profiles the viewer follows, unless they hide their attendance."""
+        """Going RSVPs of profiles the viewer follows, if they share them with the viewer (and,
+        once the event is over, keep showing them)."""
         return (
             self.filter(
                 status=Attendance.Status.GOING,
                 profile__followed_by__follower=viewer,
-                profile__hide_attendance=False,
                 profile__removed_at__isnull=True,
+            )
+            .filter(shares_attendance(viewer, "profile__"))
+            .filter(
+                models.Q(event__ends_at__gte=timezone.now())
+                | shares_past_attendance(viewer, "profile__")
             )
             .exclude(profile__in=hidden_profiles(viewer))
             .select_related("profile__avatar")

@@ -1,6 +1,7 @@
 import {
   imagesCropCreate,
   imagesRetrieve,
+  type AttendanceVisibilityEnum,
   type GenderEnum,
   type Image,
   type PatchedProfileRequestWritable,
@@ -93,8 +94,11 @@ export function ProfileForm({ profile, showPrivacy, onSave, onSaved }: ProfileFo
   const [privacy, setPrivacy] = useState({
     is_private: profile.is_private ?? false,
     hide_followers: profile.hide_followers ?? false,
-    hide_attendance: profile.hide_attendance ?? false,
+    show_past_attendance: profile.show_past_attendance ?? false,
   });
+  const [attendanceVisibility, setAttendanceVisibility] = useState<AttendanceVisibilityEnum>(
+    profile.attendance_visibility ?? 'everyone',
+  );
   const [errors, setErrors] = useState<ProfileFieldErrors>({});
 
   const set = (field: keyof typeof form) => (value: string) =>
@@ -117,7 +121,7 @@ export function ProfileForm({ profile, showPrivacy, onSave, onSaved }: ProfileFo
         avatar_id: avatar?.id ?? null,
         cover_id: cover?.id ?? null,
         interests,
-        ...(showPrivacy ? privacy : {}),
+        ...(showPrivacy ? { ...privacy, attendance_visibility: attendanceVisibility } : {}),
       };
       const fieldErrors = await onSave(body);
       if (fieldErrors) {
@@ -196,7 +200,6 @@ export function ProfileForm({ profile, showPrivacy, onSave, onSaved }: ProfileFo
             [
               ['is_private', t('editProfile.isPrivate'), t('editProfile.isPrivateHint')],
               ['hide_followers', t('editProfile.hideFollowers'), null],
-              ['hide_attendance', t('editProfile.hideAttendance'), null],
             ] as const
           ).map(([key, label, hint]) => (
             <View key={key} style={styles.switchRow}>
@@ -215,6 +218,14 @@ export function ProfileForm({ profile, showPrivacy, onSave, onSaved }: ProfileFo
               />
             </View>
           ))}
+          <AttendancePrivacy
+            visibility={attendanceVisibility}
+            onVisibility={setAttendanceVisibility}
+            showPast={privacy.show_past_attendance}
+            onShowPast={(value) =>
+              setPrivacy((current) => ({ ...current, show_past_attendance: value }))
+            }
+          />
         </View>
       ) : null}
 
@@ -447,6 +458,66 @@ function PronounPicker({ value, onChange }: { value: string; onChange: (value: s
           maxLength={30}
         />
       ) : null}
+    </>
+  );
+}
+
+const ATTENDANCE_VISIBILITY = [
+  { value: 'everyone', label: 'editProfile.attendanceEveryone' },
+  { value: 'followers', label: 'editProfile.attendanceFollowers' },
+  { value: 'nobody', label: 'editProfile.attendanceNobody' },
+] as const;
+
+/**
+ * Who sees you in who's going to events (and among friends going), and whether you stay
+ * there once an event is over.
+ */
+function AttendancePrivacy({
+  visibility,
+  onVisibility,
+  showPast,
+  onShowPast,
+}: {
+  visibility: AttendanceVisibilityEnum;
+  onVisibility: (value: AttendanceVisibilityEnum) => void;
+  showPast: boolean;
+  onShowPast: (value: boolean) => void;
+}) {
+  const { t } = useTranslation();
+  return (
+    <>
+      <View style={styles.group}>
+        <ThemedText>{t('editProfile.attendanceVisibility')}</ThemedText>
+        <View
+          style={styles.chips}
+          role="radiogroup"
+          aria-label={t('editProfile.attendanceVisibility')}>
+          {ATTENDANCE_VISIBILITY.map((option) => (
+            <Chip
+              key={option.value}
+              radio
+              label={t(option.label)}
+              selected={visibility === option.value}
+              onPress={() => onVisibility(option.value)}
+            />
+          ))}
+        </View>
+      </View>
+      {visibility === 'nobody' ? null : (
+        <View style={styles.switchRow}>
+          <View style={styles.switchText}>
+            <ThemedText>{t('editProfile.showPastAttendance')}</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              {t('editProfile.showPastAttendanceHint')}
+            </ThemedText>
+          </View>
+          <Switch
+            value={showPast}
+            accessibilityLabel={t('editProfile.showPastAttendance')}
+            onValueChange={onShowPast}
+          />
+        </View>
+      )}
     </>
   );
 }

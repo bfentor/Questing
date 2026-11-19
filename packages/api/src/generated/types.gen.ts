@@ -93,6 +93,13 @@ export type AttendanceSummary = {
     friends_going_count: number;
 };
 
+/**
+ * * `everyone` - Everyone
+ * * `followers` - Followers
+ * * `nobody` - Nobody
+ */
+export type AttendanceVisibilityEnum = 'everyone' | 'followers' | 'nobody';
+
 export type BlankEnum = '';
 
 export type CalendarSource = {
@@ -680,7 +687,8 @@ export type PatchedProfileRequest = {
     instagram?: string | string;
     is_private?: boolean;
     hide_followers?: boolean;
-    hide_attendance?: boolean;
+    attendance_visibility?: AttendanceVisibilityEnum;
+    show_past_attendance?: boolean;
     /**
      * Category slugs (GET /api/categories/).
      */
@@ -745,7 +753,8 @@ export type Profile = {
     readonly verified: boolean;
     is_private?: boolean;
     hide_followers?: boolean;
-    hide_attendance?: boolean;
+    attendance_visibility?: AttendanceVisibilityEnum;
+    show_past_attendance?: boolean;
     /**
      * Category slugs (GET /api/categories/).
      */
@@ -1237,7 +1246,8 @@ export type PatchedProfileRequestWritable = {
     instagram?: string | string;
     is_private?: boolean;
     hide_followers?: boolean;
-    hide_attendance?: boolean;
+    attendance_visibility?: AttendanceVisibilityEnum;
+    show_past_attendance?: boolean;
     /**
      * Category slugs (GET /api/categories/).
      */
@@ -1294,7 +1304,8 @@ export type ProfileWritable = {
     instagram?: string | string;
     is_private?: boolean;
     hide_followers?: boolean;
-    hide_attendance?: boolean;
+    attendance_visibility?: AttendanceVisibilityEnum;
+    show_past_attendance?: boolean;
     /**
      * Category slugs (GET /api/categories/).
      */
