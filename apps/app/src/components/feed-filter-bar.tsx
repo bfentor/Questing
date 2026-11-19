@@ -10,6 +10,7 @@ import { useTheme } from '@/hooks/use-theme';
 import { useShape } from '@/hooks/use-shape';
 import { timeWindow, type TimeWindow } from '@/lib/time-windows';
 
+import { CategoryChip } from './category-chip';
 import { ThemedText } from './themed-text';
 
 type ChipProps = {
@@ -133,9 +134,9 @@ export function FeedFilterBar({
       {showCategories ? (
         <View style={styles.row}>
           {all.map((category) => (
-            <Chip
+            <CategoryChip
               key={category.slug}
-              label={category.name}
+              category={category}
               selected={categories.includes(category.slug)}
               onPress={() => toggleCategory(category.slug)}
             />

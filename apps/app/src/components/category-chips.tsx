@@ -1,20 +1,13 @@
-import type { AndroidSymbol } from 'expo-symbols';
-import { SymbolView } from 'expo-symbols';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useCategories } from '@/hooks/use-categories';
-import { useTheme } from '@/hooks/use-theme';
-import { useShape } from '@/hooks/use-shape';
 
-import { ThemedText } from './themed-text';
-import { ThemedView } from './themed-view';
+import { CategoryChip } from './category-chip';
 
 /** Read-only chips for an event's categories. */
 export function CategoryChips({ slugs }: { slugs: string[] }) {
-  const shape = useShape();
   const { bySlug } = useCategories();
-  const theme = useTheme();
   const categories = slugs.flatMap((slug) => bySlug.get(slug) ?? []);
 
   if (categories.length === 0) {
@@ -24,23 +17,7 @@ export function CategoryChips({ slugs }: { slugs: string[] }) {
   return (
     <View style={styles.row}>
       {categories.map((category) => (
-        <ThemedView
-          key={category.slug}
-          type="backgroundElement"
-          style={[styles.chip, shape.selector]}>
-          {/* Icon names come from the server; an unknown one simply renders nothing. */}
-          {category.icon ? (
-            <SymbolView
-              name={{
-                web: category.icon as AndroidSymbol,
-                android: category.icon as AndroidSymbol,
-              }}
-              size={16}
-              tintColor={theme.textSecondary}
-            />
-          ) : null}
-          <ThemedText type="small">{category.name}</ThemedText>
-        </ThemedView>
+        <CategoryChip key={category.slug} category={category} />
       ))}
     </View>
   );
@@ -54,19 +31,17 @@ export function CategoryPicker({
   value: string[];
   onChange: (slugs: string[]) => void;
 }) {
-  const shape = useShape();
   const { categories } = useCategories();
-  const theme = useTheme();
 
   return (
     <View style={styles.row}>
       {categories.map((category) => {
         const selected = value.includes(category.slug);
         return (
-          <Pressable
+          <CategoryChip
             key={category.slug}
-            role="checkbox"
-            aria-checked={selected}
+            category={category}
+            selected={selected}
             onPress={() =>
               onChange(
                 selected
@@ -74,15 +49,7 @@ export function CategoryPicker({
                   : [...value, category.slug],
               )
             }
-            style={[
-              styles.option,
-              shape.selector,
-              { backgroundColor: selected ? theme.tint : theme.backgroundElement },
-            ]}>
-            <ThemedText type="small" style={selected && { color: theme.onTint }}>
-              {category.name}
-            </ThemedText>
-          </Pressable>
+          />
         );
       })}
     </View>
@@ -94,16 +61,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Spacing.two,
-  },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.one,
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.one,
-  },
-  option: {
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.one + 2,
   },
 });
