@@ -47,7 +47,16 @@
     "showMap": "Näytä kartta",
     "emptyWithin": "{{km}} km:n säteellä ei ole nyt tapahtumia.",
     "widen": "Hae {{km}} km:n säteeltä",
-    "youAreHere": "Olet tässä"
+    "youAreHere": "Olet tässä",
+    "searchingAroundYou": "Haetaan sijaintisi ympäriltä",
+    "searchingAround": "Haetaan paikan {{place}} ympäriltä",
+    "mapSpot": "kartalta valitun kohdan",
+    "change": "Vaihda",
+    "placeLabel": "Kaupunki, osoite tai paikka",
+    "noPlaces": "Paikkoja ei löytynyt.",
+    "searchingHere": "Haetaan tästä",
+    "mapHint": "Valitse kohta kartalta hakeaksesi sen ympäriltä.",
+    "orChoosePlace": "Tai valitse paikka, jonka ympäriltä haetaan:"
   },
   "following": {
     "signInPrompt": "Kirjaudu sisään nähdäksesi seuraamiesi ihmisten ja järjestöjen julkaisut ja tapahtumat.",
@@ -255,8 +264,7 @@
     "uploading": "Ladataan…",
     "pronounsNone": "Ei mitään",
     "pronounsCustom": "Oma",
-    "pronounsCustomLabel": "Pronominisi",
-    "pronounOptions": ["hän", "she/her", "he/him", "they/them"]
+    "pronounsCustomLabel": "Pronominisi"
   },
   "followRequests": {
     "title": "Seuraamispyynnöt",

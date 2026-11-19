@@ -10,6 +10,7 @@ import { useShape } from '@/hooks/use-shape';
 import { useFormat } from '@/lib/format';
 
 import { Avatar } from './avatar';
+import { LogoBadge } from './logo';
 import { ThemedText } from './themed-text';
 
 function describe(notification: Notification, t: TFunction) {
@@ -81,11 +82,16 @@ export function NotificationItem({ notification }: { notification: Notification 
         !notification.read && { backgroundColor: theme.backgroundElement },
         pressed && styles.pressed,
       ]}>
-      <Avatar
-        name={notification.actor?.display_name ?? 'Sidequest'}
-        image={notification.actor?.avatar}
-        size={40}
-      />
+      {notification.actor ? (
+        <Avatar
+          name={notification.actor.display_name}
+          image={notification.actor.avatar}
+          size={40}
+        />
+      ) : (
+        // From Sidequest itself: reminders, feedback requests and the like.
+        <LogoBadge size={40} />
+      )}
       <View style={styles.text}>
         <ThemedText>{describe(notification, t)}</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">

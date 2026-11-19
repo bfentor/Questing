@@ -42,6 +42,8 @@ type ProfileFormProps = {
 type PictureKind = 'avatar' | 'cover';
 const ASPECT: Record<PictureKind, number> = { avatar: 1, cover: 3 };
 const AVATAR_SIZE = 88;
+// The same in every language: they're shown to everyone as written.
+const PRONOUNS = ['she/her', 'he/him', 'they/them', 'she/they', 'he/they'];
 
 /** A picture being framed: the whole one, which image to crop, and where it was framed. */
 type Cropping = {
@@ -123,7 +125,11 @@ export function ProfileForm({ profile, showPrivacy, onSave, onSaved }: ProfileFo
       />
 
       {field('display_name', t('editProfile.displayName'))}
-      {field('handle', t('editProfile.handle'), { autoCapitalize: 'none', autoCorrect: false })}
+      {field('handle', t('editProfile.handle'), {
+        autoCapitalize: 'none',
+        autoCorrect: false,
+        notALogin: true,
+      })}
       {field('bio', t('editProfile.bio'), { multiline: true, maxLength: 500, style: styles.bio })}
       {person ? (
         <View style={styles.group}>
@@ -356,10 +362,10 @@ function CameraBadge({ style }: { style: object }) {
   );
 }
 
-/** Common pronouns for the language, none, or one's own. */
+/** Common pronouns, none, or one's own. */
 function PronounPicker({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const { t } = useTranslation();
-  const options = t('editProfile.pronounOptions', { returnObjects: true }) as string[];
+  const options = PRONOUNS;
   const [custom, setCustom] = useState(() => value !== '' && !options.includes(value));
 
   return (

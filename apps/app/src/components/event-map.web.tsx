@@ -2,7 +2,6 @@ import type { Event, LatLng } from '@sidequest/api';
 // Metro warns about the image URLs inside; they're for default icons and controls this map doesn't use.
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '@/hooks/use-theme';
 import { useShape } from '@/hooks/use-shape';
@@ -12,6 +11,10 @@ type EventMapProps = {
   radiusKm: number;
   events: Event[];
   onSelect: (event: Event) => void;
+  /** What the dot in the middle is, e.g. "You are here". */
+  centerLabel: string;
+  /** Tapping (or clicking) the map elsewhere moves the search there. */
+  onMove?: (position: LatLng) => void;
 };
 
 type LoadedMap = {
@@ -24,12 +27,19 @@ type LoadedMap = {
 
 /**
  * Events with a location as markers on an OpenStreetMap map (Leaflet), around the viewer's
- * position and the search radius. Clicking a marker selects its event.
+ * position and the search radius. Clicking a marker selects its event; clicking elsewhere can
+ * move the search (`onMove`).
  */
-export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) {
+export function EventMap({
+  center,
+  radiusKm,
+  events,
+  onSelect,
+  centerLabel,
+  onMove,
+}: EventMapProps) {
   const theme = useTheme();
   const shape = useShape();
-  const { t } = useTranslation();
   const container = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState<LoadedMap | null>(null);
 
@@ -81,9 +91,23 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
       fillOpacity: 1,
       pane: AREA_PANE,
     })
-      .bindTooltip(t('nearby.youAreHere'))
+      .bindTooltip(centerLabel)
       .addTo(area);
-  }, [loaded, center.lat, center.lng, radiusKm, theme, t]);
+  }, [loaded, center.lat, center.lng, radiusKm, theme, centerLabel]);
+
+  useEffect(() => {
+    if (!loaded || !onMove) return;
+    const { map } = loaded;
+    const move = (event: import('leaflet').LeafletMouseEvent) =>
+      onMove({ lat: event.latlng.lat, lng: event.latlng.lng });
+    map.on('click', move);
+    // A pointer rather than Leaflet's hand, since a click does something.
+    map.getContainer().style.cursor = 'crosshair';
+    return () => {
+      map.off('click', move);
+      map.getContainer().style.cursor = '';
+    };
+  }, [loaded, onMove]);
 
   useEffect(() => {
     if (!loaded) return;

@@ -11,6 +11,10 @@ type EventMapProps = {
   radiusKm: number;
   events: Event[];
   onSelect: (event: Event) => void;
+  /** What the dot in the middle is, e.g. "You are here". */
+  centerLabel: string;
+  /** Tapping (or clicking) the map elsewhere moves the search there. */
+  onMove?: (position: LatLng) => void;
 };
 
 /** Roughly fits a circle of `radiusKm` around the center on a phone-sized map. */
@@ -22,9 +26,10 @@ export function zoomFor(radiusKm: number) {
  * Events with a location as markers, on Apple Maps (iOS) or Google Maps
  * (Android), with the viewer's position and the search radius. Tapping a
  * marker selects its event; on iOS that needs iOS 18, older versions show
- * the title only.
+ * the title only. Tapping elsewhere can move the search (`onMove`); `centerLabel` is for the
+ * web map's dot, as these show the device's own position.
  */
-export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) {
+export function EventMap({ center, radiusKm, events, onSelect, onMove }: EventMapProps) {
   const shape = useShape();
   const theme = useTheme();
   const markers = events.flatMap((event) =>
@@ -52,6 +57,11 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
       lineWidth: 1.5,
     },
   ];
+  const move = ({ coordinates }: { coordinates: { latitude?: number; longitude?: number } }) => {
+    if (onMove && coordinates.latitude !== undefined && coordinates.longitude !== undefined) {
+      onMove({ lat: coordinates.latitude, lng: coordinates.longitude });
+    }
+  };
   const select = (marker: { id?: string }) => {
     const event = events.find((candidate) => String(candidate.id) === marker.id);
     if (event) onSelect(event);
@@ -65,6 +75,7 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
       circles={reach}
       properties={{ isMyLocationEnabled: true }}
       onMarkerClick={select}
+      onMapClick={move}
     />
   ) : (
     <GoogleMaps.View
@@ -74,6 +85,7 @@ export function EventMap({ center, radiusKm, events, onSelect }: EventMapProps) 
       circles={reach}
       properties={{ isMyLocationEnabled: true }}
       onMarkerClick={select}
+      onMapClick={move}
     />
   );
 }

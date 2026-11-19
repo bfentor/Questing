@@ -15,6 +15,7 @@ import { TABS } from '@/navigation/tabs';
 
 import { Avatar } from './avatar';
 import { Button } from './button';
+import { LogoMark } from './logo';
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 
@@ -141,7 +142,8 @@ function Drawer({ visible, onClose }: { visible: boolean; onClose: () => void })
                   </View>
                 </Pressable>
               ) : (
-                <View style={styles.me}>
+                <View style={[styles.me, styles.brand]}>
+                  <LogoMark size={32} />
                   <ThemedText type="subtitle" themeColor="tint">
                     Sidequest
                   </ThemedText>
@@ -223,6 +225,10 @@ const styles = StyleSheet.create({
   me: {
     gap: Spacing.two,
     paddingHorizontal: Spacing.two,
+  },
+  brand: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   pressed: {
     opacity: 0.6,
