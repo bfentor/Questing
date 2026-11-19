@@ -37,8 +37,6 @@ class Migration(migrations.Migration):
             field=models.BooleanField(default=False),
         ),
         migrations.RunPython(hidden_to_nobody, nobody_to_hidden),
-        migrations.RemoveField(
-            model_name="profile",
-            name="hide_attendance",
-        ),
+        # hide_attendance stays for one release: the previous one still reads it while a
+        # deploy switches over (DEPLOYMENT.md › Migrations). A later release removes it.
     ]

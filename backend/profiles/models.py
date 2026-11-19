@@ -131,6 +131,9 @@ class Profile(models.Model):
     # Whether it stays in those lists once an event is over: off, so nobody can look back
     # through every event someone went to.
     show_past_attendance = models.BooleanField(default=False)
+    # Unused: replaced by attendance_visibility ("nobody"). Kept for one release so the
+    # previous one works during a deploy; remove it (and this) in the next.
+    hide_attendance = models.BooleanField(default=False)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
