@@ -1,6 +1,7 @@
 import { ScrollViewStyleReset, useServerDocumentContext } from 'expo-router/html';
 import type { PropsWithChildren } from 'react';
 
+import { ICON_VERSION } from '@/constants/icon-version';
 import { Colors } from '@/constants/theme';
 
 /**
@@ -36,14 +37,14 @@ export default function Root({ children }: PropsWithChildren) {
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <link rel="manifest" href="/manifest.webmanifest" />
+        <link rel="manifest" href={`/manifest.webmanifest?v=${ICON_VERSION}`} />
         {/* The browser's toolbar in the page's colour (constants/theme.ts). */}
         <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8fafc" />
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b1020" />
-        {/* Icons: scripts/make-icons draws them from assets/logo/logo.svg. */}
-        <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
-        <link rel="icon" href="/icons/favicon.ico" sizes="48x48" />
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        {/* Icons: scripts/make-icons draws them, and versions their links (icon-version.ts). */}
+        <link rel="icon" href={`/icons/favicon.svg?v=${ICON_VERSION}`} type="image/svg+xml" />
+        <link rel="icon" href={`/icons/favicon.ico?v=${ICON_VERSION}`} sizes="48x48" />
+        <link rel="apple-touch-icon" href={`/icons/apple-touch-icon.png?v=${ICON_VERSION}`} />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Sidequest" />
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />

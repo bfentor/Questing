@@ -7,6 +7,8 @@ the favicons stay sharp. Change the shapes and colours here, then run this again
 apps/app/assets/logo/logo.svg too. Needs rsvg-convert (librsvg) and ImageMagick.
 """
 
+import hashlib
+import json
 import shutil
 import subprocess
 import tempfile
@@ -16,6 +18,8 @@ APP = Path(__file__).resolve().parent.parent / "apps" / "app"
 IMAGES = APP / "assets" / "images"
 LOGO = APP / "assets" / "logo"
 WEB = APP / "public" / "icons"
+MANIFEST = APP / "public" / "manifest.webmanifest"
+VERSION_FILE = APP / "src" / "constants" / "icon-version.ts"
 
 # The app's indigo (constants/theme.ts), as a gentle top-to-bottom gradient.
 TOP = "#6366f1"
@@ -115,3 +119,16 @@ with tempfile.TemporaryDirectory() as directory:
         sizes.append(str(target))
     subprocess.run(["magick", *sizes, str(WEB / "favicon.ico")], check=True)
 print("public/icons/favicon.ico (16, 32, 48)")
+
+# The icons keep their names, and browsers and Cloudflare keep icons for hours, so their links
+# carry a version that changes with the logo: a new logo is a new address, fetched afresh.
+version = hashlib.sha256((LOGO_SVG + SMALL).encode()).hexdigest()[:8]
+VERSION_FILE.write_text(
+    "// Written by scripts/make-icons: changes with the logo, so its links skip old copies.\n"
+    f"export const ICON_VERSION = '{version}';\n"
+)
+manifest = json.loads(MANIFEST.read_text())
+for icon in manifest["icons"]:
+    icon["src"] = icon["src"].split("?")[0] + f"?v={version}"
+MANIFEST.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
+print(f"icon version {version}: src/constants/icon-version.ts, public/manifest.webmanifest")
