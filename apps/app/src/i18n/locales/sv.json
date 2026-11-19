@@ -47,7 +47,16 @@
     "showMap": "Visa karta",
     "emptyWithin": "Inga evenemang inom {{km}} km just nu.",
     "widen": "Sök inom {{km}} km",
-    "youAreHere": "Du är här"
+    "youAreHere": "Du är här",
+    "searchingAroundYou": "Söker runt din plats",
+    "searchingAround": "Söker runt {{place}}",
+    "mapSpot": "en plats på kartan",
+    "change": "Ändra",
+    "placeLabel": "Ort, adress eller plats",
+    "noPlaces": "Inga platser hittades.",
+    "searchingHere": "Söker här",
+    "mapHint": "Välj en plats på kartan för att söka runt den.",
+    "orChoosePlace": "Eller välj en plats att söka runt:"
   },
   "following": {
     "signInPrompt": "Logga in för att se inlägg och evenemang från personer och organisationer du följer.",

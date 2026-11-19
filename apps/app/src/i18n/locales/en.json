@@ -47,7 +47,16 @@
     "showMap": "Show map",
     "emptyWithin": "No events within {{km}} km right now.",
     "widen": "Search within {{km}} km",
-    "youAreHere": "You are here"
+    "youAreHere": "You are here",
+    "searchingAroundYou": "Searching around your location",
+    "searchingAround": "Searching around {{place}}",
+    "mapSpot": "a spot on the map",
+    "change": "Change",
+    "placeLabel": "Town, address or place",
+    "noPlaces": "No places found.",
+    "searchingHere": "Searching here",
+    "mapHint": "Select a spot on the map to search around it.",
+    "orChoosePlace": "Or choose a place to search around:"
   },
   "following": {
     "signInPrompt": "Sign in to see posts and events from the people and organizations you follow.",
