@@ -65,6 +65,7 @@ class SampleProfileAdmin(admin.ModelAdmin):
             "enabled": settings.SAMPLE_DATA_ENABLED,
             "demo_email": services.DEMO_EMAIL,
             "demo_password": DEMO_PASSWORD,
+            "status": services.generation_status(),
         }
         return super().changelist_view(request, extra_context)
 
@@ -83,19 +84,24 @@ class SampleProfileAdmin(admin.ModelAdmin):
         if not settings.SAMPLE_DATA_ENABLED:
             self.message_user(request, "Sample data is switched off here.", messages.ERROR)
             return self.back()
-        services.generate()
-        counts = services.summary()
-        self.message_user(
-            request,
-            f"Generated {counts['events']} events and {counts['posts']} posts, dated from now. "
-            f"Sign in as {services.DEMO_EMAIL} / {DEMO_PASSWORD} to see them.",
-            messages.SUCCESS,
-        )
+        if services.start_generating():
+            self.message_user(
+                request,
+                "Generating a fresh set. It takes a minute or two; this page shows when it's done.",
+                messages.SUCCESS,
+            )
+        else:
+            self.message_user(request, "A set is being generated already.", messages.WARNING)
         return self.back()
 
     def delete(self, request):
         self.check_superuser(request)
         if request.method != "POST":
+            return self.back()
+        if services.generation_status()["started"]:
+            self.message_user(
+                request, "Wait until the set being generated is done.", messages.WARNING
+            )
             return self.back()
         count = services.delete_sample_data()
         self.message_user(

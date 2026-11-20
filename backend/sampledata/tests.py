@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 import pytest
 from django.contrib.gis.geos import Point
+from django.core.cache import cache
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.urls import reverse
@@ -25,6 +26,20 @@ from .models import SampleProfile
 def sample_data_with_media_in_tmp(settings, tmp_path):
     settings.SAMPLE_DATA_ENABLED = True
     settings.MEDIA_ROOT = tmp_path
+
+
+@pytest.fixture(autouse=True)
+def generate_right_away(monkeypatch):
+    """Run "background" generation in the test itself, so its results can be checked."""
+
+    class RightAway:
+        def __init__(self, target, args=(), daemon=None):
+            self.target, self.args = target, args
+
+        def start(self):
+            self.target(*self.args)
+
+    monkeypatch.setattr(services.threading, "Thread", RightAway)
 
 
 @pytest.fixture
@@ -181,6 +196,37 @@ def test_the_admin_page_generates_and_deletes(client, superuser):
 
     client.post(reverse("admin:sampledata_delete"))
     assert not Event.objects.exists()
+
+
+@pytest.mark.django_db
+def test_generating_twice_at_once_is_refused(client, superuser):
+    client.force_login(superuser)
+    cache.set(services.GENERATING, timezone.now())
+
+    client.post(reverse("admin:sampledata_generate"))
+    assert not Event.objects.exists()
+    page = client.get(reverse("admin:sampledata_sampleprofile_changelist")).content.decode()
+    assert "Generating a fresh set" in page
+    assert 'http-equiv="refresh"' in page
+
+    # Nor can it be deleted halfway.
+    client.post(reverse("admin:sampledata_delete"))
+    assert cache.get(services.GENERATING)
+
+
+@pytest.mark.django_db
+def test_a_failed_generation_says_why(client, superuser, monkeypatch):
+    def broken(viewer_email):
+        raise RuntimeError("the disk is full")
+
+    monkeypatch.setattr(services, "generate", broken)
+    client.force_login(superuser)
+
+    client.post(reverse("admin:sampledata_generate"))
+    page = client.get(reverse("admin:sampledata_sampleprofile_changelist")).content.decode()
+    assert "RuntimeError: the disk is full" in page
+    # And it can be tried again.
+    assert cache.get(services.GENERATING) is None
 
 
 @pytest.mark.django_db

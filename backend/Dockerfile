@@ -45,4 +45,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=10s --timeout=5s --start-period=60s \
     CMD curl -fsS http://localhost:8000/healthz || exit 1
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["gunicorn", "config.wsgi", "--bind", "0.0.0.0:8000", "--access-logfile", "-"]
+# Settings in gunicorn.conf.py.
+CMD ["gunicorn", "config.wsgi"]

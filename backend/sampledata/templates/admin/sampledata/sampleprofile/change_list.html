@@ -1,5 +1,10 @@
 {% extends "admin/change_list.html" %}
 
+{% block extrahead %}
+  {{ block.super }}
+  {% if status.started %}<meta http-equiv="refresh" content="10">{% endif %}
+{% endblock %}
+
 {% block extrastyle %}
   {{ block.super }}
   <style>
@@ -31,20 +36,28 @@
       ago to a month ahead, with people going, posts, comments and notifications. See it all by
       signing in as <code>{{ demo_email }}</code> / <code>{{ demo_password }}</code>; the other
       sample people sign in with <code>&lt;handle&gt;@sidequest.test</code> and the same password.
-      It takes a few seconds.
+      It takes a minute or two, in the background: you can leave this page.
     </p>
     <p>
       <strong>Delete all</strong> removes the sample people and organizations, and everything
       they made. Nothing real is touched, but real people's likes, comments and RSVPs on sample
       events and posts go with them.
     </p>
+    {% if status.started %}
+      <p class="help">
+        <strong>Generating a fresh set</strong> (started {{ status.started|timesince }} ago).
+        This page refreshes by itself until it's done.
+      </p>
+    {% elif status.failed %}
+      <p class="errornote">The last attempt to generate failed: {{ status.failed }}</p>
+    {% endif %}
     {% if not enabled %}
       <p class="errornote">
         Generating is switched off here. Set <code>SAMPLE_DATA_ENABLED=true</code> to allow it.
       </p>
     {% endif %}
     <div class="buttons">
-      {% if enabled %}
+      {% if enabled and not status.started %}
         <form method="post" action="{% url 'admin:sampledata_generate' %}">
           {% csrf_token %}
           <button type="submit" class="button default">
@@ -52,13 +65,13 @@
           </button>
         </form>
       {% endif %}
-      {% if summary.people or summary.organizations %}
+      {% if summary.people or summary.organizations %}{% if not status.started %}
         <form method="post" action="{% url 'admin:sampledata_delete' %}"
               onsubmit="return confirm('Delete all sample data?');">
           {% csrf_token %}
           <button type="submit" class="button danger">Delete all</button>
         </form>
-      {% endif %}
+      {% endif %}{% endif %}
     </div>
   </div>
   {{ block.super }}
