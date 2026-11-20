@@ -5,11 +5,14 @@ belongs to one of them, so `delete_sample_data` finds all of it (and nothing rea
 Dates are relative to when it's generated: generating again moves everything back around today.
 """
 
+import logging
+import threading
 from datetime import timedelta
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
-from django.db import transaction
+from django.db import connections, transaction
 from django.utils import timezone
 
 from accounts.models import User
@@ -23,6 +26,14 @@ from .models import SampleProfile
 
 # The account sample data is seen through, unless another is given.
 DEMO_EMAIL = "demo@sidequest.test"
+
+logger = logging.getLogger(__name__)
+
+# What the admin page shows while it's generated in the background, and if that failed. In the
+# cache, which every web process shares (CACHE_URL); expiring, in case a process dies midway.
+GENERATING = "sampledata:generating"
+FAILED = "sampledata:failed"
+GENERATING_FOR = 15 * 60
 
 
 def sensible_start(now, hours, hour=None):
@@ -102,6 +113,37 @@ def generate(viewer_email=DEMO_EMAIL):
     if viewer is None:
         raise User.DoesNotExist(f"No account with the email {viewer_email}.")
     Showcase(viewer).build()
+
+
+def start_generating(viewer_email=DEMO_EMAIL):
+    """Generate a fresh set in the background, as it takes longer than a web request may.
+
+    Returns False, and starts nothing, if a set is being generated already.
+    """
+    check_enabled()
+    if not cache.add(GENERATING, timezone.now(), timeout=GENERATING_FOR):
+        return False
+    cache.delete(FAILED)
+    threading.Thread(target=_generate_in_background, args=(viewer_email,), daemon=True).start()
+    return True
+
+
+def _generate_in_background(viewer_email):
+    try:
+        generate(viewer_email)
+    except Exception as error:
+        logger.exception("Generating sample data failed")
+        cache.set(FAILED, f"{type(error).__name__}: {error}", timeout=24 * 60 * 60)
+    finally:
+        cache.delete(GENERATING)
+        # A thread's database connections are its own; don't leave them open.
+        if threading.current_thread() is not threading.main_thread():
+            connections.close_all()
+
+
+def generation_status():
+    """When the set being generated was started (or None), and why the last attempt failed."""
+    return {"started": cache.get(GENERATING), "failed": cache.get(FAILED)}
 
 
 @transaction.atomic
