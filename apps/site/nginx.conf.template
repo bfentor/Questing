@@ -1,0 +1,30 @@
+# Questing's frontpage (questing.fi). The official nginx image fills in ${APP_URL} on start.
+server {
+    listen 80;
+    root /usr/share/nginx/html;
+    absolute_redirect off;
+
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy strict-origin-when-cross-origin always;
+
+    location = /healthz {
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    # Pages are small and change with each release; their styles and icons carry a version.
+    # (`expires`, not add_header, which would drop the headers above for that location.)
+    location / {
+        expires epoch;
+        try_files $uri $uri/ @app;
+    }
+    location ~ \.(css|svg|png|ico)$ {
+        expires 7d;
+    }
+
+    # Anything else is a page of the app (an event, a profile) someone shared with the wrong
+    # name: send it there. A 302, so it can still become a page here later.
+    location @app {
+        return 302 ${APP_URL}$request_uri;
+    }
+}

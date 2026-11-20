@@ -15,6 +15,7 @@ The app has three feeds:
 ```
 apps/app/          Expo (React Native) app: iOS, Android and web
 apps/web-server/   Node server for the exported web build (production only)
+apps/site/         The frontpage at questing.fi: what Questing is and who it's for
 packages/api/      Typed API client, generated from the backend's OpenAPI schema
 e2e/               End-to-end tests (Playwright): the web build and the API, in a browser
 backend/           Django + Django REST Framework + PostGIS
@@ -103,6 +104,10 @@ Useful URLs while the backend runs:
 - http://localhost:8000/_allauth/openapi.html: auth API docs
 - http://localhost:8000/admin/: Django admin
 
+## Frontpage
+
+`apps/site/` is the static page at `questing.fi` (the app itself lives at `app.questing.fi`). `src/page.html` holds the layout and `src/locales/{en,fi,sv}.json` the words; `npm run build -w @questing/site` writes one page per language to `apps/site/dist/` (English at `/`, Finnish at `/fi/`, Swedish at `/sv/`), with the app's logo and icons. A browser that prefers Finnish or Swedish is sent to that page. The build, and `npm run lint`, fail if a language is missing a string. Preview it with `cd apps/site/dist && python3 -m http.server 4321`. In production it's served by nginx (`apps/site/Dockerfile`), which sends any other path on to the app, so `questing.fi/events/…` links still work.
+
 ## Translations
 
 The app and the API are in English, Finnish and Swedish. Every new user-facing string gets all three in the same change.
@@ -152,7 +157,7 @@ Pull requests are squash-merged, so their title is the commit message; CI checks
 ## Shipping
 
 - **iOS and Android:** built with [EAS](https://docs.expo.dev/eas/). `apps/app/eas.json` has three profiles, `development`, `staging` and `production`; `app.config.ts` gives each its own name and app ID (`hu.fentorweb.sidequest[.dev|.staging]`). Link the project once with `cd apps/app && npx eas-cli init`. When `testing` changes, `.github/workflows/eas-update.yml` publishes the JavaScript to the `staging` update channel; when native code changes, make a new build with `npx eas-cli build --profile staging`.
-- **API and web app:** deployed to staging with Coolify; see [DEPLOYMENT.md](DEPLOYMENT.md). Scheduled jobs are listed in [CRONJOBS.md](CRONJOBS.md).
+- **API, web app and frontpage:** deployed with Coolify; see [DEPLOYMENT.md](DEPLOYMENT.md). Scheduled jobs are listed in [CRONJOBS.md](CRONJOBS.md).
 
 ## Next steps
 

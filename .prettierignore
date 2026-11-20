@@ -8,3 +8,4 @@ backend/
 # Prose is formatted by hand
 *.md
 package-lock.json
+apps/site/dist/
