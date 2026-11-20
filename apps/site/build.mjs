@@ -2,7 +2,7 @@
 /**
  * Builds Questing's frontpage into dist/: one page per language from src/page.html and
  * src/locales/*.json (English at /, Finnish at /fi/, Swedish at /sv/), with the app's logo and
- * icons (which scripts/make-icons draws).
+ * icons (which scripts/make-icons draws) and the app screenshots in src/img/ (screenshots.mjs).
  *
  * `node build.mjs --check` only checks that every language has every string the page uses,
  * and nothing it doesn't. The build fails the same way, so a missing translation never ships.
@@ -67,6 +67,11 @@ const escape = (text) =>
 
 const style = readFileSync(join(SRC, 'style.css'), 'utf8');
 const styleVersion = createHash('sha256').update(style).digest('hex').slice(0, 8);
+const images = readdirSync(join(SRC, 'img')).sort();
+const imageVersion = createHash('sha256')
+  .update(images.map((image) => readFileSync(join(SRC, 'img', image))).join(''))
+  .digest('hex')
+  .slice(0, 8);
 const iconVersion = readFileSync(join(APP, 'src', 'constants', 'icon-version.ts'), 'utf8').match(
   /ICON_VERSION = '(\w+)'/,
 )[1];
@@ -95,6 +100,7 @@ for (const [language, path] of Object.entries(LANGUAGES)) {
     '@url': SITE_URL + path,
     '@iconVersion': iconVersion,
     '@styleVersion': styleVersion,
+    '@imageVersion': imageVersion,
     '@languageRedirect': language === 'en' ? languageRedirect : '',
   };
   for (const [other, otherPath] of Object.entries(LANGUAGES)) {
@@ -114,6 +120,10 @@ for (const [language, path] of Object.entries(LANGUAGES)) {
 
 writeFileSync(join(DIST, 'style.css'), style);
 copyFileSync(join(APP, 'assets', 'logo', 'logo.svg'), join(DIST, 'logo.svg'));
+mkdirSync(join(DIST, 'img'));
+for (const image of images) {
+  copyFileSync(join(SRC, 'img', image), join(DIST, 'img', image));
+}
 mkdirSync(join(DIST, 'icons'));
 for (const icon of readdirSync(join(APP, 'public', 'icons'))) {
   copyFileSync(join(APP, 'public', 'icons', icon), join(DIST, 'icons', icon));

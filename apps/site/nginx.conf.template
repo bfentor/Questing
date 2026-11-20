@@ -12,13 +12,13 @@ server {
         return 200 "ok\n";
     }
 
-    # Pages are small and change with each release; their styles and icons carry a version.
+    # Pages are small and change with each release; their styles, pictures and icons carry a version.
     # (`expires`, not add_header, which would drop the headers above for that location.)
     location / {
         expires epoch;
         try_files $uri $uri/ @app;
     }
-    location ~ \.(css|svg|png|ico)$ {
+    location ~ \.(css|svg|png|jpg|ico)$ {
         expires 7d;
     }
 

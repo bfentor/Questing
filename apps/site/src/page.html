@@ -16,7 +16,7 @@
     <meta property="og:description" content="{{meta.description}}" />
     <meta property="og:url" content="{{@url}}" />
     <meta property="og:image" content="{{@site}}/icons/icon-512.png?v={{@iconVersion}}" />
-    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/icons/favicon.svg?v={{@iconVersion}}" type="image/svg+xml" />
     <link rel="icon" href="/icons/favicon.ico?v={{@iconVersion}}" sizes="48x48" />
@@ -25,198 +25,93 @@
     {{@languageRedirect}}
   </head>
   <body>
-    <header class="top">
-      <div class="wrap top-inner">
-        <a class="brand" href="{{@path}}" aria-label="Questing">
-          <img src="/logo.svg?v={{@iconVersion}}" alt="" width="36" height="36" />
-          <span>Questing</span>
-        </a>
-        <nav class="top-links" aria-label="{{nav.label}}">
-          <a class="quiet hide-small" href="#organizers">{{nav.organizers}}</a>
-          <a class="button small" href="{{@app}}">{{nav.open}}</a>
-        </nav>
-      </div>
+    <header class="wrap top">
+      <a class="brand" href="{{@path}}">
+        <img src="/logo.svg?v={{@iconVersion}}" alt="" width="28" height="28" />
+        Questing
+      </a>
+      <a class="top-link" href="{{@app}}">{{nav.open}}</a>
     </header>
 
     <main>
-      <section class="hero">
-        <div class="wrap hero-inner">
-          <div class="hero-text">
-            <p class="eyebrow">{{hero.eyebrow}}</p>
-            <h1>{{hero.title}}</h1>
-            <p class="lead">{{hero.lead}}</p>
-            <div class="actions">
-              <a class="button" href="{{@app}}/sign-up">{{hero.cta}}</a>
-              <a class="button secondary" href="{{@app}}">{{hero.browse}}</a>
-            </div>
-            <p class="note">{{hero.note}}</p>
-          </div>
+      <section class="wrap intro">
+        <div class="intro-text">
+          <h1>{{intro.title}}</h1>
+          <p>{{intro.body1}}</p>
+          <p>{{intro.body2}}</p>
+          <p class="actions">
+            <a class="button" href="{{@app}}">{{intro.open}}</a>
+            <a href="{{@app}}/sign-up">{{intro.signUp}}</a>
+          </p>
+        </div>
+        <picture class="shot">
+          <source
+            srcset="/img/upcoming-{{@lang}}-dark.jpg?v={{@imageVersion}}"
+            media="(prefers-color-scheme: dark)" />
+          <img
+            src="/img/upcoming-{{@lang}}-light.jpg?v={{@imageVersion}}"
+            width="390"
+            height="780"
+            alt="{{intro.screenshot}}" />
+        </picture>
+      </section>
 
-          <figure class="phone" aria-label="{{mock.label}}">
-            <div class="screen">
-              <div class="screen-head">
-                <img src="/logo.svg?v={{@iconVersion}}" alt="" width="22" height="22" />
-                <strong>{{mock.heading}}</strong>
-              </div>
-              <div class="chips" aria-hidden="true">
-                <span class="chip on">{{mock.tonight}}</span>
-                <span class="chip">{{mock.weekend}}</span>
-                <span class="chip">{{mock.free}}</span>
-              </div>
-              <ul class="cards">
-                <li class="card">
-                  <div class="cover c1" aria-hidden="true"></div>
-                  <div class="card-body">
-                    <span class="tag t1">{{mock.e1.tag}}</span>
-                    <strong>{{mock.e1.title}}</strong>
-                    <span class="meta">{{mock.e1.meta}}</span>
-                    <span class="going"
-                      ><i class="faces" aria-hidden="true"><b></b><b></b><b></b></i
-                      >{{mock.e1.going}}</span
-                    >
-                  </div>
-                </li>
-                <li class="card">
-                  <div class="cover c2" aria-hidden="true"></div>
-                  <div class="card-body">
-                    <span class="tag t2">{{mock.e2.tag}}</span>
-                    <strong>{{mock.e2.title}}</strong>
-                    <span class="meta">{{mock.e2.meta}}</span>
-                    <span class="going"
-                      ><i class="faces" aria-hidden="true"><b></b><b></b></i>{{mock.e2.going}}</span
-                    >
-                  </div>
-                </li>
-                <li class="card">
-                  <div class="cover c3" aria-hidden="true"></div>
-                  <div class="card-body">
-                    <span class="tag t3">{{mock.e3.tag}}</span>
-                    <strong>{{mock.e3.title}}</strong>
-                    <span class="meta">{{mock.e3.meta}}</span>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </figure>
+      <section class="wrap row" aria-labelledby="who">
+        <h2 id="who">{{who.title}}</h2>
+        <div class="prose">
+          <p>{{who.everyone}}</p>
+          <p>{{who.students}}</p>
+          <p>{{who.organizers}}</p>
         </div>
       </section>
 
-      <section class="section" aria-labelledby="who">
-        <div class="wrap">
-          <h2 id="who">{{who.title}}</h2>
-          <p class="section-lead">{{who.lead}}</p>
-          <div class="grid three">
-            <article class="panel">
-              <span class="icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" />
-                  <circle cx="12" cy="9.5" r="2.5" />
-                </svg>
-              </span>
-              <h3>{{who.everyone.title}}</h3>
-              <p>{{who.everyone.body}}</p>
-            </article>
-            <article class="panel">
-              <span class="icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M2 9l10-5 10 5-10 5z" />
-                  <path d="M6 11v5c3 2.5 9 2.5 12 0v-5" />
-                </svg>
-              </span>
-              <h3>{{who.students.title}}</h3>
-              <p>{{who.students.body}}</p>
-            </article>
-            <article class="panel">
-              <span class="icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M4 21V4" />
-                  <path d="M4 4h12l-2 4 2 4H4" />
-                </svg>
-              </span>
-              <h3>{{who.organizers.title}}</h3>
-              <p>{{who.organizers.body}}</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section tinted" aria-labelledby="features">
-        <div class="wrap">
-          <h2 id="features">{{features.title}}</h2>
-          <div class="grid three features">
-            <div>
-              <h3>{{features.nearby.title}}</h3>
-              <p>{{features.nearby.body}}</p>
-            </div>
-            <div>
-              <h3>{{features.follow.title}}</h3>
-              <p>{{features.follow.body}}</p>
-            </div>
-            <div>
-              <h3>{{features.friends.title}}</h3>
-              <p>{{features.friends.body}}</p>
-            </div>
-            <div>
-              <h3>{{features.reminders.title}}</h3>
-              <p>{{features.reminders.body}}</p>
-            </div>
-            <div>
-              <h3>{{features.privacy.title}}</h3>
-              <p>{{features.privacy.body}}</p>
-            </div>
-            <div>
-              <h3>{{features.languages.title}}</h3>
-              <p>{{features.languages.body}}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" aria-labelledby="organizers">
-        <div class="wrap split">
-          <div>
-            <p class="eyebrow">{{organizers.eyebrow}}</p>
-            <h2 id="organizers">{{organizers.title}}</h2>
-            <p class="section-lead">{{organizers.lead}}</p>
-            <div class="actions">
-              <a class="button" href="{{@app}}/organizations/new">{{organizers.cta}}</a>
-            </div>
-          </div>
-          <ul class="checks">
-            <li>{{organizers.publish}}</li>
-            <li>{{organizers.team}}</li>
+      <section class="wrap row" aria-labelledby="organizers">
+        <h2 id="organizers">{{organizers.title}}</h2>
+        <div class="prose">
+          <p>{{organizers.intro}}</p>
+          <ul>
+            <li>{{organizers.capacity}}</li>
+            <li>{{organizers.cohost}}</li>
             <li>{{organizers.import}}</li>
-            <li>{{organizers.reach}}</li>
-            <li>{{organizers.insights}}</li>
+            <li>{{organizers.message}}</li>
+            <li>{{organizers.dashboard}}</li>
             <li>{{organizers.verified}}</li>
           </ul>
+          <p><a href="{{@app}}/organizations/new">{{organizers.create}}</a></p>
         </div>
       </section>
 
-      <section class="closing">
-        <div class="wrap closing-inner">
-          <h2>{{closing.title}}</h2>
-          <p>{{closing.body}}</p>
-          <div class="actions center">
-            <a class="button light" href="{{@app}}/sign-up">{{closing.cta}}</a>
-            <a class="button ghost" href="{{@app}}">{{closing.browse}}</a>
+      <section class="wrap row" aria-labelledby="facts">
+        <h2 id="facts">{{facts.title}}</h2>
+        <dl class="facts">
+          <div>
+            <dt>{{facts.price}}</dt>
+            <dd>{{facts.priceText}}</dd>
           </div>
-        </div>
+          <div>
+            <dt>{{facts.where}}</dt>
+            <dd>{{facts.whereText}}</dd>
+          </div>
+          <div>
+            <dt>{{facts.languages}}</dt>
+            <dd>{{facts.languagesText}}</dd>
+          </div>
+          <div>
+            <dt>{{facts.privacy}}</dt>
+            <dd>{{facts.privacyText}}</dd>
+          </div>
+        </dl>
       </section>
     </main>
 
-    <footer class="foot">
-      <div class="wrap foot-inner">
-        <div class="brand small">
-          <img src="/logo.svg?v={{@iconVersion}}" alt="" width="24" height="24" />
-          <span>Questing</span>
-        </div>
+    <footer class="wrap">
+      <div class="foot">
         <nav aria-label="{{footer.label}}">
           <a href="{{@app}}">{{footer.app}}</a>
           <a href="{{@app}}/legal/terms">{{footer.terms}}</a>
           <a href="{{@app}}/legal/privacy">{{footer.privacy}}</a>
         </nav>
-        <nav class="languages" aria-label="{{footer.language}}">
+        <nav aria-label="{{footer.language}}">
           <a href="/" hreflang="en" lang="en" data-language="en" {{@current.en}}>English</a>
           <a href="/fi/" hreflang="fi" lang="fi" data-language="fi" {{@current.fi}}>Suomi</a>
           <a href="/sv/" hreflang="sv" lang="sv" data-language="sv" {{@current.sv}}>Svenska</a>
