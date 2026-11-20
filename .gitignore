@@ -6,3 +6,4 @@ e2e/playwright-report/
 DEPLOYMENT.md
 TODO.md
 CRONJOBS.md
+e2e/demo-video/out/
