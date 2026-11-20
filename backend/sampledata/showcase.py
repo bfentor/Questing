@@ -7,7 +7,7 @@ downloaded.
 """
 
 import random
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from io import BytesIO
 
@@ -41,8 +41,9 @@ from posts.text import notify_mentions
 from profiles.models import Follow, FollowRequest, Invitation, Membership, Profile
 from students.models import StudentStatus, University
 
+from .community import Community
 from .demo import DEMO_PASSWORD
-from .services import mark
+from .services import mark, sensible_start
 
 # Lappeenranta, where most of the showcase happens.
 CAMPUS = (28.0951, 61.0647)
@@ -185,6 +186,8 @@ class Showcase:
         self.events()
         self.lahti()
         self.posts()
+        # A town's worth of people and organizations around all this (community.py).
+        Community(self).build()
         self.notifications()
 
     # Pictures
@@ -277,7 +280,7 @@ class Showcase:
         # The viewer: a verified LUT student with a filled-in profile.
         # A new account is named after its email; give the demo account a proper name.
         if self.me.display_name == self.viewer.email.split("@")[0]:
-            self.me.display_name = "Demo Student"
+            self.me.display_name = "Ella Saarinen"
         self.me.bio = self.me.bio or "Trying out every corner of Questing."
         self.me.faculty = self.me.faculty or "Software Engineering"
         self.me.study_year = self.me.study_year or 2
@@ -397,9 +400,23 @@ class Showcase:
     # Events
 
     def event(
-        self, organizer, title, starts_in, hours, *, place=CAMPUS, categories=(), sky=None, **fields
+        self,
+        organizer,
+        title,
+        starts_in,
+        hours,
+        *,
+        place=CAMPUS,
+        categories=(),
+        sky=None,
+        hour=None,
+        **fields,
     ):
-        starts_at = self.now + timedelta(hours=starts_in)
+        # Hours from now, or an exact time.
+        if isinstance(starts_in, datetime):
+            starts_at = starts_in
+        else:
+            starts_at = sensible_start(self.now, starts_in, hour)
         lng, lat = place if place else (None, None)
         return publish_event(
             organizer=organizer,
@@ -428,6 +445,7 @@ class Showcase:
             "Winter Gala",
             150,
             6,
+            hour=18,
             sky="night",
             place=jitter(),
             categories=["party", "music"],
@@ -451,6 +469,7 @@ class Showcase:
             "Evening kayak tour",
             5,
             3,
+            hour=18,
             sky="lake",
             place=(28.1665, 61.0532),
             categories=["outdoors", "sports"],
@@ -465,6 +484,7 @@ class Showcase:
             "Algorithms study group",
             26,
             2,
+            hour=16,
             place=jitter(),
             categories=["academic"],
             venue_name="LUT Library, room 2310",
@@ -477,6 +497,7 @@ class Showcase:
             "Thesis writing workshop",
             72,
             3,
+            hour=13,
             place=jitter(),
             categories=["academic", "career"],
             venue_name="Main campus auditorium",
@@ -488,6 +509,7 @@ class Showcase:
             "Beach volleyball tournament",
             48,
             4,
+            hour=15,
             sky="lake",
             place=jitter(),
             categories=["sports"],
@@ -500,6 +522,7 @@ class Showcase:
             "Smoke sauna evening",
             96,
             4,
+            hour=18,
             sky="fire",
             place=(28.1820, 61.0645),
             categories=["wellbeing"],
@@ -513,6 +536,7 @@ class Showcase:
             "Lapland hiking trip",
             24 * 30,
             72,
+            hour=8,
             sky="snow",
             place=(24.6, 68.4),
             categories=["outdoors"],
@@ -527,6 +551,7 @@ class Showcase:
             "Ice swimming for beginners",
             24 * 10,
             2,
+            hour=9,
             sky="snow",
             place=(28.1665, 61.0532),
             categories=["wellbeing", "outdoors"],
@@ -539,6 +564,7 @@ class Showcase:
             "Remote coding dojo",
             50,
             2,
+            hour=18,
             place=None,
             categories=["tech"],
             online_url="https://example.com/meet/coding-dojo",
@@ -549,6 +575,7 @@ class Showcase:
             "Free pancake breakfast",
             40,
             2,
+            hour=9,
             sky="food",
             place=jitter(),
             categories=["food", "community"],
@@ -571,6 +598,7 @@ class Showcase:
             "Aino's birthday picnic",
             24 * 8,
             4,
+            hour=14,
             place=jitter(),
             categories=["food"],
             venue_name="Linnoitus fortress park",
@@ -587,6 +615,7 @@ class Showcase:
             "Pub quiz",
             -23,
             3,
+            hour=19,
             place=jitter(),
             categories=["games", "party"],
             venue_name="Student union building",
@@ -598,6 +627,7 @@ class Showcase:
             "Autumn bonfire",
             -24 * 8,
             4,
+            hour=18,
             sky="fire",
             place=jitter(),
             categories=["outdoors", "community"],
@@ -699,6 +729,7 @@ class Showcase:
                 50,
                 3,
                 {
+                    "hour": 16,
                     "categories": ["food", "culture"],
                     "sky": "snow",
                     "description": "Glögi, gingerbread and stalls on the market square 🎄",
@@ -711,6 +742,7 @@ class Showcase:
                 4,
                 3,
                 {
+                    "hour": 19,
                     "categories": ["music"],
                     "sky": "night",
                     "price": Decimal("15.00"),
@@ -724,6 +756,7 @@ class Showcase:
                 28,
                 3,
                 {
+                    "hour": 17,
                     "categories": ["wellbeing", "outdoors"],
                     "capacity": 10,
                     "description": "Sauna, then a dip through the ice. Towels provided.",
@@ -736,6 +769,7 @@ class Showcase:
                 20,
                 1,
                 {
+                    "hour": 7,
                     "categories": ["sports"],
                     "description": "Up and down the ski jump stairs. Brutal, but what a view.",
                 },
@@ -747,6 +781,7 @@ class Showcase:
                 70,
                 2,
                 {
+                    "hour": 8,
                     "categories": ["career"],
                     "students_of": self.lut,
                     "capacity": 30,
@@ -760,6 +795,7 @@ class Showcase:
                 24 * 4,
                 6,
                 {
+                    "hour": 9,
                     "categories": ["outdoors"],
                     "sky": "forest",
                     "description": "The highest point in southern Finland. Lunch by the fire.",
@@ -772,6 +808,7 @@ class Showcase:
                 24 * 6,
                 4,
                 {
+                    "hour": 11,
                     "categories": ["food", "community"],
                     "sky": "food",
                     "description": "Meet the animals, then pancakes with fresh jam 🥞",
@@ -784,6 +821,7 @@ class Showcase:
                 24 * 8,
                 5,
                 {
+                    "hour": 10,
                     "categories": ["outdoors", "sports"],
                     "sky": "lake",
                     "description": "Just outside the widest search, about 30 km from Lahti.",

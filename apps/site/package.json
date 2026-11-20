@@ -5,6 +5,7 @@
   "description": "Questing's frontpage at questing.fi: what Questing is and who it's for.",
   "type": "module",
   "scripts": {
+    "dev": "node dev.mjs",
     "build": "node build.mjs",
     "lint": "node build.mjs --check"
   }
