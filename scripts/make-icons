@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Draws the logo and every icon the app and website use: `scripts/make-icons`.
 
-The logo is a path that winds to a destination, as a side quest does (and an S). It's drawn
-on a 32-unit grid where every straight edge falls on a whole pixel at 16 and 32 pixels, so
-the favicons stay sharp. Change the shapes and colours here, then run this again; it writes
+The logo is a map pin turned so that its point is the tail of a Q: Questing, and somewhere
+to go. It's drawn on a 32-unit grid where the pin's round edges and its straight sides fall
+on whole pixels at 32 pixels (and half pixels at 16), so the favicons stay sharp. The hole
+is cut out, so whatever is behind the pin (the indigo, or Android's background) shows
+through. Change the shapes and colours here, then run this again; it writes
 apps/app/assets/logo/logo.svg too. Needs rsvg-convert (librsvg) and ImageMagick.
 """
 
@@ -31,17 +33,19 @@ DARK_PAGE = "#0b1020"
 CORNER = 7
 
 
-def svg(*, background=True, corner=CORNER, scale=1.0, colour="#ffffff", path_opacity=0.8, dot=3.5):
+def svg(*, background=True, corner=CORNER, scale=1.0, colour="#ffffff"):
     """The logo on a 32 × 32 grid.
 
     background: the indigo square (False for the mark alone, e.g. Android's foreground).
     corner: its corner radius; 0 for systems that round the corners themselves.
     scale: the mark's size around the middle; smaller where a system crops the icon.
-    dot: the destination's radius; 4 keeps its edges on whole pixels at 16 and 32.
     """
     square = (
         f'<rect width="32" height="32" rx="{corner}" fill="url(#indigo)"/>' if background else ""
     )
+    # The pin: a circle of radius 9 around (15, 15) whose bottom-right quarter is a square
+    # corner (softened a little), with a hole of radius 4. The mark spans 6 to 24, a point
+    # left of and above the middle, which the heavier corner makes up for.
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <defs>
     <linearGradient id="indigo" x1="0" y1="0" x2="0" y2="1">
@@ -51,10 +55,8 @@ def svg(*, background=True, corner=CORNER, scale=1.0, colour="#ffffff", path_opa
   </defs>
   {square}
   <g transform="translate(16 16) scale({scale}) translate(-16 -16)">
-    <path d="M8 24H20A4 4 0 0 0 20 16H12A4 4 0 0 1 12 8H18" fill="none" stroke="{colour}"
-      stroke-opacity="{path_opacity}" stroke-width="4" stroke-linecap="round"
-      stroke-linejoin="round"/>
-    <circle cx="22" cy="8" r="{dot}" fill="{colour}"/>
+    <path d="M15 6A9 9 0 1 0 15 24H22A2 2 0 0 0 24 22V15A9 9 0 0 0 15 6ZM15 11A4 4 0 1 1 15 19A4 4 0 0 1 15 11Z"
+      fill="{colour}" fill-rule="evenodd"/>
   </g>
 </svg>
 """
@@ -78,12 +80,12 @@ for tool in ("rsvg-convert", "magick"):
         raise SystemExit(f"{tool} is needed: install librsvg and ImageMagick.")
 
 LOGO_SVG = svg()
-# Favicons: the bigger dot, which lands on whole pixels.
-SMALL = svg(dot=4)
+# Favicons: the same drawing, which is already made for small sizes.
+SMALL = LOGO_SVG
 # For iOS and maskable icons, which get their corners rounded (or cropped) for them.
 SQUARE = svg(corner=0)
-# Android crops icons to a circle (or other shapes) keeping the middle 61%; the mark reaches
-# 44% from the middle at full size.
+# Android crops icons to a circle (or other shapes) keeping the middle 61%; the pin's corner
+# reaches 44% from the middle (diagonally) at full size.
 ANDROID = 0.69
 # Maskable web icons keep the middle 80% circle.
 MASKABLE = 0.9
@@ -95,11 +97,7 @@ print("assets/logo/logo.svg")
 png(SQUARE, 1024, IMAGES / "icon.png")
 png(svg(corner=0, scale=0), 1024, IMAGES / "android-icon-background.png")
 png(svg(background=False, scale=ANDROID), 1024, IMAGES / "android-icon-foreground.png")
-png(
-    svg(background=False, scale=ANDROID, path_opacity=1),
-    1024,
-    IMAGES / "android-icon-monochrome.png",
-)
+png(svg(background=False, scale=ANDROID), 1024, IMAGES / "android-icon-monochrome.png")
 png(LOGO_SVG, 512, IMAGES / "splash-icon.png")
 png(SMALL, 48, IMAGES / "favicon.png")
 
