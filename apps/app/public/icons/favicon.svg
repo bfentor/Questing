@@ -7,9 +7,7 @@
   </defs>
   <rect width="32" height="32" rx="7" fill="url(#indigo)"/>
   <g transform="translate(16 16) scale(1.0) translate(-16 -16)">
-    <path d="M8 24H20A4 4 0 0 0 20 16H12A4 4 0 0 1 12 8H18" fill="none" stroke="#ffffff"
-      stroke-opacity="0.8" stroke-width="4" stroke-linecap="round"
-      stroke-linejoin="round"/>
-    <circle cx="22" cy="8" r="4" fill="#ffffff"/>
+    <path d="M15 6A9 9 0 1 0 15 24H22A2 2 0 0 0 24 22V15A9 9 0 0 0 15 6ZM15 11A4 4 0 1 1 15 19A4 4 0 0 1 15 11Z"
+      fill="#ffffff" fill-rule="evenodd"/>
   </g>
 </svg>

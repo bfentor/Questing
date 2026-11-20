@@ -1,4 +1,4 @@
-import type { Category } from '@sidequest/api';
+import type { Category } from '@questing/api';
 import { SymbolView, type AndroidSymbol } from 'expo-symbols';
 import { Pressable, StyleSheet, View } from 'react-native';
 

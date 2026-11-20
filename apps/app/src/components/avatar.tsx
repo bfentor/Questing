@@ -1,4 +1,4 @@
-import type { Image as ApiImage } from '@sidequest/api';
+import type { Image as ApiImage } from '@questing/api';
 import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 

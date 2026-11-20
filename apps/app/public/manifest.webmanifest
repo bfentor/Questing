@@ -1,7 +1,7 @@
 {
-  "name": "Sidequest",
-  "short_name": "Sidequest",
-  "description": "Find student events near you, and see what your friends are going to.",
+  "name": "Questing",
+  "short_name": "Questing",
+  "description": "Find what's on near you, follow the people and clubs behind it, and see who's going.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -9,31 +9,31 @@
   "theme_color": "#f8fafc",
   "icons": [
     {
-      "src": "/icons/icon-192.png?v=c702c0a6",
+      "src": "/icons/icon-192.png?v=2e8b2c20",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-512.png?v=c702c0a6",
+      "src": "/icons/icon-512.png?v=2e8b2c20",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-maskable-192.png?v=c702c0a6",
+      "src": "/icons/icon-maskable-192.png?v=2e8b2c20",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/icon-maskable-512.png?v=c702c0a6",
+      "src": "/icons/icon-maskable-512.png?v=2e8b2c20",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/favicon.svg?v=c702c0a6",
+      "src": "/icons/favicon.svg?v=2e8b2c20",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"

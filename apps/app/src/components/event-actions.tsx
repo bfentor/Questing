@@ -1,4 +1,4 @@
-import type { Event } from '@sidequest/api';
+import type { Event } from '@questing/api';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

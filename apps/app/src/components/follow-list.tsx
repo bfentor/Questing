@@ -1,4 +1,4 @@
-import { useFollowList } from '@sidequest/api';
+import { useFollowList } from '@questing/api';
 import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 

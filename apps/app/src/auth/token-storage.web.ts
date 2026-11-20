@@ -1,3 +1,4 @@
+// Named before the app became Questing; a new name would sign everyone out.
 const KEY = 'sidequest.session-token';
 
 /** Persists the session token in the browser's localStorage. */

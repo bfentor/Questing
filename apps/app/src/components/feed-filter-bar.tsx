@@ -1,4 +1,4 @@
-import type { FeedFilters } from '@sidequest/api';
+import type { FeedFilters } from '@questing/api';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';

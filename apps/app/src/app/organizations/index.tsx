@@ -1,8 +1,4 @@
-import {
-  meInvitationsCreate,
-  meInvitationsDestroy,
-  meInvitationsListOptions,
-} from '@sidequest/api';
+import { meInvitationsCreate, meInvitationsDestroy, meInvitationsListOptions } from '@questing/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';

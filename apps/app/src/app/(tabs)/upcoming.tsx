@@ -4,7 +4,7 @@ import {
   useUpcomingFeed,
   type Event,
   type FeedFilters,
-} from '@sidequest/api';
+} from '@questing/api';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';

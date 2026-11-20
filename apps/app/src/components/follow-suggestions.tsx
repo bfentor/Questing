@@ -3,7 +3,7 @@ import {
   profilesRetrieveOptions,
   type Profile,
   type ProfileKindEnum,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { ActivityIndicator } from 'react-native';

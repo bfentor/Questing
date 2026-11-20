@@ -42,7 +42,7 @@ class ExportView(APIView):
 
     @extend_schema(responses={(200, "application/json"): OpenApiTypes.OBJECT})
     def get(self, request):
-        filename = f"sidequest-data-{timezone.now():%Y-%m-%d}.json"
+        filename = f"questing-data-{timezone.now():%Y-%m-%d}.json"
         response = HttpResponse(
             json.dumps(export_data(request.user), indent=2, ensure_ascii=False),
             content_type="application/json",

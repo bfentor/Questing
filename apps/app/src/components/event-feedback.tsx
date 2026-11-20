@@ -4,7 +4,7 @@ import {
   eventsFeedbackMineUpdate,
   type Event,
   type MyFeedback,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { SymbolView } from 'expo-symbols';
 import { useState } from 'react';

@@ -1,4 +1,4 @@
-import { eventsRetrieveOptions, imagesRetrieveOptions, postsCreate } from '@sidequest/api';
+import { eventsRetrieveOptions, imagesRetrieveOptions, postsCreate } from '@questing/api';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';

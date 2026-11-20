@@ -1,4 +1,4 @@
-import { meProfilesListQueryKey, organizationsCreate } from '@sidequest/api';
+import { meProfilesListQueryKey, organizationsCreate } from '@questing/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useState } from 'react';

@@ -4,7 +4,7 @@ import type {
   EventVisibilityEnum,
   FrequencyEnum,
   Image,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

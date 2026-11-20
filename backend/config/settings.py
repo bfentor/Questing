@@ -1,4 +1,4 @@
-"""Django settings for the Sidequest API.
+"""Django settings for the Questing API.
 
 All environment-specific values come from environment variables (or a local
 `.env` file, see `.env.example`), so the same settings module is used in
@@ -62,7 +62,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "django.contrib.postgres",
-    # The site's name ("Sidequest") is what allauth's emails are signed with.
+    # The site's name ("Questing") is what allauth's emails are signed with.
     "django.contrib.sites",
     # Third party
     "corsheaders",
@@ -166,7 +166,7 @@ ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 ACCOUNT_CHANGE_EMAIL = True
 # Tell people by email about security-relevant changes (password, email).
 ACCOUNT_EMAIL_NOTIFICATIONS = True
-ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Sidequest] "
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Questing] "
 # Birth date and acceptance of the terms at signup (accounts/signup.py).
 ACCOUNT_SIGNUP_FORM_CLASS = "accounts.signup.SignupForm"
 # To review with a lawyer: Finland's age of digital consent is 13.
@@ -176,7 +176,7 @@ TERMS_VERSION = "2026-11-01"
 
 # Two-factor sign-in with an authenticator app, plus one-time recovery codes.
 MFA_SUPPORTED_TYPES = ["totp", "recovery_codes"]
-MFA_TOTP_ISSUER = "Sidequest"
+MFA_TOTP_ISSUER = "Questing"
 # Lets people see where they're signed in and sign out other devices.
 USERSESSIONS_TRACK_ACTIVITY = True
 
@@ -204,15 +204,13 @@ MAILERS = {
 }
 # Address search for the event form (events/geocoding.py).
 GEOCODER_URL = env("GEOCODER_URL", default="https://nominatim.openstreetmap.org/search")
-GEOCODER_USER_AGENT = env(
-    "GEOCODER_USER_AGENT", default=f"Sidequest/{APP_VERSION} ({FRONTEND_URL})"
-)
+GEOCODER_USER_AGENT = env("GEOCODER_USER_AGENT", default=f"Questing/{APP_VERSION} ({FRONTEND_URL})")
 GEOCODER_COUNTRY_CODES = env("GEOCODER_COUNTRY_CODES", default="fi")
 
 # Optional: Expo's "enhanced push security" access token.
 EXPO_ACCESS_TOKEN = env("EXPO_ACCESS_TOKEN", default="")
 
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Sidequest <noreply@localhost>")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Questing <noreply@localhost>")
 
 
 # API
@@ -244,7 +242,7 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Sidequest API",
+    "TITLE": "Questing API",
     "VERSION": APP_VERSION,
     "SERVE_INCLUDE_SCHEMA": False,
     # Separate request/response components so generated clients know which

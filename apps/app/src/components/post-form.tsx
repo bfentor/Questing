@@ -1,4 +1,4 @@
-import { uploadImage, type Image, type Post, type PostRequestWritable } from '@sidequest/api';
+import { uploadImage, type Image, type Post, type PostRequestWritable } from '@questing/api';
 import { useMutation } from '@tanstack/react-query';
 import { Image as ExpoImage } from 'expo-image';
 import { useCallback, useEffect, useRef, useState } from 'react';

@@ -13,7 +13,7 @@ import { Logo } from './logo';
 import { ThemedText } from './themed-text';
 
 /**
- * What Sidequest is, above the upcoming events, for signed-out visitors to
+ * What Questing is, above the upcoming events, for signed-out visitors to
  * the website: a sign-up button, and the app's store pages once it's out.
  */
 export function Welcome() {

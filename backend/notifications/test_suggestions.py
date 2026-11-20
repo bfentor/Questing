@@ -82,8 +82,8 @@ def test_sharing_where_you_are_is_rounded_and_can_be_cleared(auth_client, user):
 
 def test_suggestion_push_wording_and_link(user):
     near = Notification(recipient=user, kind=Kind.NEARBY_EVENTS, message="5")
-    assert render(near) == ("Sidequest", "5 new events near you")
+    assert render(near) == ("Questing", "5 new events near you")
     assert link(near) == "/nearby"
     one = Notification(recipient=user, kind=Kind.INTEREST_EVENTS, message="1")
-    assert render(one) == ("Sidequest", "1 new event for your interests")
+    assert render(one) == ("Questing", "1 new event for your interests")
     assert link(one) == "/upcoming?order=forYou"

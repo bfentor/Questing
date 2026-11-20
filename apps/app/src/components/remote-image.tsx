@@ -1,4 +1,4 @@
-import type { Image as ApiImage } from '@sidequest/api';
+import type { Image as ApiImage } from '@questing/api';
 import { Image, type ImageProps } from 'expo-image';
 
 import { useReducedMotion } from '@/hooks/use-reduced-motion';

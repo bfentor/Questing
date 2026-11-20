@@ -4,7 +4,7 @@ import {
   meSettingsRetrieveOptions,
   meSettingsRetrieveQueryKey,
   verifyEmail,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

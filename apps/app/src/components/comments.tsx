@@ -8,7 +8,7 @@ import {
   useComments,
   type Comment,
   type CommentParent,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, router } from 'expo-router';
 import { useState } from 'react';

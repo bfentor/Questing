@@ -1,4 +1,4 @@
-import type { LatLng } from '@sidequest/api';
+import type { LatLng } from '@questing/api';
 import { AppleMaps, GoogleMaps } from 'expo-maps';
 import { useMemo } from 'react';
 import { Platform, StyleSheet } from 'react-native';

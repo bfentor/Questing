@@ -1,4 +1,4 @@
-import type { LatLng } from '@sidequest/api';
+import type { LatLng } from '@questing/api';
 import { useEffect, useState } from 'react';
 
 import { preferences } from './preferences';

@@ -1,4 +1,4 @@
-import { useAttendees } from '@sidequest/api';
+import { useAttendees } from '@questing/api';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

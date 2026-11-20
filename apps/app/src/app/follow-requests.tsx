@@ -4,7 +4,7 @@ import {
   meFollowRequestsListInfiniteQueryKey,
   meRetrieveQueryKey,
   useFollowRequests,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';

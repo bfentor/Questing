@@ -1,4 +1,4 @@
-import { eventsCreate, eventsRetrieveOptions } from '@sidequest/api';
+import { eventsCreate, eventsRetrieveOptions } from '@questing/api';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';

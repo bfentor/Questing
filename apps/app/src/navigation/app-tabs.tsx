@@ -1,4 +1,4 @@
-import { useUnreadCount } from '@sidequest/api';
+import { useUnreadCount } from '@questing/api';
 import { NativeTabs } from 'expo-router/native-tabs';
 import { useTranslation } from 'react-i18next';
 

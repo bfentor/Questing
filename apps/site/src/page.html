@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="{{@lang}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{meta.title}}</title>
+    <meta name="description" content="{{meta.description}}" />
+    <link rel="canonical" href="{{@url}}" />
+    <link rel="alternate" hreflang="en" href="{{@url.en}}" />
+    <link rel="alternate" hreflang="fi" href="{{@url.fi}}" />
+    <link rel="alternate" hreflang="sv" href="{{@url.sv}}" />
+    <link rel="alternate" hreflang="x-default" href="{{@url.en}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Questing" />
+    <meta property="og:title" content="{{meta.title}}" />
+    <meta property="og:description" content="{{meta.description}}" />
+    <meta property="og:url" content="{{@url}}" />
+    <meta property="og:image" content="{{@site}}/icons/icon-512.png?v={{@iconVersion}}" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/icons/favicon.svg?v={{@iconVersion}}" type="image/svg+xml" />
+    <link rel="icon" href="/icons/favicon.ico?v={{@iconVersion}}" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v={{@iconVersion}}" />
+    <link rel="stylesheet" href="/style.css?v={{@styleVersion}}" />
+    {{@languageRedirect}}
+  </head>
+  <body>
+    <header class="wrap top">
+      <a class="brand" href="{{@path}}">
+        <img src="/logo.svg?v={{@iconVersion}}" alt="" width="28" height="28" />
+        Questing
+      </a>
+      <a class="top-link" href="{{@app}}">{{nav.open}}</a>
+    </header>
+
+    <main>
+      <section class="wrap intro">
+        <div class="intro-text">
+          <h1>{{intro.title}}</h1>
+          <p>{{intro.body1}}</p>
+          <p>{{intro.body2}}</p>
+          <p class="actions">
+            <a class="button" href="{{@app}}">{{intro.open}}</a>
+            <a href="{{@app}}/sign-up">{{intro.signUp}}</a>
+          </p>
+        </div>
+        <picture class="shot">
+          <source
+            srcset="/img/upcoming-{{@lang}}-dark.jpg?v={{@imageVersion}}"
+            media="(prefers-color-scheme: dark)" />
+          <img
+            src="/img/upcoming-{{@lang}}-light.jpg?v={{@imageVersion}}"
+            width="390"
+            height="780"
+            alt="{{intro.screenshot}}" />
+        </picture>
+      </section>
+
+      <section class="wrap row" aria-labelledby="who">
+        <h2 id="who">{{who.title}}</h2>
+        <div class="prose">
+          <p>{{who.everyone}}</p>
+          <p>{{who.students}}</p>
+          <p>{{who.organizers}}</p>
+        </div>
+      </section>
+
+      <section class="wrap row" aria-labelledby="organizers">
+        <h2 id="organizers">{{organizers.title}}</h2>
+        <div class="prose">
+          <p>{{organizers.intro}}</p>
+          <ul>
+            <li>{{organizers.capacity}}</li>
+            <li>{{organizers.cohost}}</li>
+            <li>{{organizers.import}}</li>
+            <li>{{organizers.message}}</li>
+            <li>{{organizers.dashboard}}</li>
+            <li>{{organizers.verified}}</li>
+          </ul>
+          <p><a href="{{@app}}/organizations/new">{{organizers.create}}</a></p>
+        </div>
+      </section>
+
+      <section class="wrap row" aria-labelledby="facts">
+        <h2 id="facts">{{facts.title}}</h2>
+        <dl class="facts">
+          <div>
+            <dt>{{facts.price}}</dt>
+            <dd>{{facts.priceText}}</dd>
+          </div>
+          <div>
+            <dt>{{facts.where}}</dt>
+            <dd>{{facts.whereText}}</dd>
+          </div>
+          <div>
+            <dt>{{facts.languages}}</dt>
+            <dd>{{facts.languagesText}}</dd>
+          </div>
+          <div>
+            <dt>{{facts.privacy}}</dt>
+            <dd>{{facts.privacyText}}</dd>
+          </div>
+        </dl>
+      </section>
+    </main>
+
+    <footer class="wrap">
+      <div class="foot">
+        <nav aria-label="{{footer.label}}">
+          <a href="{{@app}}">{{footer.app}}</a>
+          <a href="{{@app}}/legal/terms">{{footer.terms}}</a>
+          <a href="{{@app}}/legal/privacy">{{footer.privacy}}</a>
+        </nav>
+        <nav aria-label="{{footer.language}}">
+          <a href="/" hreflang="en" lang="en" data-language="en" {{@current.en}}>English</a>
+          <a href="/fi/" hreflang="fi" lang="fi" data-language="fi" {{@current.fi}}>Suomi</a>
+          <a href="/sv/" hreflang="sv" lang="sv" data-language="sv" {{@current.sv}}>Svenska</a>
+        </nav>
+      </div>
+    </footer>
+    <script>
+      // A language picked here is remembered, so the English page stops sending this visitor
+      // to the one their browser prefers.
+      document.querySelectorAll('[data-language]').forEach(function (link) {
+        link.addEventListener('click', function () {
+          try {
+            localStorage.setItem('questing.site-language', link.dataset.language);
+          } catch (e) {}
+        });
+      });
+    </script>
+  </body>
+</html>

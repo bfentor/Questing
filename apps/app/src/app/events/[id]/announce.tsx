@@ -1,4 +1,4 @@
-import { eventsAnnouncementsCreateMutation } from '@sidequest/api';
+import { eventsAnnouncementsCreateMutation } from '@questing/api';
 import { useMutation } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';

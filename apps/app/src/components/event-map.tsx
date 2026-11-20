@@ -1,4 +1,4 @@
-import type { Event, LatLng } from '@sidequest/api';
+import type { Event, LatLng } from '@questing/api';
 import { AppleMaps, GoogleMaps } from 'expo-maps';
 import { Platform, StyleSheet } from 'react-native';
 

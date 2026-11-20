@@ -4,7 +4,7 @@ import {
   meSettingsPartialUpdate,
   meSettingsRetrieveOptions,
   meSettingsRetrieveQueryKey,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -35,7 +35,7 @@ export function AccountSection() {
       const { data } = await meExportRetrieve({ throwOnError: true });
       const date = new Date().toISOString().slice(0, 10);
       await saveTextFile(
-        `sidequest-data-${date}.json`,
+        `questing-data-${date}.json`,
         JSON.stringify(data, null, 2),
         'application/json',
       );

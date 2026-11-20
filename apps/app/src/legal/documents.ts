@@ -11,13 +11,13 @@ export type LegalDocument = 'terms' | 'privacy';
  */
 export const LEGAL_DOCUMENTS: Record<LegalDocument, Record<Language, string>> = {
   terms: {
-    en: 'The terms of service are being written. This placeholder will be replaced before Sidequest launches.',
-    fi: 'Käyttöehtoja kirjoitetaan. Tämä väliaikainen teksti korvataan ennen Sidequestin julkaisua.',
-    sv: 'Användarvillkoren håller på att skrivas. Den här tillfälliga texten ersätts innan Sidequest lanseras.',
+    en: 'The terms of service are being written. This placeholder will be replaced before Questing launches.',
+    fi: 'Käyttöehtoja kirjoitetaan. Tämä väliaikainen teksti korvataan ennen Questingin julkaisua.',
+    sv: 'Användarvillkoren håller på att skrivas. Den här tillfälliga texten ersätts innan Questing lanseras.',
   },
   privacy: {
-    en: 'The privacy policy is being written. This placeholder will be replaced before Sidequest launches.',
-    fi: 'Tietosuojaselostetta kirjoitetaan. Tämä väliaikainen teksti korvataan ennen Sidequestin julkaisua.',
-    sv: 'Integritetspolicyn håller på att skrivas. Den här tillfälliga texten ersätts innan Sidequest lanseras.',
+    en: 'The privacy policy is being written. This placeholder will be replaced before Questing launches.',
+    fi: 'Tietosuojaselostetta kirjoitetaan. Tämä väliaikainen teksti korvataan ennen Questingin julkaisua.',
+    sv: 'Integritetspolicyn håller på att skrivas. Den här tillfälliga texten ersätts innan Questing lanseras.',
   },
 };

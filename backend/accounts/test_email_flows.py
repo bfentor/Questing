@@ -46,7 +46,7 @@ def sign_up_and_verify(client):
 def test_signup_needs_the_emailed_code(api_client, db):
     pending = post(api_client, "/auth/signup", SIGNUP).json()
     token = pending["meta"]["session_token"]
-    assert mail.outbox[-1].subject.startswith("[Sidequest]")
+    assert mail.outbox[-1].subject.startswith("[Questing]")
 
     assert post(api_client, "/auth/email/verify", {"key": "AAAA-BBBB"}, token).status_code == 400
     verified = post(api_client, "/auth/email/verify", {"key": last_code()}, token)

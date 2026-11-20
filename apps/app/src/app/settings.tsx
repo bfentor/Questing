@@ -9,7 +9,7 @@ import {
   profilesBlockDestroyMutation,
   profilesMuteDestroyMutation,
   type ProfileSummary,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Location from 'expo-location';
 import { Link } from 'expo-router';

@@ -849,7 +849,7 @@ export const profilesBlockCreate = <ThrowOnError extends boolean = false>(option
  * Calendars (iCal feeds) whose events a profile you act for imports and keeps in sync.
  *
  * Adding one syncs it straight away; after that it syncs every hour. Events
- * changed in Sidequest are overwritten by the next sync, so edit them in the
+ * changed in Questing are overwritten by the next sync, so edit them in the
  * calendar.
  */
 export const profilesCalendarsList = <ThrowOnError extends boolean = false>(options: Options<ProfilesCalendarsListData, ThrowOnError>): RequestResult<ProfilesCalendarsListResponses, unknown, ThrowOnError> => (options.client ?? client).get<ProfilesCalendarsListResponses, unknown, ThrowOnError>({
@@ -862,7 +862,7 @@ export const profilesCalendarsList = <ThrowOnError extends boolean = false>(opti
  * Calendars (iCal feeds) whose events a profile you act for imports and keeps in sync.
  *
  * Adding one syncs it straight away; after that it syncs every hour. Events
- * changed in Sidequest are overwritten by the next sync, so edit them in the
+ * changed in Questing are overwritten by the next sync, so edit them in the
  * calendar.
  */
 export const profilesCalendarsCreate = <ThrowOnError extends boolean = false>(options: Options<ProfilesCalendarsCreateData, ThrowOnError>): RequestResult<ProfilesCalendarsCreateResponses, unknown, ThrowOnError> => (options.client ?? client).post<ProfilesCalendarsCreateResponses, unknown, ThrowOnError>({

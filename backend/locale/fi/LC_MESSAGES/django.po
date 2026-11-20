@@ -6,11 +6,11 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Sidequest\n"
+"Project-Id-Version: Questing\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-11-19 16:13+0200\n"
 "PO-Revision-Date: 2026-11-02 20:52+0200\n"
-"Last-Translator: Sidequest <dev@sidequest.invalid>\n"
+"Last-Translator: Questing <dev@questing.invalid>\n"
 "Language-Team: Finnish\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
@@ -31,8 +31,8 @@ msgid "That username is taken. Try another one."
 msgstr "Käyttäjänimi on jo käytössä. Kokeile toista."
 
 #, python-format
-msgid "You need to be at least %(age)s years old to use Sidequest."
-msgstr "Sidequestin käyttäjän täytyy olla vähintään %(age)s-vuotias."
+msgid "You need to be at least %(age)s years old to use Questing."
+msgstr "Questingin käyttäjän täytyy olla vähintään %(age)s-vuotias."
 
 msgid "The password is wrong."
 msgstr "Salasana on väärä."
@@ -179,8 +179,8 @@ msgstr "Uutta seuraamiltasi:"
 msgid "You get this email because you turned on the weekly summary. Turn it off in Settings: %(url)s"
 msgstr "Saat tämän viestin, koska otit viikkokoosteen käyttöön. Voit poistaa sen käytöstä asetuksista: %(url)s"
 
-msgid "[Sidequest] Your week of events"
-msgstr "[Sidequest] Viikkosi tapahtumat"
+msgid "[Questing] Your week of events"
+msgstr "[Questing] Viikkosi tapahtumat"
 
 msgid "New followers"
 msgstr "Uudet seuraajat"
@@ -384,12 +384,12 @@ msgstr "Käytä arvoa upcoming tai past."
 msgid "This isn't a university email address we know."
 msgstr "Tämä ei ole tuntemamme yliopiston sähköpostiosoite."
 
-msgid "[Sidequest] Your student verification code"
-msgstr "[Sidequest] Opiskelijavahvistuksen koodisi"
+msgid "[Questing] Your student verification code"
+msgstr "[Questing] Opiskelijavahvistuksen koodisi"
 
 #, python-format
-msgid "Your code is %(code)s. Enter it in Sidequest within 15 minutes to show you study at %(university)s. If you didn't ask for this, ignore this email."
-msgstr "Koodisi on %(code)s. Syötä se Sidequestiin 15 minuutin kuluessa osoittaaksesi, että opiskelet yliopistossa %(university)s. Jos et pyytänyt tätä, voit jättää viestin huomiotta."
+msgid "Your code is %(code)s. Enter it in Questing within 15 minutes to show you study at %(university)s. If you didn't ask for this, ignore this email."
+msgstr "Koodisi on %(code)s. Syötä se Questingiin 15 minuutin kuluessa osoittaaksesi, että opiskelet yliopistossa %(university)s. Jos et pyytänyt tätä, voit jättää viestin huomiotta."
 
 msgid "The code has expired. Ask for a new one."
 msgstr "Koodi on vanhentunut. Pyydä uusi."

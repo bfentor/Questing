@@ -1,4 +1,4 @@
-import { eventsRetrieveOptions, useUnreadCount } from '@sidequest/api';
+import { eventsRetrieveOptions, useUnreadCount } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 import { Link, usePathname, type Href } from 'expo-router';
 import { SymbolView, type AndroidSymbol } from 'expo-symbols';
@@ -140,7 +140,7 @@ function NavBar({ children }: { children: ReactNode }) {
             <Pressable role="link" style={styles.brandLink}>
               <Logo size={30} />
               <ThemedText type="subtitle" themeColor="tint" style={styles.brand}>
-                Sidequest
+                Questing
               </ThemedText>
             </Pressable>
           </Link>

@@ -1,4 +1,4 @@
-import { meAttendingListOptions, type Event } from '@sidequest/api';
+import { meAttendingListOptions, type Event } from '@questing/api';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

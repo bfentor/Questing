@@ -138,7 +138,7 @@ def remind_due():
             attendees = attendees_of(event).exclude(
                 attendances__event=event, attendances__status=Attendance.Status.WAITLISTED
             )
-            # No actor: reminders come from Sidequest, so blocks and mutes don't apply.
+            # No actor: reminders come from Questing, so blocks and mutes don't apply.
             notify(attendees, Kind.EVENT_REMINDER, event=event)
         count += 1
     return count

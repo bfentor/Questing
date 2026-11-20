@@ -6,7 +6,7 @@ import {
   type Image,
   type PatchedProfileRequestWritable,
   type Profile,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation } from '@tanstack/react-query';
 import { SymbolView } from 'expo-symbols';
 import { useRef, useState, type ComponentRef } from 'react';

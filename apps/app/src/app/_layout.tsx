@@ -1,4 +1,4 @@
-import { meSettingsPartialUpdate } from '@sidequest/api';
+import { meSettingsPartialUpdate } from '@questing/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';

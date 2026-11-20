@@ -9,7 +9,7 @@ import {
   eventsViewCreate,
   type Event,
   type EventStatusEnum,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, router } from 'expo-router';
 import type { TFunction } from 'i18next';

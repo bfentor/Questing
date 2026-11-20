@@ -95,7 +95,7 @@ def compose(attending, from_followed):
         "You get this email because you turned on the weekly summary. "
         "Turn it off in Settings: %(url)s"
     ) % {"url": f"{settings.FRONTEND_URL}/settings"}
-    return _("[Sidequest] Your week of events"), "\n\n\n".join([*sections, footer])
+    return _("[Questing] Your week of events"), "\n\n\n".join([*sections, footer])
 
 
 def send_due(base_url):

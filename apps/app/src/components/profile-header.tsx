@@ -1,4 +1,4 @@
-import type { Profile } from '@sidequest/api';
+import type { Profile } from '@questing/api';
 import { Link } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import type { ReactNode } from 'react';

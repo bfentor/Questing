@@ -9,9 +9,9 @@ import type { ConfigContext, ExpoConfig } from 'expo/config';
  * by side on one phone.
  */
 const VARIANTS = {
-  development: { name: 'Sidequest Dev', id: 'hu.fentorweb.sidequest.dev' },
-  staging: { name: 'Sidequest Staging', id: 'hu.fentorweb.sidequest.staging' },
-  production: { name: 'Sidequest', id: 'hu.fentorweb.sidequest' },
+  development: { name: 'Questing Dev', id: 'hu.fentorweb.sidequest.dev' },
+  staging: { name: 'Questing Staging', id: 'hu.fentorweb.sidequest.staging' },
+  production: { name: 'Questing', id: 'hu.fentorweb.sidequest' },
 } as const;
 
 type Variant = keyof typeof VARIANTS;
@@ -52,7 +52,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   return {
     ...config,
     name: variant.name,
-    slug: config.slug ?? 'sidequest',
+    slug: config.slug ?? 'questing',
     ios: { ...config.ios, bundleIdentifier: variant.id },
     android: {
       ...config.android,

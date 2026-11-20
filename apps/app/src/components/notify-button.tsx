@@ -3,7 +3,7 @@ import {
   profilesRetrieveQueryKey,
   type NotifyEnum,
   type Profile,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef, useState, type ComponentRef } from 'react';
 import { useTranslation } from 'react-i18next';

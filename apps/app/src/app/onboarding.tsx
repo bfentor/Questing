@@ -6,7 +6,7 @@ import {
   meSuggestionsListQueryKey,
   type AccountSettings,
   type Profile,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

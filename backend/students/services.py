@@ -36,9 +36,9 @@ def send_code(user, email):
     )
     with translation.override(user.language):
         send_mail(
-            _("[Sidequest] Your student verification code"),
+            _("[Questing] Your student verification code"),
             _(
-                "Your code is %(code)s. Enter it in Sidequest within 15 minutes to show "
+                "Your code is %(code)s. Enter it in Questing within 15 minutes to show "
                 "you study at %(university)s. If you didn't ask for this, ignore this email."
             )
             % {"code": code, "university": university.name},

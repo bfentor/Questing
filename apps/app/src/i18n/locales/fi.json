@@ -40,7 +40,7 @@
   "nearby": {
     "locationFailed": "Sijaintiasi ei voitu selvittää.",
     "askPermission": "Jaa sijaintisi nähdäksesi lähelläsi olevat tapahtumat. Sijaintia käytetään vain tapahtumien järjestämiseen, eikä sitä tallenneta.",
-    "permissionDenied": "Sidequestin sijaintioikeus on pois päältä. Salli se asetuksista nähdäksesi lähelläsi olevat tapahtumat.",
+    "permissionDenied": "Questingin sijaintioikeus on pois päältä. Salli se asetuksista nähdäksesi lähelläsi olevat tapahtumat.",
     "useMyLocation": "Käytä sijaintiani",
     "empty": "Lähelläsi ei ole nyt tapahtumia.",
     "within": "{{km}} km",
@@ -167,7 +167,7 @@
     "buildUpdate": "Päivitys {{id}}, {{date}}",
     "nearbyTitle": "Tapahtumat lähelläsi",
     "nearbyToggle": "Kerro uusista tapahtumista lähelläni",
-    "nearbyHint": "Korkeintaan kerran päivässä. Sidequest tallentaa sijaintisi vain karkeasti (noin kilometrin tarkkuudella), kunnes poistat tämän käytöstä.",
+    "nearbyHint": "Korkeintaan kerran päivässä. Questing tallentaa sijaintisi vain karkeasti (noin kilometrin tarkkuudella), kunnes poistat tämän käytöstä.",
     "nearbyRadius": "Kuinka kaukaa",
     "nearbyUpdate": "Käytä nykyistä sijaintiani",
     "nearbyDenied": "Salli sijainnin käyttö saadaksesi nämä.",
@@ -245,7 +245,7 @@
     "unread": "Lukematon",
     "pushPrompt": "Saat puhelimeesi ilmoituksen, kun jotain tapahtuu.",
     "enablePush": "Ota push-ilmoitukset käyttöön",
-    "pushDenied": "Sidequestin push-ilmoitukset ovat pois päältä. Voit sallia ne puhelimesi asetuksista.",
+    "pushDenied": "Questingin push-ilmoitukset ovat pois päältä. Voit sallia ne puhelimesi asetuksista.",
     "newFollower": "{{name}} alkoi seurata sinua.",
     "newEvent": "Uusi tapahtuma ({{name}}): {{title}}",
     "eventChanged": "Tapahtuman {{title}} aika tai paikka muuttui.",
@@ -340,7 +340,7 @@
     "sendInvite": "Lähetä kutsu",
     "pending": "Odottaa vastausta",
     "verification": "Vahvistusmerkki",
-    "verificationHint": "Viralliset ylioppilaskunnat, ainejärjestöt ja kerhot voivat saada vahvistusmerkin. Kerro moderaattoreille, keitä olette ja miten sen voi varmistaa.",
+    "verificationHint": "Viralliset järjestöt, kuten yhdistykset, kerhot, tapahtumapaikat ja ylioppilaskunnat, voivat saada vahvistusmerkin. Kerro moderaattoreille, keitä olette ja miten sen voi varmistaa.",
     "verificationMessage": "Viesti moderaattoreille",
     "requestVerification": "Pyydä vahvistusta",
     "verificationSent": "Pyyntö lähetetty. Moderaattorit ovat yhteydessä."
@@ -432,7 +432,7 @@
   },
   "account": {
     "title": "Tilisi",
-    "exportHint": "Lataa kopio kaikesta, mitä Sidequest on tallentanut sinusta.",
+    "exportHint": "Lataa kopio kaikesta, mitä Questing on tallentanut sinusta.",
     "export": "Lataa tietoni",
     "delete": "Poista tili",
     "deleteConfirmTitle": "Poistetaanko tilisi?",
@@ -448,7 +448,7 @@
     "terms": "Käyttöehdot",
     "privacy": "Tietosuojaseloste",
     "updatedTitle": "Ehtomme ovat muuttuneet",
-    "updatedMessage": "Lue ja hyväksy päivitetyt käyttöehdot ja tietosuojaseloste jatkaaksesi Sidequestin käyttöä.",
+    "updatedMessage": "Lue ja hyväksy päivitetyt käyttöehdot ja tietosuojaseloste jatkaaksesi Questingin käyttöä.",
     "accept": "Hyväksy"
   },
   "verifyEmail": {
@@ -583,7 +583,7 @@
     "sent_other": "Lähetetty {{count}} henkilölle."
   },
   "onboarding": {
-    "title": "Tervetuloa Sidequestiin",
+    "title": "Tervetuloa Questingiin",
     "step": "Vaihe {{current}}/{{total}}",
     "interestsTitle": "Mistä olet kiinnostunut?",
     "interestsHint": "Valitse muutama, niin ehdotamme sinulle sopivia tapahtumia ja järjestöjä.",
@@ -650,15 +650,15 @@
   "embed": {
     "title": "Tulevat tapahtumat: {{name}}",
     "empty": "Tulevia tapahtumia ei juuri nyt ole.",
-    "seeAll": "Näytä kaikki Sidequestissa",
+    "seeAll": "Näytä kaikki Questingissa",
     "dashboardTitle": "Verkkosivuillasi",
     "dashboardHint": "Liitä tämä verkkosivuillesi, niin tulevat tapahtumasi näkyvät siellä. Se päivittyy itsestään."
   },
   "welcome": {
-    "title": "Kaikki opiskelijatapahtumat yhdessä paikassa",
-    "tagline": "Sidequest näyttää, mitä kampuksesi ympärillä tapahtuu: bileitä, urheilua, kerhoja, uratapahtumia ja paljon muuta niitä järjestäviltä ylioppilaskunnilta, killoilta ja kerhoilta.",
+    "title": "Kaikki lähelläsi tapahtuva yhdessä paikassa",
+    "tagline": "Questing näyttää, mitä ympärilläsi tapahtuu: keikkoja, urheilua, kerhoja, bileitä, työpajoja ja paljon muuta niitä järjestäviltä yhdistyksiltä, kerhoilta, tapahtumapaikoilta ja ylioppilaskunnilta.",
     "pointNearby": "Löydä tapahtumia läheltäsi tänä iltana tai viikonloppuna",
-    "pointFollow": "Seuraa kiltaasi ja kerhojasi, niin et missaa niiden tapahtumia",
+    "pointFollow": "Seuraa kerhojasi ja lempijärjestäjiäsi, niin et missaa niiden tapahtumia",
     "pointFriends": "Ilmoittaudu ja näe, ketkä kavereistasi ovat menossa",
     "signUp": "Rekisteröidy, se on ilmaista",
     "appStore": "Lataa App Storesta",

@@ -1,8 +1,8 @@
 {
-  "name": "@sidequest/api",
+  "name": "@questing/api",
   "version": "0.0.0",
   "private": true,
-  "description": "Typed client for the Sidequest backend, shared by every frontend.",
+  "description": "Typed client for the Questing backend, shared by every frontend.",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {

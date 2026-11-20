@@ -1,4 +1,4 @@
-import { postsRetrieveOptions } from '@sidequest/api';
+import { postsRetrieveOptions } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';

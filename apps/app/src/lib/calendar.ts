@@ -1,4 +1,4 @@
-import type { Event } from '@sidequest/api';
+import type { Event } from '@questing/api';
 
 /** 2026-11-02T18:30:00.000Z → 20261102T183000Z */
 function icsTime(iso: string | Date) {
@@ -54,11 +54,12 @@ export function eventIcs(event: Event, url: string) {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Sidequest//Events//EN',
+    'PRODID:-//Questing//Events//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',
-    // Stable, so adding the event again updates it instead of duplicating it.
+    // Stable, so adding the event again updates it instead of duplicating it (which is why it
+    // still says sidequest, the app's old name).
     `UID:event-${event.id}@sidequest`,
     `DTSTAMP:${icsTime(new Date())}`,
     `DTSTART:${icsTime(event.starts_at)}`,

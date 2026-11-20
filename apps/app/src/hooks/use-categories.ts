@@ -1,4 +1,4 @@
-import { categoriesListOptions, type Category } from '@sidequest/api';
+import { categoriesListOptions, type Category } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 

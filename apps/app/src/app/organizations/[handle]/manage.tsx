@@ -12,7 +12,7 @@ import {
   profilesRetrieveOptions,
   profilesRetrieveQueryKey,
   type MembershipRoleEnum,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';

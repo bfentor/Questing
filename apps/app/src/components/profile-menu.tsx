@@ -1,4 +1,4 @@
-import type { Profile } from '@sidequest/api';
+import type { Profile } from '@questing/api';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

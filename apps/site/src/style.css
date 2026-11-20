@@ -1,0 +1,298 @@
+/* Questing's frontpage: plain, mostly text, with the app's indigo for links and the one button. */
+:root {
+  --text: #1a1d24;
+  --muted: #5b6372;
+  --page: #ffffff;
+  --line: #e4e7ec;
+  --tint: #4f46e5;
+  --tint-hover: #4338ca;
+  --on-tint: #ffffff;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #e2e8f0;
+    --muted: #97a1b3;
+    --page: #0b1020;
+    --line: #232b42;
+    --tint: #a5b4fc;
+    --tint-hover: #c7d2fe;
+    --on-tint: #0b1020;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--text);
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+a {
+  color: var(--tint);
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  color: var(--tint-hover);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--tint);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+h1,
+h2 {
+  margin: 0;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2rem, 4.5vw, 2.75rem);
+  margin-bottom: 0.6em;
+}
+
+h2 {
+  font-size: 1.15rem;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+.wrap {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+@media (min-width: 720px) {
+  .wrap {
+    padding: 0 40px;
+  }
+}
+
+/* Header */
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-weight: 650;
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+
+.brand:hover {
+  color: var(--text);
+}
+
+.top-link {
+  font-weight: 500;
+}
+
+/* The first part: what it is, and the app beside it */
+
+.intro {
+  display: grid;
+  gap: 48px;
+  padding-top: 40px;
+  padding-bottom: 72px;
+}
+
+@media (min-width: 860px) {
+  .intro {
+    grid-template-columns: 1fr 300px;
+    gap: 72px;
+    align-items: center;
+    padding-top: 64px;
+    padding-bottom: 96px;
+  }
+}
+
+.intro-text {
+  max-width: 34em;
+}
+
+.intro-text p {
+  color: var(--muted);
+  font-size: 1.125rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  margin-top: 32px;
+}
+
+.button {
+  display: inline-block;
+  padding: 12px 22px;
+  border-radius: 8px;
+  background: var(--tint);
+  color: var(--on-tint);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.button:hover {
+  background: var(--tint-hover);
+  color: var(--on-tint);
+}
+
+.shot {
+  display: block;
+  justify-self: center;
+  width: min(300px, 80vw);
+}
+
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+}
+
+/* The rest: a heading on the left, the text on the right */
+
+.row {
+  display: grid;
+  gap: 12px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.row::before {
+  content: '';
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--line);
+  margin-bottom: 28px;
+}
+
+@media (min-width: 720px) {
+  .row {
+    grid-template-columns: 200px 1fr;
+    column-gap: 48px;
+  }
+
+  .row h2 {
+    padding-top: 2px;
+  }
+}
+
+.prose {
+  max-width: 36em;
+}
+
+.prose ul {
+  margin: 0 0 1.25em;
+  padding-left: 1.2em;
+}
+
+.prose li {
+  margin-bottom: 0.4em;
+}
+
+.prose li::marker {
+  color: var(--muted);
+}
+
+.facts {
+  margin: 0;
+  max-width: 36em;
+  display: grid;
+  gap: 16px;
+}
+
+.facts div {
+  display: grid;
+  gap: 2px;
+}
+
+@media (min-width: 560px) {
+  .facts div {
+    grid-template-columns: 7em 1fr;
+    gap: 16px;
+  }
+}
+
+.facts dt {
+  font-weight: 600;
+}
+
+.facts dd {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Footer */
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px 32px;
+  margin-top: 40px;
+  padding-top: 24px;
+  padding-bottom: 40px;
+  border-top: 1px solid var(--line);
+  font-size: 0.9375rem;
+}
+
+.foot nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.foot a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.foot a:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+.foot a[aria-current] {
+  color: var(--text);
+}
