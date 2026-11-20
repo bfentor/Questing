@@ -541,6 +541,7 @@ class Community:
         self.posts()
         self.organizer_tools()
         self.reports()
+        self.dashboard()
 
     def at(self, days, hour, minute=0):
         """`days` from today, at `hour`:`minute` local time."""
@@ -1086,24 +1087,6 @@ class Community:
                 author = self.p.get(handle) or self.o.get(handle)
                 self.s.comment(author, body, event=e[key])
 
-        # A month of views on the outdoor club's events, rising towards today.
-        today = timezone.localdate()
-        for event in Event.objects.filter(organizer=self.s.outdoor, published_at__isnull=False):
-            EventViewDay.objects.filter(event=event).delete()
-            EventViewDay.objects.bulk_create(
-                EventViewDay(
-                    event=event,
-                    date=today - timedelta(days=day),
-                    count=self.random.randint(4, 12) + (30 - day) * self.random.randint(0, 2),
-                )
-                for day in range(30)
-            )
-        # RSVPs to its events spread over the month, not all made just now.
-        for attendance in Attendance.objects.filter(event__organizer=self.s.outdoor):
-            Attendance.objects.filter(pk=attendance.pk).update(
-                created_at=self.now - timedelta(days=self.random.randint(0, 29))
-            )
-
     def days_until(self, weekday):
         """Days from today to the next `weekday` (0 is Monday), at least one."""
         return (weekday - timezone.localdate().weekday() - 1) % 7 + 1
@@ -1132,11 +1115,6 @@ class Community:
             hours_ago=9,
             likes=self.some(everyone, 3, 8),
         )
-        # Spread the event announcements over the past days, like the showcase's.
-        for post in Post.objects.filter(event__isnull=False, body="", author__in=self.o.values()):
-            Post.objects.filter(pk=post.pk).update(
-                created_at=self.now - timedelta(hours=self.random.randint(2, 200))
-            )
 
     # What organizers and moderators see
 
@@ -1145,12 +1123,12 @@ class Community:
         # A calendar the club already keeps elsewhere, imported and in sync.
         source = CalendarSource.objects.create(
             profile=club,
-            url="https://example.com/outdoor-club/calendar.ics",
+            url="https://calendar.google.com/calendar/ical/lut.outdoor.club%40gmail.com/public/basic.ics",
             added_by=self.viewer,
             synced_at=self.now - timedelta(minutes=35),
         )
         for days, hour, title, place in [
-            (6, 10, "Saturday paddle maintenance day", "harbour"),
+            (6, 10, "Paddle maintenance day", "harbour"),
             (16, 12, "Gear swap and repair café", "library"),
             (27, 9, "Winter hiking first aid course", "kaukas"),
         ]:
@@ -1182,6 +1160,42 @@ class Community:
             user=self.p["petra"].user,
             defaults={"role": Membership.Role.EDITOR},
         )
+
+    def dashboard(self):
+        """A month of numbers for the outdoor club, which the viewer runs, rising towards today."""
+        club = self.s.outdoor
+        today = timezone.localdate()
+        for event in Event.objects.filter(organizer=club, published_at__isnull=False):
+            EventViewDay.objects.filter(event=event).delete()
+            EventViewDay.objects.bulk_create(
+                EventViewDay(
+                    event=event,
+                    date=today - timedelta(days=day),
+                    count=self.random.randint(4, 12) + (30 - day) * self.random.randint(0, 2),
+                )
+                for day in range(30)
+            )
+        # RSVPs and follows made while generating would all land on today.
+        recent = self.now - timedelta(hours=1)
+        for attendance in Attendance.objects.filter(event__organizer=club, created_at__gte=recent):
+            Attendance.objects.filter(pk=attendance.pk).update(
+                created_at=self.now - timedelta(days=self.random.randint(0, 29))
+            )
+        for follow in Follow.objects.filter(followee=club, created_at__gte=recent):
+            Follow.objects.filter(pk=follow.pk).update(
+                created_at=self.now - timedelta(days=self.random.randint(1, 29))
+            )
+        # The demo data's post (demo.py), from a few hours ago rather than just now.
+        Post.objects.filter(author__handle="sam", created_at__gte=recent).update(
+            created_at=self.now - timedelta(hours=3)
+        )
+        # Event announcements made while generating, spread over the past week and a half.
+        for post in Post.objects.filter(
+            event__isnull=False, body="", author__sample__isnull=False, created_at__gte=recent
+        ):
+            Post.objects.filter(pk=post.pk).update(
+                created_at=self.now - timedelta(hours=self.random.randint(2, 250))
+            )
 
     def reports(self):
         """A few open reports, so the moderators' queue in the admin isn't empty."""

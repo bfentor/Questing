@@ -46,6 +46,8 @@ def seed_demo():
     # Demo accounts can sign in straight away, without the emailed code.
     for user in (demo, friend):
         EmailAddress.objects.create(user=user, email=user.email, verified=True, primary=True)
+    friend.profile.display_name = "Sam Koivisto"
+    friend.profile.save(update_fields=["display_name"])
     union = Profile.objects.create(
         kind=Profile.Kind.ORGANIZATION,
         handle="student_union",
