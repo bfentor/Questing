@@ -106,7 +106,7 @@ Useful URLs while the backend runs:
 
 ## Frontpage
 
-`apps/site/` is the static page at `questing.fi` (the app itself lives at `app.questing.fi`). `src/page.html` holds the layout and `src/locales/{en,fi,sv}.json` the words; `npm run build -w @questing/site` writes one page per language to `apps/site/dist/` (English at `/`, Finnish at `/fi/`, Swedish at `/sv/`), with the app's logo and icons. A browser that prefers Finnish or Swedish is sent to that page. The build, and `npm run lint`, fail if a language is missing a string. Preview it with `cd apps/site/dist && python3 -m http.server 4321`. In production it's served by nginx (`apps/site/Dockerfile`), which sends any other path on to the app, so `questing.fi/events/…` links still work.
+`apps/site/` is the static page at `questing.fi` (the app itself lives at `app.questing.fi`). `src/page.html` holds the layout and `src/locales/{en,fi,sv}.json` the words; `npm run build -w @questing/site` writes one page per language to `apps/site/dist/` (English at `/`, Finnish at `/fi/`, Swedish at `/sv/`), with the app's logo and icons. A browser that prefers Finnish or Swedish is sent to that page. The build, and `npm run lint`, fail if a language is missing a string. While you work on it, `npm run site` serves it on http://localhost:4321, rebuilds it whenever you save, and reloads the page; its buttons then lead to the app on port 8081 (`APP_URL=… npm run site` for another). In production it's served by nginx (`apps/site/Dockerfile`), which sends any other path on to the app, so `questing.fi/events/…` links still work.
 
 ## Translations
 

@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "scripts/dev",
     "app": "npm run start -w @questing/app --",
+    "site": "npm run dev -w @questing/site",
     "api:generate": "npm run generate -w @questing/api",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
