@@ -1,4 +1,4 @@
-import { eventsRetrieveOptions } from '@sidequest/api';
+import { eventsRetrieveOptions } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import type { GenerateMetadataFunction } from 'expo-server';

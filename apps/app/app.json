@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Sidequest",
-    "slug": "sidequest",
+    "name": "Questing",
+    "slug": "questing",
     "version": "0.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "sidequest",
+    "scheme": "questing",
     "userInterfaceStyle": "automatic",
     "android": {
       "adaptiveIcon": {
@@ -38,13 +38,13 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Sidequest uses your location to show events near you."
+          "locationWhenInUsePermission": "Questing uses your location to show events near you."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Sidequest lets you choose photos for your profile, events and posts."
+          "photosPermission": "Questing lets you choose photos for your profile, events and posts."
         }
       ],
       "expo-maps"

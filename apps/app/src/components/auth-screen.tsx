@@ -1,4 +1,4 @@
-import type { AuthResult } from '@sidequest/api';
+import type { AuthResult } from '@questing/api';
 import { Link, router } from 'expo-router';
 import type { TFunction } from 'i18next';
 import { useRef, useState } from 'react';

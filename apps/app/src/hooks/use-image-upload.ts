@@ -1,4 +1,4 @@
-import { uploadImage, type UploadResult } from '@sidequest/api';
+import { uploadImage, type UploadResult } from '@questing/api';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 

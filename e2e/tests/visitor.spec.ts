@@ -2,10 +2,10 @@ import { expect, test } from '@playwright/test';
 
 import { DEMO, openEvent } from './helpers';
 
-test('visitors see what Sidequest is, and what is coming up', async ({ page }) => {
+test('visitors see what Questing is, and what is coming up', async ({ page }) => {
   await page.goto('/');
   await expect(
-    page.getByRole('heading', { name: 'Every student event, in one place' }),
+    page.getByRole('heading', { name: "What's on near you, in one place" }),
   ).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Home', level: 1 })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Coming up' })).toBeVisible();

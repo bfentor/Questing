@@ -1,4 +1,4 @@
-import { useUnreadCount } from '@sidequest/api';
+import { useUnreadCount } from '@questing/api';
 import { router, usePathname, type Href } from 'expo-router';
 import { SymbolView, type AndroidSymbol, type SFSymbol } from 'expo-symbols';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
@@ -145,7 +145,7 @@ function Drawer({ visible, onClose }: { visible: boolean; onClose: () => void })
                 <View style={[styles.me, styles.brand]}>
                   <Logo size={32} />
                   <ThemedText type="subtitle" themeColor="tint">
-                    Sidequest
+                    Questing
                   </ThemedText>
                 </View>
               )}

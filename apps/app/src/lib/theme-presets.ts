@@ -2,7 +2,7 @@ import { DEFAULT_LOOK, type Look, type Palette } from './theme-lab';
 
 /** Starting points for the Theme lab (development only). */
 export const PRESETS: { name: string; look: Look }[] = [
-  { name: 'Sidequest', look: DEFAULT_LOOK },
+  { name: 'Questing', look: DEFAULT_LOOK },
   {
     name: 'Paper',
     look: {

@@ -1,4 +1,4 @@
-import { eventsPhotosListOptions, type Event } from '@sidequest/api';
+import { eventsPhotosListOptions, type Event } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 import { Link, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';

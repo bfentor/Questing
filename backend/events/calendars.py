@@ -1,7 +1,7 @@
 """Keeping a profile's events in step with a calendar it already keeps (an iCal feed).
 
 Each event in the feed (each occurrence, for repeating ones) becomes an
-event in Sidequest, matched by its ID in the calendar, so later syncs update
+event in Questing, matched by its ID in the calendar, so later syncs update
 it instead of adding it again. Run by sync_calendars (see CRONJOBS.md).
 """
 

@@ -1,4 +1,4 @@
-import { postsCreate, uploadImage } from '@sidequest/api';
+import { postsCreate, uploadImage } from '@questing/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';

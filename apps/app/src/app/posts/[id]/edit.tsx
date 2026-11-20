@@ -1,4 +1,4 @@
-import { postsPartialUpdate, postsRetrieveOptions } from '@sidequest/api';
+import { postsPartialUpdate, postsRetrieveOptions } from '@questing/api';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';

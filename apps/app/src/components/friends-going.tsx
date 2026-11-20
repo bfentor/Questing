@@ -1,4 +1,4 @@
-import type { AttendanceSummary } from '@sidequest/api';
+import type { AttendanceSummary } from '@questing/api';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 

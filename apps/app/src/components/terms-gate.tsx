@@ -2,7 +2,7 @@ import {
   meAcceptTermsCreate,
   meSettingsRetrieveOptions,
   meSettingsRetrieveQueryKey,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'expo-router';
 import { useTranslation } from 'react-i18next';

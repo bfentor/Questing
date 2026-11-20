@@ -4,7 +4,7 @@ import {
   profilesCalendarsListOptions,
   profilesCalendarsListQueryKey,
   type CalendarSource,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';

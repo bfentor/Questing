@@ -397,7 +397,7 @@ class CalendarSourcesView(generics.ListCreateAPIView):
     """Calendars (iCal feeds) whose events a profile you act for imports and keeps in sync.
 
     Adding one syncs it straight away; after that it syncs every hour. Events
-    changed in Sidequest are overwritten by the next sync, so edit them in the
+    changed in Questing are overwritten by the next sync, so edit them in the
     calendar.
     """
 

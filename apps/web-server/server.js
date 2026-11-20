@@ -28,5 +28,5 @@ app.use(express.static(path.join(dist, 'client'), { maxAge: '1h', redirect: fals
 app.use(createRequestHandler({ build: path.join(dist, 'server') }));
 
 app.listen(port, () => {
-  console.log(`Sidequest web listening on port ${port}`);
+  console.log(`Questing web listening on port ${port}`);
 });

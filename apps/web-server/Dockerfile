@@ -34,7 +34,7 @@ COPY apps/app/package.json apps/app/
 COPY apps/web-server/package.json apps/web-server/
 COPY packages/api/package.json packages/api/
 # Only the server's own dependencies (express, expo-server), at their locked versions.
-RUN npm ci --omit=dev --workspace @sidequest/web-server --include-workspace-root=false --ignore-scripts \
+RUN npm ci --omit=dev --workspace @questing/web-server --include-workspace-root=false --ignore-scripts \
     && npm cache clean --force
 
 COPY apps/web-server/server.js apps/web-server/

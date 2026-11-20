@@ -1,4 +1,4 @@
-import type { LinkPreview as LinkPreviewData } from '@sidequest/api';
+import type { LinkPreview as LinkPreviewData } from '@questing/api';
 import { Image } from 'expo-image';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 

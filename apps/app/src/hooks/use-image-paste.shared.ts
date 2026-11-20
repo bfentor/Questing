@@ -1,4 +1,4 @@
-import type { NativeFile } from '@sidequest/api';
+import type { NativeFile } from '@questing/api';
 
 /** A pasted picture: what to upload, and something to show meanwhile. */
 export type PastedImage = { file: Blob | NativeFile; preview: string };

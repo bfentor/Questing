@@ -1,4 +1,4 @@
-import { meProfilesListOptions } from '@sidequest/api';
+import { meProfilesListOptions } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 
 import { useAuth } from '@/auth/auth-provider';

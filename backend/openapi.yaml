@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Sidequest API
+  title: Questing API
   version: 0.2.0
 paths:
   /api/categories/:
@@ -2160,7 +2160,7 @@ paths:
         Calendars (iCal feeds) whose events a profile you act for imports and keeps in sync.
 
         Adding one syncs it straight away; after that it syncs every hour. Events
-        changed in Sidequest are overwritten by the next sync, so edit them in the
+        changed in Questing are overwritten by the next sync, so edit them in the
         calendar.
       parameters:
       - in: path
@@ -2187,7 +2187,7 @@ paths:
         Calendars (iCal feeds) whose events a profile you act for imports and keeps in sync.
 
         Adding one syncs it straight away; after that it syncs every hour. Events
-        changed in Sidequest are overwritten by the next sync, so edit them in the
+        changed in Questing are overwritten by the next sync, so edit them in the
         calendar.
       parameters:
       - in: path

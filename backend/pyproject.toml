@@ -1,7 +1,7 @@
 [project]
-name = "sidequest-backend"
+name = "questing-backend"
 version = "0.2.0"
-description = "Sidequest API server"
+description = "Questing API server"
 requires-python = ">=3.13"
 dependencies = [
     "django>=6.1.2",

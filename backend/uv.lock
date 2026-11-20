@@ -661,6 +661,59 @@ wheels = [
 ]
 
 [[package]]
+name = "questing-backend"
+version = "0.2.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "django" },
+    { name = "django-allauth", extra = ["headless", "mfa"] },
+    { name = "django-cors-headers" },
+    { name = "django-environ" },
+    { name = "django-storages", extra = ["s3"] },
+    { name = "djangorestframework" },
+    { name = "drf-spectacular" },
+    { name = "gunicorn" },
+    { name = "icalendar" },
+    { name = "pillow" },
+    { name = "psycopg", extra = ["binary"] },
+    { name = "recurring-ical-events" },
+    { name = "sentry-sdk" },
+    { name = "whitenoise" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+    { name = "pytest-django" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "django", specifier = ">=6.1.2" },
+    { name = "django-allauth", extras = ["headless", "mfa"], specifier = ">=65.21.1" },
+    { name = "django-cors-headers", specifier = ">=4.9.0" },
+    { name = "django-environ", specifier = ">=0.14.0" },
+    { name = "django-storages", extras = ["s3"], specifier = ">=1.14.6" },
+    { name = "djangorestframework", specifier = ">=3.18.3" },
+    { name = "drf-spectacular", specifier = ">=0.30.0" },
+    { name = "gunicorn", specifier = ">=26.2.0" },
+    { name = "icalendar", specifier = ">=7.3.0" },
+    { name = "pillow", specifier = ">=13.0.0" },
+    { name = "psycopg", extras = ["binary"], specifier = ">=3.3.6" },
+    { name = "recurring-ical-events", specifier = ">=3.8.2" },
+    { name = "sentry-sdk", specifier = ">=2.73.0" },
+    { name = "whitenoise", specifier = ">=6.12.0" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pytest", specifier = ">=9.2.0" },
+    { name = "pytest-django", specifier = ">=4.14.0" },
+    { name = "ruff", specifier = ">=0.17.3" },
+]
+
+[[package]]
 name = "recurring-ical-events"
 version = "3.8.2"
 source = { registry = "https://pypi.org/simple" }
@@ -817,59 +870,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c5/3b/1e47acf2456781c26e12007379ecc154bf310b8f64d40390d78b791d55c3/sentry_sdk-2.73.0.tar.gz", hash = "sha256:4a2ab97b16e4693c325ab361c7bbbb346dbc7d0bc0150922d795a25bac8d5280", size = 1079078, upload-time = "2026-10-22T09:08:49.63Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b2/88/cabf98d017d7b940720e514e5f8ee02e3e6f7495caf93c30735a38387ec4/sentry_sdk-2.73.0-py3-none-any.whl", hash = "sha256:0bcfa6928ea5adbb89591858b514d27adac27c7a3cccc31b20ed10e0b09eda9e", size = 549011, upload-time = "2026-10-22T09:08:47.88Z" },
-]
-
-[[package]]
-name = "sidequest-backend"
-version = "0.2.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "django" },
-    { name = "django-allauth", extra = ["headless", "mfa"] },
-    { name = "django-cors-headers" },
-    { name = "django-environ" },
-    { name = "django-storages", extra = ["s3"] },
-    { name = "djangorestframework" },
-    { name = "drf-spectacular" },
-    { name = "gunicorn" },
-    { name = "icalendar" },
-    { name = "pillow" },
-    { name = "psycopg", extra = ["binary"] },
-    { name = "recurring-ical-events" },
-    { name = "sentry-sdk" },
-    { name = "whitenoise" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pytest" },
-    { name = "pytest-django" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "django", specifier = ">=6.1.2" },
-    { name = "django-allauth", extras = ["headless", "mfa"], specifier = ">=65.21.1" },
-    { name = "django-cors-headers", specifier = ">=4.9.0" },
-    { name = "django-environ", specifier = ">=0.14.0" },
-    { name = "django-storages", extras = ["s3"], specifier = ">=1.14.6" },
-    { name = "djangorestframework", specifier = ">=3.18.3" },
-    { name = "drf-spectacular", specifier = ">=0.30.0" },
-    { name = "gunicorn", specifier = ">=26.2.0" },
-    { name = "icalendar", specifier = ">=7.3.0" },
-    { name = "pillow", specifier = ">=13.0.0" },
-    { name = "psycopg", extras = ["binary"], specifier = ">=3.3.6" },
-    { name = "recurring-ical-events", specifier = ">=3.8.2" },
-    { name = "sentry-sdk", specifier = ">=2.73.0" },
-    { name = "whitenoise", specifier = ">=6.12.0" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pytest", specifier = ">=9.2.0" },
-    { name = "pytest-django", specifier = ">=4.14.0" },
-    { name = "ruff", specifier = ">=0.17.3" },
 ]
 
 [[package]]

@@ -1,7 +1,7 @@
 {
-  "name": "Sidequest",
-  "short_name": "Sidequest",
-  "description": "Find student events near you, and see what your friends are going to.",
+  "name": "Questing",
+  "short_name": "Questing",
+  "description": "Find what's on near you, follow the people and clubs behind it, and see who's going.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

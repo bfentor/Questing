@@ -1,4 +1,4 @@
-import { useHashtagFeed } from '@sidequest/api';
+import { useHashtagFeed } from '@questing/api';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 

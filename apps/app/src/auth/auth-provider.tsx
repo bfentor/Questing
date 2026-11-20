@@ -1,4 +1,4 @@
-import * as api from '@sidequest/api';
+import * as api from '@questing/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { createContext, use, useEffect, useState, type PropsWithChildren } from 'react';
 

@@ -32,33 +32,33 @@ def render(notification) -> tuple[str, str]:
     actor = notification.actor.display_name if notification.actor else ""
     event = notification.event
     # A deleted event's title is kept in the message.
-    title = event.title if event else (notification.message or "Sidequest")
+    title = event.title if event else (notification.message or "Questing")
     match notification.kind:
         case Kind.NEW_FOLLOWER:
-            return "Sidequest", _("%(name)s started following you.") % {"name": actor}
+            return "Questing", _("%(name)s started following you.") % {"name": actor}
         case Kind.FOLLOW_REQUEST:
-            return "Sidequest", _("%(name)s asked to follow you.") % {"name": actor}
+            return "Questing", _("%(name)s asked to follow you.") % {"name": actor}
         case Kind.ORGANIZATION_INVITE:
-            return "Sidequest", _("%(name)s invited you to join them.") % {"name": actor}
+            return "Questing", _("%(name)s invited you to join them.") % {"name": actor}
         case Kind.FOLLOW_ACCEPTED:
-            return "Sidequest", _("%(name)s accepted your follow request.") % {"name": actor}
+            return "Questing", _("%(name)s accepted your follow request.") % {"name": actor}
         case Kind.NEW_EVENT:
             return title, _("New event from %(name)s.") % {"name": actor}
         case Kind.NEARBY_EVENTS:
             count = int(notification.message or 0)
-            return "Sidequest", ngettext(
+            return "Questing", ngettext(
                 "%(count)s new event near you", "%(count)s new events near you", count
             ) % {"count": count}
         case Kind.INTEREST_EVENTS:
             count = int(notification.message or 0)
-            return "Sidequest", ngettext(
+            return "Questing", ngettext(
                 "%(count)s new event for your interests",
                 "%(count)s new events for your interests",
                 count,
             ) % {"count": count}
         case Kind.NEW_POST:
             body = notification.post.body if notification.post else ""
-            return actor or "Sidequest", Truncator(body).chars(120) or _("New post")
+            return actor or "Questing", Truncator(body).chars(120) or _("New post")
         case Kind.EVENT_CHANGED:
             return title, _("The time or place of this event changed.")
         case Kind.EVENT_CANCELLED:
@@ -77,12 +77,12 @@ def render(notification) -> tuple[str, str]:
         case Kind.ANNOUNCEMENT:
             return title, f"{actor}: {notification.message}"
         case Kind.MENTION:
-            return "Sidequest", _("%(name)s mentioned you.") % {"name": actor}
+            return "Questing", _("%(name)s mentioned you.") % {"name": actor}
         case Kind.COMMENT:
-            return "Sidequest", _("%(name)s commented.") % {"name": actor}
+            return "Questing", _("%(name)s commented.") % {"name": actor}
         case Kind.REACTION:
-            return "Sidequest", _("%(name)s liked your post.") % {"name": actor}
-    return "Sidequest", ""
+            return "Questing", _("%(name)s liked your post.") % {"name": actor}
+    return "Questing", ""
 
 
 def link(notification) -> str:

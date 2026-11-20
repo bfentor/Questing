@@ -40,7 +40,7 @@
   "nearby": {
     "locationFailed": "Couldn't determine your location.",
     "askPermission": "Share your location to see events around you. It is only used to sort events and is never stored.",
-    "permissionDenied": "Location access is turned off for Sidequest. Enable it in your settings to see events around you.",
+    "permissionDenied": "Location access is turned off for Questing. Enable it in your settings to see events around you.",
     "useMyLocation": "Use my location",
     "empty": "No events near you right now.",
     "within": "{{km}} km",
@@ -167,7 +167,7 @@
     "buildUpdate": "Update {{id}} from {{date}}",
     "nearbyTitle": "Events near you",
     "nearbyToggle": "Tell me about new events near me",
-    "nearbyHint": "At most once a day. Sidequest keeps only roughly where you are (to about a kilometre), until you turn this off.",
+    "nearbyHint": "At most once a day. Questing keeps only roughly where you are (to about a kilometre), until you turn this off.",
     "nearbyRadius": "How far",
     "nearbyUpdate": "Use where I am now",
     "nearbyDenied": "Allow location access to get these.",
@@ -245,7 +245,7 @@
     "unread": "Unread",
     "pushPrompt": "Get a notification on your phone when something happens.",
     "enablePush": "Turn on push notifications",
-    "pushDenied": "Push notifications are off for Sidequest. You can turn them on in your phone's settings.",
+    "pushDenied": "Push notifications are off for Questing. You can turn them on in your phone's settings.",
     "newFollower": "{{name}} started following you.",
     "newEvent": "New event from {{name}}: {{title}}",
     "eventChanged": "The time or place of {{title}} changed.",
@@ -340,7 +340,7 @@
     "sendInvite": "Send invitation",
     "pending": "Waiting for an answer",
     "verification": "Verified badge",
-    "verificationHint": "Official student unions, guilds and clubs can get a verified badge. Tell the moderators who you are and how to confirm it.",
+    "verificationHint": "Official organizations, such as associations, clubs, venues and student unions, can get a verified badge. Tell the moderators who you are and how to confirm it.",
     "verificationMessage": "Message to moderators",
     "requestVerification": "Request verification",
     "verificationSent": "Request sent. Moderators will get back to you."
@@ -432,7 +432,7 @@
   },
   "account": {
     "title": "Your account",
-    "exportHint": "Download a copy of everything Sidequest stores about you.",
+    "exportHint": "Download a copy of everything Questing stores about you.",
     "export": "Download my data",
     "delete": "Delete account",
     "deleteConfirmTitle": "Delete your account?",
@@ -448,7 +448,7 @@
     "terms": "Terms of service",
     "privacy": "Privacy policy",
     "updatedTitle": "Our terms have changed",
-    "updatedMessage": "Please read and accept the updated terms of service and privacy policy to keep using Sidequest.",
+    "updatedMessage": "Please read and accept the updated terms of service and privacy policy to keep using Questing.",
     "accept": "Accept"
   },
   "verifyEmail": {
@@ -583,7 +583,7 @@
     "sent_other": "Sent to {{count}} people."
   },
   "onboarding": {
-    "title": "Welcome to Sidequest",
+    "title": "Welcome to Questing",
     "step": "Step {{current}} of {{total}}",
     "interestsTitle": "What are you into?",
     "interestsHint": "Pick a few, and we'll suggest events and organizations to match.",
@@ -650,15 +650,15 @@
   "embed": {
     "title": "Upcoming events from {{name}}",
     "empty": "No upcoming events right now.",
-    "seeAll": "See all on Sidequest",
+    "seeAll": "See all on Questing",
     "dashboardTitle": "On your website",
     "dashboardHint": "Paste this into your website to show your upcoming events there. It updates by itself."
   },
   "welcome": {
-    "title": "Every student event, in one place",
-    "tagline": "Sidequest shows what's on around your campus: parties, sports, clubs, career events and more, from the student unions, guilds and clubs that run them.",
+    "title": "What's on near you, in one place",
+    "tagline": "Questing shows what's happening around you: gigs, sports, clubs, parties, workshops and more, from the clubs, associations, venues and student unions that run them.",
     "pointNearby": "Find events near you, tonight or this weekend",
-    "pointFollow": "Follow your guild and clubs so you never miss their events",
+    "pointFollow": "Follow your clubs and favourite organizers so you never miss their events",
     "pointFriends": "RSVP, and see which friends are going",
     "signUp": "Sign up, it's free",
     "appStore": "Download on the App Store",

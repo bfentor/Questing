@@ -64,7 +64,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="mobile-web-app-capable" content="yes" />
         {/* The status bar takes theme-color, with dark or light text to suit it. */}
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Sidequest" />
+        <meta name="apple-mobile-web-app-title" content="Questing" />
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <style>{'html[data-theme-pending] #root { visibility: hidden; }'}</style>
         <ScrollViewStyleReset />

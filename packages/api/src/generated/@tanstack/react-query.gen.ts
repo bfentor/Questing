@@ -1953,7 +1953,7 @@ export const profilesCalendarsListQueryKey = (options: Options<ProfilesCalendars
  * Calendars (iCal feeds) whose events a profile you act for imports and keeps in sync.
  *
  * Adding one syncs it straight away; after that it syncs every hour. Events
- * changed in Sidequest are overwritten by the next sync, so edit them in the
+ * changed in Questing are overwritten by the next sync, so edit them in the
  * calendar.
  */
 export const profilesCalendarsListOptions = (options: Options<ProfilesCalendarsListData>) => queryOptions<ProfilesCalendarsListResponse, DefaultError, ProfilesCalendarsListResponse, ReturnType<typeof profilesCalendarsListQueryKey>>({
@@ -1973,7 +1973,7 @@ export const profilesCalendarsListOptions = (options: Options<ProfilesCalendarsL
  * Calendars (iCal feeds) whose events a profile you act for imports and keeps in sync.
  *
  * Adding one syncs it straight away; after that it syncs every hour. Events
- * changed in Sidequest are overwritten by the next sync, so edit them in the
+ * changed in Questing are overwritten by the next sync, so edit them in the
  * calendar.
  */
 export const profilesCalendarsCreateMutation = (options?: Partial<Options<ProfilesCalendarsCreateData>>): UseMutationOptions<ProfilesCalendarsCreateResponse, DefaultError, Options<ProfilesCalendarsCreateData>> => {

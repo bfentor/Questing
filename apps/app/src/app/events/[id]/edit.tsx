@@ -1,4 +1,4 @@
-import { eventsPartialUpdate, eventsRetrieveOptions } from '@sidequest/api';
+import { eventsPartialUpdate, eventsRetrieveOptions } from '@questing/api';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';

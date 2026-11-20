@@ -1,4 +1,4 @@
-import { meRetrieveOptions } from '@sidequest/api';
+import { meRetrieveOptions } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 
 import { useAuth } from '@/auth/auth-provider';

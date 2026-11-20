@@ -1,4 +1,4 @@
-import { flagsRetrieveOptions } from '@sidequest/api';
+import { flagsRetrieveOptions } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 
 /**

@@ -6,7 +6,7 @@ import {
   useUpcomingFeed,
   type Event,
   type LatLng,
-} from '@sidequest/api';
+} from '@questing/api';
 import { Link, router, type Href } from 'expo-router';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';

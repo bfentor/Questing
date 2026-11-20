@@ -278,7 +278,7 @@ class Showcase:
         # A new account is named after its email; give the demo account a proper name.
         if self.me.display_name == self.viewer.email.split("@")[0]:
             self.me.display_name = "Demo Student"
-        self.me.bio = self.me.bio or "Trying out every corner of Sidequest."
+        self.me.bio = self.me.bio or "Trying out every corner of Questing."
         self.me.faculty = self.me.faculty or "Software Engineering"
         self.me.study_year = self.me.study_year or 2
         self.me.university = self.me.university or "LUT University"
@@ -955,7 +955,7 @@ class Showcase:
         # The viewer's own posts: one that people reacted to, and one sharing an event.
         welcome = self.post(
             me,
-            "First week on Sidequest and I've already found three new clubs! Thanks "
+            "First week on Questing and I've already found three new clubs! Thanks "
             "@student_union 🙌",
             hours_ago=24 * 6,
             likes=friends,

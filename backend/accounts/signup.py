@@ -49,7 +49,7 @@ class SignupForm(forms.Form):
         birth_date = self.cleaned_data["birth_date"]
         if age_on(birth_date, timezone.localdate()) < settings.MINIMUM_AGE:
             raise forms.ValidationError(
-                _("You need to be at least %(age)s years old to use Sidequest.")
+                _("You need to be at least %(age)s years old to use Questing.")
                 % {"age": settings.MINIMUM_AGE}
             )
         return birth_date

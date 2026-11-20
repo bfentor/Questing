@@ -1,10 +1,11 @@
-import type { Event } from '@sidequest/api';
+import type { Event } from '@questing/api';
 import type { Metadata } from 'expo-server';
 
 import { API_URL, WEB_URL } from './config';
 
-const SITE_NAME = 'Sidequest';
-const SITE_DESCRIPTION = 'Find student events near you, and see what your friends are going to.';
+const SITE_NAME = 'Questing';
+const SITE_DESCRIPTION =
+  "Find what's on near you, follow the people and clubs behind it, and see who's going.";
 // Where events happen; the same as the backend's TIME_ZONE.
 const EVENT_TIME_ZONE = 'Europe/Helsinki';
 
@@ -17,7 +18,7 @@ const when = new Intl.DateTimeFormat('en-GB', {
   timeZone: EVENT_TIME_ZONE,
 });
 
-/** Tags for pages without their own: what Sidequest is. */
+/** Tags for pages without their own: what Questing is. */
 const siteMetadata: Metadata = {
   title: SITE_NAME,
   description: SITE_DESCRIPTION,

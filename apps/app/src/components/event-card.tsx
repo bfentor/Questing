@@ -1,4 +1,4 @@
-import type { Event } from '@sidequest/api';
+import type { Event } from '@questing/api';
 import { Link } from 'expo-router';
 import { SymbolView, type AndroidSymbol, type SFSymbol } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';

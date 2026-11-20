@@ -1,4 +1,4 @@
-import type { Event, LatLng } from '@sidequest/api';
+import type { Event, LatLng } from '@questing/api';
 // Metro warns about the image URLs inside; they're for default icons and controls this map doesn't use.
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useRef, useState } from 'react';

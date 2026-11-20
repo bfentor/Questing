@@ -1,4 +1,4 @@
-import type { AuthError } from '@sidequest/api';
+import type { AuthError } from '@questing/api';
 import type { TFunction } from 'i18next';
 
 /**

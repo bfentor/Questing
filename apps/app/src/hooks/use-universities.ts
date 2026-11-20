@@ -1,4 +1,4 @@
-import { universitiesListOptions } from '@sidequest/api';
+import { universitiesListOptions } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 
 /** Universities students can verify with; changes rarely, so cached for a day. */

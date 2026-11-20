@@ -1,4 +1,4 @@
-import { profilesStatsRetrieveOptions } from '@sidequest/api';
+import { profilesStatsRetrieveOptions } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 import { Link, router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -108,7 +108,7 @@ export default function DashboardScreen() {
       <ThemedText themeColor="textSecondary">{t('embed.dashboardHint')}</ThemedText>
       <ThemedView type="backgroundElement" style={[styles.snippet, shape.inner]}>
         <ThemedText type="code" selectable>
-          {`<iframe src="${WEB_URL}/embed/${handle}" title="Sidequest" width="100%" height="480" style="border:0"></iframe>`}
+          {`<iframe src="${WEB_URL}/embed/${handle}" title="Questing" width="100%" height="480" style="border:0"></iframe>`}
         </ThemedText>
       </ThemedView>
       <Button

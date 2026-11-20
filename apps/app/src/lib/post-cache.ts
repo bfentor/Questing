@@ -1,4 +1,4 @@
-import type { Post } from '@sidequest/api';
+import type { Post } from '@questing/api';
 import type { QueryClient } from '@tanstack/react-query';
 
 function isPost(value: object): value is Post {

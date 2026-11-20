@@ -40,7 +40,7 @@
   "nearby": {
     "locationFailed": "Det gick inte att avgöra var du är.",
     "askPermission": "Dela din plats för att se evenemang omkring dig. Den används bara för att sortera evenemang och sparas aldrig.",
-    "permissionDenied": "Platsåtkomst är avstängd för Sidequest. Slå på den i inställningarna för att se evenemang omkring dig.",
+    "permissionDenied": "Platsåtkomst är avstängd för Questing. Slå på den i inställningarna för att se evenemang omkring dig.",
     "useMyLocation": "Använd min plats",
     "empty": "Inga evenemang nära dig just nu.",
     "within": "{{km}} km",
@@ -167,7 +167,7 @@
     "buildUpdate": "Uppdatering {{id}} från {{date}}",
     "nearbyTitle": "Evenemang nära dig",
     "nearbyToggle": "Berätta om nya evenemang nära mig",
-    "nearbyHint": "Högst en gång om dagen. Sidequest sparar bara ungefär var du är (på ungefär en kilometer när) tills du stänger av det här.",
+    "nearbyHint": "Högst en gång om dagen. Questing sparar bara ungefär var du är (på ungefär en kilometer när) tills du stänger av det här.",
     "nearbyRadius": "Hur långt bort",
     "nearbyUpdate": "Använd var jag är nu",
     "nearbyDenied": "Tillåt platsåtkomst för att få dessa.",
@@ -245,7 +245,7 @@
     "unread": "Oläst",
     "pushPrompt": "Få en notis i telefonen när något händer.",
     "enablePush": "Slå på pushnotiser",
-    "pushDenied": "Pushnotiser är avstängda för Sidequest. Du kan slå på dem i telefonens inställningar.",
+    "pushDenied": "Pushnotiser är avstängda för Questing. Du kan slå på dem i telefonens inställningar.",
     "newFollower": "{{name}} började följa dig.",
     "newEvent": "Nytt evenemang från {{name}}: {{title}}",
     "eventChanged": "Tiden eller platsen för {{title}} har ändrats.",
@@ -340,7 +340,7 @@
     "sendInvite": "Skicka inbjudan",
     "pending": "Väntar på svar",
     "verification": "Verifieringsmärke",
-    "verificationHint": "Officiella studentkårer, ämnesföreningar och klubbar kan få ett verifieringsmärke. Berätta för moderatorerna vilka ni är och hur det kan bekräftas.",
+    "verificationHint": "Officiella organisationer, som föreningar, klubbar, scener och studentkårer, kan få ett verifieringsmärke. Berätta för moderatorerna vilka ni är och hur det kan bekräftas.",
     "verificationMessage": "Meddelande till moderatorerna",
     "requestVerification": "Begär verifiering",
     "verificationSent": "Begäran skickad. Moderatorerna hör av sig."
@@ -432,7 +432,7 @@
   },
   "account": {
     "title": "Ditt konto",
-    "exportHint": "Ladda ner en kopia av allt Sidequest sparar om dig.",
+    "exportHint": "Ladda ner en kopia av allt Questing sparar om dig.",
     "export": "Ladda ner mina uppgifter",
     "delete": "Radera konto",
     "deleteConfirmTitle": "Radera ditt konto?",
@@ -448,7 +448,7 @@
     "terms": "Användarvillkor",
     "privacy": "Integritetspolicy",
     "updatedTitle": "Våra villkor har ändrats",
-    "updatedMessage": "Läs och godkänn de uppdaterade användarvillkoren och integritetspolicyn för att fortsätta använda Sidequest.",
+    "updatedMessage": "Läs och godkänn de uppdaterade användarvillkoren och integritetspolicyn för att fortsätta använda Questing.",
     "accept": "Godkänn"
   },
   "verifyEmail": {
@@ -583,7 +583,7 @@
     "sent_other": "Skickat till {{count}} personer."
   },
   "onboarding": {
-    "title": "Välkommen till Sidequest",
+    "title": "Välkommen till Questing",
     "step": "Steg {{current}} av {{total}}",
     "interestsTitle": "Vad är du intresserad av?",
     "interestsHint": "Välj några, så föreslår vi evenemang och organisationer som passar dig.",
@@ -650,15 +650,15 @@
   "embed": {
     "title": "Kommande evenemang: {{name}}",
     "empty": "Inga kommande evenemang just nu.",
-    "seeAll": "Se alla på Sidequest",
+    "seeAll": "Se alla på Questing",
     "dashboardTitle": "På din webbplats",
     "dashboardHint": "Klistra in det här på din webbplats för att visa dina kommande evenemang där. Det uppdateras av sig självt."
   },
   "welcome": {
-    "title": "Alla studentevenemang på ett ställe",
-    "tagline": "Sidequest visar vad som händer runt ditt campus: fester, idrott, klubbar, karriärevenemang och mycket mer, från studentkårerna, gillena och klubbarna som ordnar dem.",
+    "title": "Allt som händer nära dig, på ett ställe",
+    "tagline": "Questing visar vad som händer omkring dig: spelningar, idrott, klubbar, fester, workshoppar och mycket mer, från föreningarna, klubbarna, scenerna och studentkårerna som ordnar dem.",
     "pointNearby": "Hitta evenemang nära dig, i kväll eller i helgen",
-    "pointFollow": "Följ ditt gille och dina klubbar så missar du aldrig deras evenemang",
+    "pointFollow": "Följ dina klubbar och favoritarrangörer så missar du aldrig deras evenemang",
     "pointFriends": "Anmäl dig och se vilka vänner som ska gå",
     "signUp": "Registrera dig, det är gratis",
     "appStore": "Ladda ned i App Store",

@@ -1,4 +1,4 @@
-import { geocodeListOptions, type LatLng } from '@sidequest/api';
+import { geocodeListOptions, type LatLng } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

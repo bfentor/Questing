@@ -4,7 +4,7 @@ import {
   useProfileEvents,
   useProfilePosts,
   type Profile,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 import { useState, type ReactElement, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,4 +1,4 @@
-import { useNearbyFeed, type LatLng } from '@sidequest/api';
+import { useNearbyFeed, type LatLng } from '@questing/api';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

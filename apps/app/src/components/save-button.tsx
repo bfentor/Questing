@@ -4,7 +4,7 @@ import {
   eventsSaveUpdate,
   meSavedListInfiniteQueryKey,
   type Event,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 

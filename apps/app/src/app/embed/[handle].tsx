@@ -1,4 +1,4 @@
-import { profilesEventsListOptions, profilesRetrieveOptions } from '@sidequest/api';
+import { profilesEventsListOptions, profilesRetrieveOptions } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ const SHOWN = 10;
 /**
  * A profile's upcoming public events, without the app around them, for
  * organizations to put on their own website in an iframe (the snippet is on
- * their dashboard). Events open on Sidequest in a new tab.
+ * their dashboard). Events open on Questing in a new tab.
  */
 export default function EmbedScreen() {
   const shape = useShape();

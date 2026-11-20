@@ -1,5 +1,5 @@
 {
-  "name": "sidequest",
+  "name": "questing",
   "version": "0.2.0",
   "private": true,
   "workspaces": [
@@ -9,13 +9,13 @@
   ],
   "scripts": {
     "dev": "scripts/dev",
-    "app": "npm run start -w @sidequest/app --",
-    "api:generate": "npm run generate -w @sidequest/api",
+    "app": "npm run start -w @questing/app --",
+    "api:generate": "npm run generate -w @questing/api",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "e2e": "npm test -w @sidequest/e2e --"
+    "e2e": "npm test -w @questing/e2e --"
   },
   "engines": {
     "node": ">=22"

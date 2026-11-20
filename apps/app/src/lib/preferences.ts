@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 
+// From before the app became Questing (as are the other stored keys): a new prefix would
+// forget everyone's settings.
 const PREFIX = 'sidequest.';
 
 /**

@@ -1,4 +1,4 @@
-import { configureApi } from '@sidequest/api';
+import { configureApi } from '@questing/api';
 
 import i18n from '@/i18n';
 import { API_URL } from '@/lib/config';

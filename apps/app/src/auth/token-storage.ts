@@ -1,5 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 
+// Named before the app became Questing; a new name would sign everyone out.
 const KEY = 'sidequest.session-token';
 
 /** Persists the session token in the iOS Keychain / Android Keystore. */

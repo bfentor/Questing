@@ -3,7 +3,7 @@ import {
   meRetrieveQueryKey,
   profilesRetrieveQueryKey,
   type Profile,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { ActivityIndicator } from 'react-native';
 

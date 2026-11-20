@@ -1,4 +1,4 @@
-import { postsDestroyMutation, type Post } from '@sidequest/api';
+import { postsDestroyMutation, type Post } from '@questing/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';

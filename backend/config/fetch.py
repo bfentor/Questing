@@ -15,7 +15,7 @@ from urllib.parse import urljoin, urlsplit
 
 logger = logging.getLogger(__name__)
 
-USER_AGENT = "Sidequest (+https://questing.fi)"
+USER_AGENT = "Questing (+https://questing.fi)"
 TIMEOUT_SECONDS = 3
 MAX_REDIRECTS = 3
 

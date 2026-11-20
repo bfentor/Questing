@@ -1,4 +1,4 @@
-import { meSettingsRetrieveOptions } from '@sidequest/api';
+import { meSettingsRetrieveOptions } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 import { router, usePathname, useRootNavigationState } from 'expo-router';
 import { useEffect } from 'react';

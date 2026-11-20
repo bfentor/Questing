@@ -1,6 +1,6 @@
-# Sidequest
+# Questing
 
-An event dashboard for students. One codebase ships to the **App Store**, **Google Play** and the **web**, backed by a Django API.
+An app for finding what's on near you: events from clubs, associations, venues and student unions, and the people you follow. One codebase ships to the **App Store**, **Google Play** and the **web**, backed by a Django API.
 
 The app has three feeds:
 

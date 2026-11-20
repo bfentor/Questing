@@ -1,4 +1,4 @@
-import { useMyEvents, type MyEventList } from '@sidequest/api';
+import { useMyEvents, type MyEventList } from '@questing/api';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

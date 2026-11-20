@@ -6,7 +6,7 @@ import {
   meAttendingListInfiniteQueryKey,
   type AttendanceSummary,
   type Event,
-} from '@sidequest/api';
+} from '@questing/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
