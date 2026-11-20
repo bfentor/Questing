@@ -13,18 +13,18 @@ from events.services import publish_event
 from posts.models import Post
 from profiles.models import Follow, Membership, Profile
 
-from .services import DEMO_EMAIL, check_enabled, mark
+from .services import DEMO_EMAIL, check_enabled, mark, sensible_start
 
 DEMO_PASSWORD = "sidequest-demo"
 
-# (title, venue, (lng, lat), starts in hours, duration in hours)
+# (title, venue, (lng, lat), starts in hours, duration in hours, at what hour of the day)
 EVENTS = [
-    ("Board game night", "Student union building", (28.0951, 61.0647), 3, 4),
-    ("Morning run by the lake", "Myllysaari beach", (28.1665, 61.0532), 20, 1),
-    ("Startup pitch evening", "Main campus auditorium", (28.0934, 61.0652), 50, 3),
-    ("Sauna & swim", "Lake Saimaa harbour", (28.1820, 61.0645), 74, 3),
-    ("Hackathon kick-off", "Helsinki city centre", (24.9384, 60.1699), 30, 8),
-    ("Open-air cinema", "Esplanadi park", (24.9497, 60.1675), 98, 3),
+    ("Board game night", "Student union building", (28.0951, 61.0647), 3, 4, 18),
+    ("Morning run by the lake", "Myllysaari beach", (28.1665, 61.0532), 20, 1, 7),
+    ("Startup pitch evening", "Main campus auditorium", (28.0934, 61.0652), 50, 3, 18),
+    ("Sauna & swim", "Lake Saimaa harbour", (28.1820, 61.0645), 74, 3, 17),
+    ("Hackathon kick-off", "Helsinki city centre", (24.9384, 60.1699), 30, 8, 10),
+    ("Open-air cinema", "Esplanadi park", (24.9497, 60.1675), 98, 3, 20),
 ]
 
 
@@ -58,8 +58,8 @@ def seed_demo():
     Follow.objects.create(follower=demo.profile, followee=friend.profile)
 
     now = timezone.now()
-    for index, (title, venue, (lng, lat), starts_in, hours) in enumerate(EVENTS):
-        starts_at = now + timedelta(hours=starts_in)
+    for index, (title, venue, (lng, lat), starts_in, hours, hour) in enumerate(EVENTS):
+        starts_at = sensible_start(now, starts_in, hour)
         publish_event(
             organizer=union if index % 2 == 0 else friend.profile,
             title=title,

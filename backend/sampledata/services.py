@@ -5,13 +5,17 @@ belongs to one of them, so `delete_sample_data` finds all of it (and nothing rea
 Dates are relative to when it's generated: generating again moves everything back around today.
 """
 
+from datetime import timedelta
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
+from django.utils import timezone
 
 from accounts.models import User
 from events.models import Event
 from images.models import Image
+from moderation.models import Report
 from posts.models import LinkPreview, Post
 from profiles.models import Profile
 
@@ -19,6 +23,34 @@ from .models import SampleProfile
 
 # The account sample data is seen through, unless another is given.
 DEMO_EMAIL = "demo@sidequest.test"
+
+
+def sensible_start(now, hours, hour=None):
+    """`hours` from `now`, at a time people would actually meet.
+
+    With `hour`, at that hour on the same day (the next or previous day if that would put an
+    upcoming event in the past, or a past one in the future). Otherwise on a quarter hour, and
+    moved out of the night to 18:00 the same day, as long as that keeps an upcoming event
+    upcoming and a past one over. Events that are on right now stay put.
+    """
+    if hour is not None and not -6 < hours <= 0:
+        local = timezone.localtime(now + timedelta(hours=hours))
+        start = local.replace(hour=hour, minute=0, second=0, microsecond=0)
+        if hours > 0 and start < now + timedelta(hours=1):
+            start += timedelta(days=1)
+        elif hours < 0 and start > now - timedelta(hours=8):
+            start -= timedelta(days=1)
+        return start
+    local = timezone.localtime(now + timedelta(hours=hours))
+    local = local.replace(minute=local.minute - local.minute % 15, second=0, microsecond=0)
+    if -6 < hours <= 0 or 8 <= local.hour < 22:
+        return local
+    evening = local.replace(hour=18, minute=0)
+    if (hours > 0 and evening > now + timedelta(hours=1)) or (
+        hours < 0 and evening < now - timedelta(hours=8)
+    ):
+        return evening
+    return local
 
 
 def check_enabled():
@@ -82,6 +114,8 @@ def delete_sample_data():
     # Pictures are kept when their uploader goes, so remove the ones only sample data used.
     pictures = list(Image.objects.filter(uploader__in=users).values_list("pk", flat=True))
     count = profiles.count()
+    # Reports point at what they're about loosely, so they'd outlive it.
+    Report.objects.filter(reporter__in=users).delete()
     users.delete()
     # Organizations have no account of their own.
     profiles.delete()

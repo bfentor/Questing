@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import pytest
 from django.contrib.gis.geos import Point
@@ -11,9 +11,11 @@ from accounts.models import User
 from events.attendance import rsvp
 from events.models import Attendance, Event
 from images.models import Image
+from moderation.models import Report
 from notifications.models import Kind, Notification
 from posts.models import LinkPreview, Post, PostImage, PostLike
 from profiles.models import Follow, Profile
+from students.models import StudentStatus
 
 from . import services
 from .models import SampleProfile
@@ -53,6 +55,36 @@ def test_showcase_covers_the_app_from_the_demo_accounts_view():
     assert not feed.filter(author__handle="loud_larry").exists()  # muted
     assert PostImage.objects.filter(post__author__handle="student_union").count() == 4
     assert Event.objects.filter(published_at__isnull=True, organizer__handle="outdoor_club")
+
+    # A town's worth of people, and what only organizers and moderators see.
+    assert Profile.objects.filter(kind=Profile.Kind.PERSON).count() >= 40
+    assert Profile.objects.filter(kind=Profile.Kind.ORGANIZATION).count() >= 12
+    outdoor = Profile.objects.get(handle="outdoor_club")
+    assert outdoor.calendar_sources.get().events.count() == 3
+    assert outdoor.verification_requests.filter(status="pending").exists()
+    assert outdoor.invitations.count() == 2
+    assert Follow.objects.filter(followee=outdoor).count() >= 20
+    assert Report.objects.filter(status="open").exists()
+    assert StudentStatus.objects.count() >= 10
+
+
+@pytest.mark.parametrize(
+    "now, hours, expected, hour",
+    [
+        ("2026-11-20 21:53", 5, "2026-11-21 18:00", None),  # out of the night, still upcoming
+        ("2026-11-20 13:07", 5, "2026-11-20 18:00", None),  # on a quarter hour
+        ("2026-11-20 13:07", 2, "2026-11-20 15:00", None),
+        ("2026-11-20 23:40", -1, "2026-11-20 22:30", None),  # happening now: stays put
+        ("2026-11-20 09:00", -24 * 8 - 6, "2026-11-12 18:00", None),  # past, and stays past
+        ("2026-11-20 21:53", 20, "2026-11-21 07:00", 7),  # a morning run in the morning
+        ("2026-11-21 00:45", -23, "2026-11-19 19:00", 19),  # last night's would still be on
+        ("2026-11-20 08:30", 1, "2026-11-21 08:00", 8),  # this morning's is too soon
+    ],
+)
+def test_sample_events_start_at_sensible_times(now, hours, expected, hour):
+    now = timezone.make_aware(datetime.fromisoformat(now))
+    start = services.sensible_start(now, hours, hour)
+    assert start.strftime("%Y-%m-%d %H:%M") == expected
 
 
 @pytest.mark.django_db
