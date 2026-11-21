@@ -15,8 +15,8 @@ export const PRESETS: { name: string; look: Look }[] = [
         tint: '#111111',
         onTint: '#fafaf7',
         danger: '#c2261b',
-        flag: '#FF7A1F',
-        onFlag: '#221C35',
+        flag: '#ff7a1f',
+        onFlag: '#221c35',
       },
       dark: {
         text: '#f2f1ec',
@@ -27,7 +27,7 @@ export const PRESETS: { name: string; look: Look }[] = [
         tint: '#f2f1ec',
         onTint: '#121211',
         danger: '#ff6b5e',
-        flag: '#FF9A4D',
+        flag: '#ff9a4d',
         onFlag: '#191527',
       },
       shape: {
@@ -53,8 +53,8 @@ export const PRESETS: { name: string; look: Look }[] = [
         tint: '#c42a7c',
         onTint: '#ffffff',
         danger: '#c92a36',
-        flag: '#FF7A1F',
-        onFlag: '#221C35',
+        flag: '#ff7a1f',
+        onFlag: '#221c35',
       },
       dark: {
         text: '#fbeaf4',
@@ -65,7 +65,7 @@ export const PRESETS: { name: string; look: Look }[] = [
         tint: '#ff6eb4',
         onTint: '#2b0a1c',
         danger: '#ff6b78',
-        flag: '#FF9A4D',
+        flag: '#ff9a4d',
         onFlag: '#191527',
       },
       shape: {
@@ -91,8 +91,8 @@ export const PRESETS: { name: string; look: Look }[] = [
         tint: '#2f7a3f',
         onTint: '#ffffff',
         danger: '#b8322a',
-        flag: '#FF7A1F',
-        onFlag: '#221C35',
+        flag: '#ff7a1f',
+        onFlag: '#221c35',
       },
       dark: {
         text: '#e6efe2',
@@ -103,7 +103,7 @@ export const PRESETS: { name: string; look: Look }[] = [
         tint: '#5fbf73',
         onTint: '#08130b',
         danger: '#ff7b6e',
-        flag: '#FF9A4D',
+        flag: '#ff9a4d',
         onFlag: '#191527',
       },
       shape: {
@@ -129,8 +129,8 @@ export const PRESETS: { name: string; look: Look }[] = [
         tint: '#c2410c',
         onTint: '#ffffff',
         danger: '#b91c1c',
-        flag: '#FF7A1F',
-        onFlag: '#221C35',
+        flag: '#ff7a1f',
+        onFlag: '#221c35',
       },
       dark: {
         text: '#fdeee0',
@@ -141,7 +141,7 @@ export const PRESETS: { name: string; look: Look }[] = [
         tint: '#ff8a3d',
         onTint: '#2a1204',
         danger: '#ff6b6b',
-        flag: '#FF9A4D',
+        flag: '#ff9a4d',
         onFlag: '#191527',
       },
       shape: {
@@ -167,8 +167,8 @@ export const PRESETS: { name: string; look: Look }[] = [
         tint: '#4f46e5',
         onTint: '#ffffff',
         danger: '#dc2626',
-        flag: '#FF7A1F',
-        onFlag: '#221C35',
+        flag: '#ff7a1f',
+        onFlag: '#221c35',
       },
       dark: {
         text: '#e2e8f0',
@@ -179,7 +179,7 @@ export const PRESETS: { name: string; look: Look }[] = [
         tint: '#818cf8',
         onTint: '#0b1020',
         danger: '#f87171',
-        flag: '#FF9A4D',
+        flag: '#ff9a4d',
         onFlag: '#191527',
       },
       shape: {
@@ -229,7 +229,7 @@ export function randomLook(): Look {
     tint: hsl(hue, 70, 40),
     onTint: '',
     danger: '#c62828',
-    flag: '#FF9A4D',
+    flag: '#ff9a4d',
     onFlag: '#191527',
   };
   const dark: Palette = {
@@ -241,7 +241,7 @@ export function randomLook(): Look {
     tint: hsl(hue, 80, 66),
     onTint: '',
     danger: '#ff6b6b',
-    flag: '#FF9A4D',
+    flag: '#ff9a4d',
     onFlag: '#191527',
   };
   light.onTint = textOn(light.tint);
