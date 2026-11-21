@@ -42,28 +42,28 @@ const OVERLAY = `(() => {
       pointer-events: none; transform: translate(-100px, -100px); transition: none; }
     #tour-cursor svg { filter: drop-shadow(0 1px 2px rgb(0 0 0 / 35%)); }
     .tour-ripple { position: fixed; z-index: 2147483646; pointer-events: none; width: 36px; height: 36px;
-      margin: -18px 0 0 -18px; border-radius: 50%; background: rgb(79 70 229 / 30%);
+      margin: -18px 0 0 -18px; border-radius: 50%; background: rgb(176 22 143 / 30%);
       animation: tour-ripple 0.5s ease-out forwards; }
     @keyframes tour-ripple { from { transform: scale(0.3); opacity: 1 } to { transform: scale(1.6); opacity: 0 } }
     #tour-caption { position: fixed; left: 50%; bottom: 28px; z-index: 2147483645; pointer-events: none;
-      max-width: 860px; padding: 12px 22px; border-radius: 14px; background: rgb(15 23 42 / 86%);
-      color: #fff; font: 500 20px/1.4 system-ui, sans-serif; text-align: center;
+      max-width: 860px; padding: 12px 22px; border-radius: 14px; background: rgb(34 28 53 / 88%);
+      color: #fff; font: 20px/1.4 'Figtree-Medium', system-ui, sans-serif; text-align: center;
       transform: translate(-50%, 12px); opacity: 0; transition: opacity 0.35s ease, transform 0.35s ease; }
     #tour-caption.on { opacity: 1; transform: translate(-50%, 0); }
     #tour-card { position: fixed; inset: 0; z-index: 2147483644; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 18px; background: #f8fafc; color: #0f172a;
-      font-family: system-ui, sans-serif; text-align: center; opacity: 0; pointer-events: none;
+      align-items: center; justify-content: center; gap: 18px; background: #f4f6ee; color: #221c35;
+      font-family: 'Figtree-Medium', system-ui, sans-serif; text-align: center; opacity: 0; pointer-events: none;
       transition: opacity 0.6s ease; }
     #tour-card.on { opacity: 1; }
     #tour-card.on ~ #tour-cursor { visibility: hidden; }
     #tour-card svg { width: 96px; height: 96px; }
-    #tour-card h1 { margin: 0; font-size: 56px; letter-spacing: -0.03em; }
-    #tour-card p { margin: 0; font-size: 24px; color: #526079; max-width: 760px; }
+    #tour-card h1 { margin: 0; font: 64px/1 'Anybody-Black', system-ui, sans-serif; letter-spacing: -0.02em; }
+    #tour-card p { margin: 0; font-size: 24px; color: #5e5873; max-width: 760px; }
     #tour-card .small { font-size: 18px; }
   \`;
   const cursor = document.createElement('div');
   cursor.id = 'tour-cursor';
-  cursor.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26"><path d="M4 2l15 11-6.5 1.2L9.8 21z" fill="#0f172a" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+  cursor.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26"><path d="M4 2l15 11-6.5 1.2L9.8 21z" fill="#221c35" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
   const caption = document.createElement('div');
   caption.id = 'tour-caption';
   const card = document.createElement('div');
