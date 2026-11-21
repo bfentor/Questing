@@ -1,13 +1,14 @@
 name: Release
 
-# Runs on every push to testing (and by hand: Actions › Release › Run workflow). release-please
-# keeps a pull request titled "chore: release X.Y.Z" open and up to date: it bumps the version
-# everywhere it appears (release-please-config.json) and lists the commits since the last
-# release in CHANGELOG.md. Merging that pull request into testing makes the release: it tags it,
-# creates a GitHub Release, and the next deploy shows the new version. The version comes from
-# the commit messages:
+# Runs on every push to testing (and by hand: Actions › Release › Run workflow), and makes every
+# push a release. release-please opens (or updates) a pull request titled "chore: release X.Y.Z"
+# that bumps the version everywhere it appears (release-please-config.json) and lists the
+# commits since the last release in CHANGELOG.md; this workflow then merges it straight away,
+# tags it and creates a GitHub Release, and the next deploy shows the new version. The version
+# comes from the commit messages:
 #   fix: …  → patch    feat: …  → minor    feat!: … / BREAKING CHANGE → major
-# (Before 1.0.0, breaking changes bump the minor version instead.)
+# (Before 1.0.0, breaking changes bump the minor version instead.) Pushes with only other types
+# (chore, docs, test…) don't make a release.
 
 # Needs Settings › Actions › General › "Allow GitHub Actions to create and
 # approve pull requests".
@@ -66,3 +67,38 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit --all --message "chore: lockfiles and API schema at the release's version"
           git push
+
+      # Every push is a release: merge the open release pull request now, whether this run opened
+      # or updated it or it was already waiting. Its mergeability is worked out just after a
+      # push, so a first attempt can be too early.
+      - name: Merge the release pull request
+        id: merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pr=$(gh pr list --repo "$GITHUB_REPOSITORY" --base testing --state open \
+            --label "autorelease: pending" --json number --jq '.[0].number // empty')
+          if [ -z "$pr" ]; then
+            echo "Nothing to release."
+            exit 0
+          fi
+          for attempt in 1 2 3 4 5 6; do
+            if gh pr merge "$pr" --repo "$GITHUB_REPOSITORY" --squash; then
+              echo "merged=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Couldn't merge release pull request #$pr." >&2
+          exit 1
+
+      # Then tag it and create its GitHub Release. A merge made with this workflow's own token
+      # doesn't start a new run, so this run finishes the release itself.
+      - name: Tag the release
+        if: steps.merge.outputs.merged == 'true'
+        uses: googleapis/release-please-action@v4
+        with:
+          target-branch: testing
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          skip-github-pull-request: true

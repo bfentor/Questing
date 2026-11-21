@@ -5,13 +5,16 @@
 #
 #   git add -A
 #   git commit -m "<type>(<scope>): <description>"
+#   git fetch origin testing && git merge --no-edit origin/testing
 #   git push origin <branch>
 #   git checkout testing && git pull --ff-only origin testing
 #   git merge --no-edit <branch> && git push origin testing
 #   git checkout <branch>
 #
-# The version is not bumped here: release-please works it out from the commit
-# messages and opens a release pull request (.github/workflows/release-please.yml).
+# The version is not bumped here: once testing has the push, the Release workflow works it out
+# from the commit messages and releases it (.github/workflows/release-please.yml). Its release
+# commits land on testing, so shipping first merges testing into your branch: it picks up the
+# previous release's version and changelog, and nothing on testing is left out of the branch.
 #
 # Set up the alias once per clone:
 #   git config alias.ship '!scripts/git-ship'
@@ -56,6 +59,8 @@ else
     echo "No changes to commit: shipping $branch as it is."
 fi
 
+git fetch origin testing
+git merge --no-edit origin/testing
 git push origin "$branch"
 git checkout testing
 git pull --ff-only origin testing
