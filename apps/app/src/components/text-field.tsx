@@ -1,5 +1,6 @@
 import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
+import { FontFamily } from '@/constants/fonts';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useShape } from '@/hooks/use-shape';
@@ -49,6 +50,7 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   input: {
+    fontFamily: FontFamily.body,
     paddingHorizontal: Spacing.three,
     fontSize: 16,
   },

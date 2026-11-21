@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, TextInput, View } from 'react-native';
 
+import { FontFamily } from '@/constants/fonts';
 import { Spacing } from '@/constants/theme';
 import { useImagePaste } from '@/hooks/use-image-paste';
 import type { PastedImage } from '@/hooks/use-image-paste.shared';
@@ -151,6 +152,7 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   input: {
+    fontFamily: FontFamily.body,
     flex: 1,
     minHeight: 44,
     maxHeight: 160,

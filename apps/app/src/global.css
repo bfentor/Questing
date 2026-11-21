@@ -1,9 +1,24 @@
 :root {
+  /* The families constants/fonts.ts loads (Figtree for text, Anybody for titles). */
   --font-display:
-    Spline Sans, Inter, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji,
+    'Figtree-Medium', ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji,
     Segoe UI Symbol, Noto Color Emoji;
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
   --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;
+  --font-title: 'Anybody-Black', 'Figtree-Bold', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Taps answer with the app's own press animations, not the browser's grey flash. */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Text inputs and the browser's own controls in the app's typeface. */
+input,
+textarea,
+select,
+button {
+  font-family: var(--font-display);
 }
