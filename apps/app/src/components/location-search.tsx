@@ -2,12 +2,13 @@ import { geocodeListOptions, type LatLng } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useShape } from '@/hooks/use-shape';
 
+import { PressableScale } from './pressable-scale';
 import { Button } from './button';
 import { LocationPin } from './location-pin';
 import { TextField } from './text-field';
@@ -77,7 +78,8 @@ export function LocationSearch({ value, onChange }: LocationSearchProps) {
             { backgroundColor: theme.backgroundElement },
           ]}>
           {results.data.map((place) => (
-            <Pressable
+            <PressableScale
+              squish="card"
               key={`${place.lat},${place.lng}`}
               role="option"
               onPress={() => {
@@ -88,9 +90,9 @@ export function LocationSearch({ value, onChange }: LocationSearchProps) {
                 setMapOpen(true);
                 onChange({ address: place.label, location });
               }}
-              style={({ pressed }) => [styles.result, pressed && { opacity: 0.6 }]}>
+              style={[styles.result]}>
               <ThemedText type="small">{place.label}</ThemedText>
-            </Pressable>
+            </PressableScale>
           ))}
         </View>
       ) : null}

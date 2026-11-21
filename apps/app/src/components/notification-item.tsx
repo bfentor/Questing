@@ -2,13 +2,14 @@ import type { Notification } from '@questing/api';
 import { router } from 'expo-router';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useShape } from '@/hooks/use-shape';
 import { useFormat } from '@/lib/format';
 
+import { PressableScale } from './pressable-scale';
 import { Avatar } from './avatar';
 import { Logo } from './logo';
 import { ThemedText } from './themed-text';
@@ -84,13 +85,13 @@ export function NotificationItem({ notification }: { notification: Notification 
   const format = useFormat();
 
   return (
-    <Pressable
+    <PressableScale
+      squish="card"
       onPress={() => open(notification)}
-      style={({ pressed }) => [
+      style={[
         styles.item,
         shape.box,
         !notification.read && { backgroundColor: theme.backgroundElement },
-        pressed && styles.pressed,
       ]}>
       {notification.actor ? (
         <Avatar
@@ -114,7 +115,7 @@ export function NotificationItem({ notification }: { notification: Notification 
           accessibilityLabel={t('notifications.unread')}
         />
       ) : null}
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -133,8 +134,5 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-  },
-  pressed: {
-    opacity: 0.7,
   },
 });

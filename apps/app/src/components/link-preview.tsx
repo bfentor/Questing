@@ -1,11 +1,12 @@
 import type { LinkPreview as LinkPreviewData } from '@questing/api';
 import { Image } from 'expo-image';
-import { Linking, Pressable, StyleSheet, View } from 'react-native';
+import { Linking, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useShape } from '@/hooks/use-shape';
 
+import { PressableScale } from './pressable-scale';
 import { ThemedText } from './themed-text';
 
 /** The page a post links to: its picture, site, title and description. Opens the page. */
@@ -14,16 +15,12 @@ export function LinkPreview({ preview }: { preview: LinkPreviewData }) {
   const shape = useShape();
 
   return (
-    <Pressable
+    <PressableScale
+      squish="card"
       role="link"
       accessibilityLabel={preview.title}
       onPress={() => Linking.openURL(preview.url)}
-      style={({ pressed }) => [
-        styles.card,
-        shape.picture,
-        { borderColor: theme.backgroundElement },
-        pressed && styles.pressed,
-      ]}>
+      style={[styles.card, shape.picture, { borderColor: theme.backgroundElement }]}>
       {preview.image_url ? (
         <Image
           source={{ uri: preview.image_url }}
@@ -47,7 +44,7 @@ export function LinkPreview({ preview }: { preview: LinkPreviewData }) {
           </ThemedText>
         ) : null}
       </View>
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -55,9 +52,6 @@ const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
     overflow: 'hidden',
-  },
-  pressed: {
-    opacity: 0.7,
   },
   image: {
     width: '100%',

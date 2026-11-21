@@ -1,10 +1,11 @@
 import { SymbolView, type AndroidSymbol, type SFSymbol } from 'expo-symbols';
-import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useShape } from '@/hooks/use-shape';
 
+import { PressableScale } from './pressable-scale';
 import { ThemedText } from './themed-text';
 
 type ButtonProps = {
@@ -33,7 +34,8 @@ export function Button({
   const shape = useShape();
   const background = {
     primary: theme.tint,
-    secondary: theme.backgroundElement,
+    // Pale, so it shows on white cards as well as on the page.
+    secondary: theme.backgroundSelected,
     danger: theme.danger,
     outline: 'transparent',
   }[variant];
@@ -46,11 +48,12 @@ export function Button({
   const filled = variant !== 'secondary' && variant !== 'outline';
 
   return (
-    <Pressable
+    <PressableScale
       role="button"
       onPress={onPress}
+      feedback="tap"
       disabled={disabled || loading}
-      style={({ pressed }) => [
+      style={[
         styles.button,
         shape.button,
         size === 'small' && styles.small,
@@ -58,7 +61,7 @@ export function Button({
         filled && shape.raised,
         variant === 'outline' && [styles.outline, { borderColor: theme.tint }],
         { backgroundColor: background },
-        (pressed || disabled) && styles.dimmed,
+        disabled && styles.dimmed,
       ]}>
       {loading ? (
         <ActivityIndicator color={foreground} />
@@ -71,12 +74,14 @@ export function Button({
               tintColor={foreground}
             />
           ) : null}
-          <ThemedText type="smallBold" style={{ color: foreground, textAlign: 'center' }}>
+          <ThemedText
+            type="smallBold"
+            style={[styles.label, size === 'small' && styles.smallLabel, { color: foreground }]}>
             {title}
           </ThemedText>
         </>
       )}
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -102,6 +107,15 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   dimmed: {
-    opacity: 0.6,
+    opacity: 0.5,
+  },
+  label: {
+    fontSize: 16,
+    lineHeight: 22,
+    textAlign: 'center',
+  },
+  smallLabel: {
+    fontSize: 14,
+    lineHeight: 20,
   },
 });

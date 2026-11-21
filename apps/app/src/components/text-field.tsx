@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
 import { FontFamily } from '@/constants/fonts';
@@ -21,9 +22,17 @@ const IGNORED_BY_PASSWORD_MANAGERS = {
   dataSet: { bwignore: 'true', '1pIgnore': 'true', lpignore: 'true' },
 };
 
-export function TextField({ label, style, notALogin, ...inputProps }: TextFieldProps) {
+export function TextField({
+  label,
+  style,
+  notALogin,
+  onFocus,
+  onBlur,
+  ...inputProps
+}: TextFieldProps) {
   const shape = useShape();
   const theme = useTheme();
+  const [focused, setFocused] = useState(false);
 
   return (
     <View style={styles.field}>
@@ -35,11 +44,24 @@ export function TextField({ label, style, notALogin, ...inputProps }: TextFieldP
         style={[
           styles.input,
           shape.field,
-          { color: theme.text, backgroundColor: theme.backgroundElement },
+          {
+            color: theme.text,
+            backgroundColor: theme.backgroundElement,
+            // The field being typed in is outlined in the accent.
+            borderColor: focused ? theme.tint : theme.backgroundSelected,
+          },
           style,
         ]}
         {...(notALogin ? IGNORED_BY_PASSWORD_MANAGERS : {})}
         {...inputProps}
+        onFocus={(event) => {
+          setFocused(true);
+          onFocus?.(event);
+        }}
+        onBlur={(event) => {
+          setFocused(false);
+          onBlur?.(event);
+        }}
       />
     </View>
   );
@@ -51,6 +73,7 @@ const styles = StyleSheet.create({
   },
   input: {
     fontFamily: FontFamily.body,
+    borderWidth: 2,
     paddingHorizontal: Spacing.three,
     fontSize: 16,
   },

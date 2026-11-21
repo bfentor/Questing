@@ -3,8 +3,9 @@ import { useMutation } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
+import { PressableScale } from '@/components/pressable-scale';
 import { Button } from '@/components/button';
 import type { ReportTarget } from '@/components/content-menu';
 import { Screen } from '@/components/screen';
@@ -52,17 +53,18 @@ export default function ReportScreen() {
         {REASONS.map((option) => {
           const selected = option === reason;
           return (
-            <Pressable
+            <PressableScale
+              squish="card"
               key={option}
               role="radio"
               aria-checked={selected}
               onPress={() => setReason(option)}
-              style={({ pressed }) => [styles.option, pressed && styles.pressed]}>
+              style={[styles.option]}>
               <ThemedText style={selected && { color: theme.tint }}>
                 {t(`moderation.reasons.${option}`)}
               </ThemedText>
               {selected ? <ThemedText style={{ color: theme.tint }}>✓</ThemedText> : null}
-            </Pressable>
+            </PressableScale>
           );
         })}
       </ThemedView>
@@ -98,9 +100,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.three,
-  },
-  pressed: {
-    opacity: 0.6,
   },
   details: {
     minHeight: 96,

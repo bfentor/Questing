@@ -1,8 +1,10 @@
 import { SymbolView, type AndroidSymbol, type SFSymbol } from 'expo-symbols';
-import { Pressable, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { useShape } from '@/hooks/use-shape';
 import { useTheme } from '@/hooks/use-theme';
+
+import { PressableScale } from './pressable-scale';
 
 type IconButtonProps = {
   /** SF Symbol on iOS; Material Symbol on Android and web. */
@@ -18,18 +20,20 @@ export function IconButton({ icon, label, onPress, size = 20, color }: IconButto
   const theme = useTheme();
 
   return (
-    <Pressable
+    <PressableScale
       role="button"
       accessibilityLabel={label}
       hitSlop={8}
+      squish="icon"
+      feedback="tap"
       onPress={onPress}
-      style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
+      style={styles.button}>
       <SymbolView
         name={{ ios: icon.ios, android: icon.material, web: icon.material }}
         size={size}
         tintColor={color ?? theme.textSecondary}
       />
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -48,33 +52,34 @@ export function RoundIconButton({
   const shape = useShape();
 
   return (
-    <Pressable
+    <PressableScale
       role="button"
       accessibilityLabel={label}
       hitSlop={6}
+      squish="icon"
+      feedback="tap"
       onPress={onPress}
-      style={({ pressed }) => [
+      style={[
         styles.round,
         {
           backgroundColor: primary ? theme.tint : outline ? 'transparent' : theme.backgroundElement,
         },
         outline && [styles.outline, { borderColor: theme.tint }],
         primary && shape.raised,
-        pressed && styles.pressed,
       ]}>
       <SymbolView
         name={{ ios: icon.ios, android: icon.material, web: icon.material }}
         size={18}
         tintColor={primary ? theme.onTint : outline ? theme.tint : theme.text}
       />
-    </Pressable>
+    </PressableScale>
   );
 }
 
 const styles = StyleSheet.create({
   round: {
-    width: 34,
-    height: 34,
+    width: 38,
+    height: 38,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 999,
@@ -85,8 +90,5 @@ const styles = StyleSheet.create({
   button: {
     padding: 4,
     borderRadius: 999,
-  },
-  pressed: {
-    opacity: 0.5,
   },
 });
