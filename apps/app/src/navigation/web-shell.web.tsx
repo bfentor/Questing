@@ -2,7 +2,14 @@ import { eventsRetrieveOptions, useUnreadCount } from '@questing/api';
 import { useQuery } from '@tanstack/react-query';
 import { Link, usePathname, type Href } from 'expo-router';
 import { SymbolView, type AndroidSymbol } from 'expo-symbols';
-import { useCallback, useMemo, useState, type ComponentProps, type ReactNode } from 'react';
+import {
+  useCallback,
+  useMemo,
+  useState,
+  type ComponentProps,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaInsetsContext, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -76,8 +83,17 @@ export function WebShell({ children }: { children: ReactNode }) {
       <KeyboardShortcuts onEscape={close} />
       <div
         className={panelOpen ? `${classes.shell} ${classes.withPanel}` : classes.shell}
-        // Around the pages' own backgrounds, e.g. behind the sidebar.
-        style={{ backgroundColor: theme.background }}>
+        // Around the pages' own backgrounds, e.g. behind the sidebar; the CSS colours the
+        // bottom bar and the lines between areas from these.
+        style={
+          {
+            backgroundColor: theme.background,
+            '--nav-background': theme.backgroundElement,
+            '--nav-line': theme.backgroundSelected,
+            '--nav-accent': theme.tint,
+            '--nav-on-accent': theme.onTint,
+          } as CSSProperties
+        }>
         <NavBar>
           {TABS.map((tab) => (
             <Link key={tab.name} href={tab.href} asChild>
@@ -205,19 +221,21 @@ function TabButton({ icon, children, badge = 0, isFocused, ...props }: TabButton
   const color = isFocused ? theme.tint : theme.textSecondary;
 
   return (
-    <Pressable {...props}>
+    <Pressable {...props} aria-current={isFocused ? 'page' : undefined}>
       <div className={classes.tabButton}>
-        <SymbolView name={{ web: icon }} tintColor={color} size={24} />
+        <span className={classes.icon}>
+          {/* Where you are, circled like a checkpoint on the course; it springs in. */}
+          {isFocused ? <span className={classes.ring} /> : null}
+          <SymbolView name={{ web: icon }} tintColor={color} size={24} />
+        </span>
         <span className={classes.label}>
-          <ThemedText type="smallBold" style={{ color }}>
+          <ThemedText
+            type="smallBold"
+            style={{ color: isFocused ? theme.text : theme.textSecondary }}>
             {children}
           </ThemedText>
         </span>
-        {badge > 0 ? (
-          <span className={classes.badge} style={{ backgroundColor: theme.tint }}>
-            {badge > 99 ? '99+' : badge}
-          </span>
-        ) : null}
+        {badge > 0 ? <span className={classes.badge}>{badge > 99 ? '99+' : badge}</span> : null}
       </div>
     </Pressable>
   );

@@ -1,10 +1,8 @@
 import { createContext, useContext, useSyncExternalStore } from 'react';
 import { Platform, useWindowDimensions, type ViewStyle } from 'react-native';
 
-/** From this width, the web app has a sidebar and frames the page's column. */
+/** From this width, the web app has a sidebar beside the page's column. */
 export const SidebarMinWidth = 768;
-/** The lines between the sidebar, the column and the event panel. */
-export const DividerColor = 'rgba(127, 127, 127, 0.25)';
 
 const BesideSidebarContext = createContext(false);
 const subscribe = () => () => {};
@@ -13,9 +11,9 @@ const subscribe = () => () => {};
 export const BesideSidebar = BesideSidebarContext.Provider;
 
 /**
- * Extra style for a screen's content column. On wide web screens it gets a border on each
- * side and fills the window's height, so it doesn't just fade into the background; beside
- * the sidebar it lines up with it. Elsewhere nothing changes.
+ * Extra style for a screen's content column. On wide web screens it fills the window's
+ * height, and beside the sidebar it lines up with it. Elsewhere nothing changes. (Its cards
+ * are white on the map-paper background, so it needs no borders of its own.)
  */
 export function useColumnStyle(): ViewStyle | null {
   const { width } = useWindowDimensions();
@@ -33,8 +31,5 @@ export function useColumnStyle(): ViewStyle | null {
   return {
     alignSelf: besideSidebar ? 'flex-start' : 'center',
     flexGrow: 1,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: DividerColor,
   };
 }

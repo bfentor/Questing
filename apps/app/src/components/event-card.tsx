@@ -30,6 +30,8 @@ type EventCardProps = {
    * picture goes on top then, as the card is narrow.
    */
   fill?: boolean;
+  /** Inside another card, e.g. a post: on the page's colour instead of white. */
+  inset?: boolean;
 };
 
 /** Tile beside the text in a list; banner above it in a grid. */
@@ -40,7 +42,7 @@ const BANNER = 112;
  * An event in a list: its cover picture (or its date, in its category's colour), then when,
  * what, where and who. One you're going to carries a checkpoint flag, like a sticker.
  */
-export function EventCard({ event, distanceM, fill }: EventCardProps) {
+export function EventCard({ event, distanceM, fill, inset }: EventCardProps) {
   const { t } = useTranslation();
   const format = useFormat();
   const place = [event.venue_name, distanceM !== undefined && format.distance(distanceM)]
@@ -61,7 +63,7 @@ export function EventCard({ event, distanceM, fill }: EventCardProps) {
         fill && styles.fill,
         shape.box,
         {
-          backgroundColor: theme.backgroundElement,
+          backgroundColor: inset ? theme.background : theme.backgroundElement,
           // The event open beside the feed is outlined in the accent.
           borderColor: selected ? theme.tint : 'transparent',
         },
