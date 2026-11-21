@@ -87,7 +87,8 @@ export function EventCard({ event, distanceM, fill, inset }: EventCardProps) {
           {event.title}
         </ThemedText>
         {place ? (
-          <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
+          // Two lines, so a long venue name doesn't hide the distance after it.
+          <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
             {place}
           </ThemedText>
         ) : null}

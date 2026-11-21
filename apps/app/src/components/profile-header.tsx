@@ -10,9 +10,9 @@ import { useTheme } from '@/hooks/use-theme';
 import { useShape } from '@/hooks/use-shape';
 
 import { Avatar } from './avatar';
+import { MapPattern } from './map-pattern';
 import { RemoteImage } from './remote-image';
 import { ThemedText } from './themed-text';
-import { ThemedView } from './themed-view';
 
 /**
  * Their gender, as shown on the profile: the API only sends it when they show it (or it's
@@ -59,10 +59,8 @@ export function ProfileHeader({ profile, actions }: ProfileHeaderProps) {
           contentFit="cover"
         />
       ) : (
-        <ThemedView
-          type="backgroundElement"
-          style={[styles.cover, shape.picture, styles.coverEmpty]}
-        />
+        // No cover yet: a scrap of map instead of a blank box.
+        <MapPattern style={[styles.cover, shape.picture, styles.coverEmpty]} />
       )}
       <View style={styles.avatarRow}>
         {/* A ring in the page colour, so the picture stands out where it overlaps the cover. */}
