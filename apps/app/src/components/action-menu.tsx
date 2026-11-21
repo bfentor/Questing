@@ -28,7 +28,7 @@ type ActionMenuProps = {
   onClose: () => void;
   actions: MenuAction[];
   title?: string;
-  /** Drop the menu down from this button instead of showing a sheet. */
+  /** Drop the menu down from this button; without one it's a small dialog in the middle. */
   anchor?: MenuAnchor | null;
 };
 
@@ -39,8 +39,10 @@ const GAP = 4;
 const BOTTOM_CLEARANCE = 72;
 
 /**
- * A list of actions: dropped down from the button that opened it when given an `anchor`,
- * otherwise a sheet at the bottom of the screen.
+ * A list of actions, dropped down from the button that opened it (`anchor`). Without one
+ * (its button couldn't be measured) it's a small dialog in the middle of the screen. Nothing
+ * slides up from the bottom: on a desktop that's far from the button, and on phones it covers
+ * the tab bar.
  */
 export function ActionMenu({ visible, onClose, actions, title, anchor }: ActionMenuProps) {
   const reducedMotion = useReducedMotion();
@@ -62,7 +64,7 @@ export function ActionMenu({ visible, onClose, actions, title, anchor }: ActionM
       style={({ pressed, hovered }) => [
         styles.item,
         anchor && styles.dropdownItem,
-        (pressed || hovered) && { backgroundColor: theme.backgroundElement },
+        (pressed || hovered) && { backgroundColor: theme.backgroundSelected },
       ]}>
       <ThemedText style={action.destructive && { color: theme.danger }}>{action.label}</ThemedText>
     </Pressable>
@@ -82,9 +84,9 @@ export function ActionMenu({ visible, onClose, actions, title, anchor }: ActionM
             {items}
           </Dropdown>
         ) : (
-          <Sheet title={title} onClose={onClose}>
+          <Centered title={title} onClose={onClose}>
             {items}
-          </Sheet>
+          </Centered>
         )}
       </Modal>
       {confirming?.confirm ? (
@@ -104,34 +106,40 @@ export function ActionMenu({ visible, onClose, actions, title, anchor }: ActionM
 
 type PanelProps = { title?: string; onClose: () => void; children: ReactNode };
 
-function Sheet({ title, onClose, children }: PanelProps) {
+function Centered({ title, onClose, children }: PanelProps) {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const shape = useShape();
   const { t } = useTranslation();
 
   return (
-    <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel={t('common.cancel')}>
+    <View style={styles.backdrop}>
+      <Pressable
+        style={StyleSheet.absoluteFill}
+        onPress={onClose}
+        accessibilityLabel={t('common.cancel')}
+      />
       <ThemedView
-        style={[styles.sheet, { paddingBottom: insets.bottom + Spacing.two }]}
-        onStartShouldSetResponder={() => true}>
+        type="backgroundElement"
+        role="menu"
+        style={[styles.centered, shape.dialog, { borderColor: theme.backgroundSelected }]}>
         {title ? (
           <ThemedText type="smallBold" themeColor="textSecondary" style={styles.title}>
             {title}
           </ThemedText>
         ) : null}
         {children}
-        <View style={[styles.separator, { backgroundColor: theme.backgroundElement }]} />
+        <View style={[styles.separator, { backgroundColor: theme.backgroundSelected }]} />
         <Pressable
           role="button"
           onPress={onClose}
-          style={({ pressed }) => [
+          style={({ pressed, hovered }) => [
             styles.item,
-            pressed && { backgroundColor: theme.backgroundElement },
+            (pressed || hovered) && { backgroundColor: theme.backgroundSelected },
           ]}>
           <ThemedText themeColor="textSecondary">{t('common.cancel')}</ThemedText>
         </Pressable>
       </ThemedView>
-    </Pressable>
+    </View>
   );
 }
 
@@ -152,7 +160,8 @@ function Dropdown({
   const { t } = useTranslation();
   const screen = useWindowDimensions();
 
-  const width = Math.min(DROPDOWN_WIDTH, screen.width - 2 * Spacing.three);
+  // As wide as a wide button (e.g. Add to calendar); a fixed width under a small one ("…").
+  const width = Math.min(Math.max(DROPDOWN_WIDTH, anchor.width), screen.width - 2 * Spacing.three);
   const height = count * ITEM_HEIGHT + (title ? ITEM_HEIGHT : 0) + 2 * Spacing.one;
   const left = Math.min(
     Math.max(Spacing.three, anchor.x + anchor.width - width),
@@ -170,6 +179,7 @@ function Dropdown({
         accessibilityLabel={t('common.cancel')}
       />
       <ThemedView
+        type="backgroundElement"
         role="menu"
         style={[
           styles.dropdown,
@@ -195,17 +205,16 @@ function Dropdown({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    justifyContent: 'flex-end',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: Spacing.three,
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
-  sheet: {
+  centered: {
     width: '100%',
-    maxWidth: 480,
-    alignSelf: 'center',
-    borderTopLeftRadius: Spacing.four,
-    borderTopRightRadius: Spacing.four,
-    paddingTop: Spacing.two,
-    marginBottom: 0,
+    maxWidth: 360,
+    paddingVertical: Spacing.two,
+    overflow: 'hidden',
   },
   title: {
     paddingHorizontal: Spacing.four,

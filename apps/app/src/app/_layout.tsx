@@ -110,8 +110,9 @@ function RootStack() {
         name="profiles/[handle]/calendars"
         options={{ title: t('calendarSync.title') }}
       />
-      <Stack.Screen name="sign-in" options={{ title: t('common.signIn'), presentation: 'modal' }} />
-      <Stack.Screen name="sign-up" options={{ title: t('auth.signUp'), presentation: 'modal' }} />
+      {/* Ordinary pages, not sheets sliding up from the bottom. */}
+      <Stack.Screen name="sign-in" options={{ title: t('common.signIn') }} />
+      <Stack.Screen name="sign-up" options={{ title: t('auth.signUp') }} />
       <Stack.Screen name="settings" options={{ title: t('common.settings') }} />
       <Stack.Screen name="edit-profile" options={{ title: t('profile.edit') }} />
       <Stack.Screen name="follow-requests" options={{ title: t('followRequests.title') }} />
@@ -130,10 +131,7 @@ function RootStack() {
       <Stack.Screen name="organizations/new" options={{ title: t('organizations.create') }} />
       {/* Development only: the screen redirects home in production builds. */}
       <Stack.Screen name="theme-lab" options={{ title: 'Theme lab' }} />
-      <Stack.Screen
-        name="report"
-        options={{ title: t('moderation.report'), presentation: 'modal' }}
-      />
+      <Stack.Screen name="report" options={{ title: t('moderation.report') }} />
     </Stack>
   );
 }
