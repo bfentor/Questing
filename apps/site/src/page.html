@@ -16,11 +16,13 @@
     <meta property="og:description" content="{{meta.description}}" />
     <meta property="og:url" content="{{@url}}" />
     <meta property="og:image" content="{{@site}}/icons/icon-512.png?v={{@iconVersion}}" />
-    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#121830" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f4f6ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#191527" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/icons/favicon.svg?v={{@iconVersion}}" type="image/svg+xml" />
     <link rel="icon" href="/icons/favicon.ico?v={{@iconVersion}}" sizes="48x48" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v={{@iconVersion}}" />
+    <link rel="preload" href="/fonts/Anybody_900Black.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="/fonts/Figtree_500Medium.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="stylesheet" href="/style.css?v={{@styleVersion}}" />
     {{@languageRedirect}}
   </head>
@@ -42,7 +44,6 @@
       <section class="hero">
         <div class="wrap hero-inner">
           <div class="hero-text">
-            <p class="eyebrow">{{hero.eyebrow}}</p>
             <h1>{{hero.title}}</h1>
             <p class="lead">{{hero.lead}}</p>
             <div class="actions">
@@ -52,51 +53,90 @@
             <p class="note">{{hero.note}}</p>
           </div>
 
-          <figure class="phone" aria-label="{{mock.label}}">
-            <div class="screen">
-              <div class="screen-head">
-                <img src="/logo.svg?v={{@iconVersion}}" alt="" width="22" height="22" />
-                <strong>{{mock.heading}}</strong>
-              </div>
-              <div class="chips" aria-hidden="true">
-                <span class="chip on">{{mock.tonight}}</span>
-                <span class="chip">{{mock.weekend}}</span>
-                <span class="chip">{{mock.free}}</span>
-              </div>
-              <ul class="cards">
-                <li class="card">
-                  <div class="cover c1" aria-hidden="true"></div>
-                  <div class="card-body">
-                    <span class="tag t1">{{mock.e1.tag}}</span>
-                    <strong>{{mock.e1.title}}</strong>
-                    <span class="meta">{{mock.e1.meta}}</span>
-                    <span class="going"
-                      ><i class="faces" aria-hidden="true"><b></b><b></b><b></b></i
-                      >{{mock.e1.going}}</span
-                    >
-                  </div>
-                </li>
-                <li class="card">
-                  <div class="cover c2" aria-hidden="true"></div>
-                  <div class="card-body">
-                    <span class="tag t2">{{mock.e2.tag}}</span>
-                    <strong>{{mock.e2.title}}</strong>
-                    <span class="meta">{{mock.e2.meta}}</span>
-                    <span class="going"
-                      ><i class="faces" aria-hidden="true"><b></b><b></b></i>{{mock.e2.going}}</span
-                    >
-                  </div>
-                </li>
-                <li class="card">
-                  <div class="cover c3" aria-hidden="true"></div>
-                  <div class="card-body">
-                    <span class="tag t3">{{mock.e3.tag}}</span>
-                    <strong>{{mock.e3.title}}</strong>
-                    <span class="meta">{{mock.e3.meta}}</span>
-                  </div>
-                </li>
-              </ul>
-            </div>
+          <!--
+            Three events on a scrap of orienteering map, joined in the order they happen like
+            checkpoints on a course: a start triangle, numbered circles and the finish's double
+            circle. The script at the end draws the lines between them.
+          -->
+          <figure class="map">
+            <svg
+              class="terrain"
+              viewBox="0 0 400 560"
+              preserveAspectRatio="xMidYMid slice"
+              aria-hidden="true">
+              <rect class="land" width="400" height="560" />
+              <path
+                class="forest"
+                d="M0 0H210C196 40 236 70 214 112C190 158 120 150 92 196C64 242 40 250 0 252Z" />
+              <path
+                class="forest"
+                d="M400 330C356 338 330 372 344 414C356 452 330 480 340 560H400Z" />
+              <path class="water" d="M0 400C40 388 84 410 96 446C108 484 80 520 92 560H0Z" />
+              <g class="contours">
+                <path
+                  d="M226 236C222 196 280 178 318 192C356 206 366 248 336 268C304 290 230 280 226 236Z" />
+                <path
+                  d="M248 236C248 212 284 204 306 212C330 222 334 246 314 256C292 266 250 258 248 236Z" />
+                <path
+                  d="M270 236C272 226 290 224 298 230C306 236 300 246 290 246C280 246 268 242 270 236Z" />
+                <path
+                  d="M-10 318C50 300 110 330 170 316C230 302 270 330 330 318C370 310 390 300 420 296" />
+                <path d="M-10 346C60 330 120 360 180 346C240 332 280 362 420 330" />
+                <path d="M120 600C130 540 200 520 240 530C280 540 300 520 310 600" />
+                <path d="M300 -10C306 30 350 40 380 30C396 25 410 30 420 36" />
+              </g>
+            </svg>
+            <svg class="legs" aria-hidden="true"></svg>
+            <ol class="course" aria-label="{{course.label}}">
+              <li class="stop start" aria-hidden="true" style="--i: 0">
+                <span class="mark">
+                  <svg viewBox="0 0 40 40"><path d="M20 5L36 33H4Z" /></svg>
+                </span>
+              </li>
+              <li class="stop" style="--i: 1">
+                <span class="mark" aria-hidden="true"><span class="number">1</span></span>
+                <article class="card">
+                  <span class="tag games">{{course.e1.tag}}</span>
+                  <strong>{{course.e1.title}}</strong>
+                  <span class="meta">{{course.e1.meta}}</span>
+                  <span class="going"
+                    ><i class="faces" aria-hidden="true"><b></b><b></b><b></b></i
+                    >{{course.e1.going}}</span
+                  >
+                  <span class="mine">
+                    <svg class="flag" viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="1" y="1" width="22" height="22" rx="3.5" fill="#fff" />
+                      <path
+                        d="M21.975 2.025A3.5 3.5 0 0 1 23 4.5V19.5A3.5 3.5 0 0 1 19.5 23H4.5A3.5 3.5 0 0 1 2.025 21.975Z" />
+                      <rect x="1" y="1" width="22" height="22" rx="3.5" class="edge" />
+                    </svg>
+                    {{course.going}}
+                  </span>
+                </article>
+              </li>
+              <li class="stop" style="--i: 2">
+                <span class="mark" aria-hidden="true"><span class="number">2</span></span>
+                <article class="card">
+                  <span class="tag music">{{course.e2.tag}}</span>
+                  <strong>{{course.e2.title}}</strong>
+                  <span class="meta">{{course.e2.meta}}</span>
+                  <span class="going"
+                    ><i class="faces" aria-hidden="true"><b></b><b></b></i>{{course.e2.going}}</span
+                  >
+                </article>
+              </li>
+              <li class="stop" style="--i: 3">
+                <span class="mark" aria-hidden="true"><span class="number">3</span></span>
+                <article class="card">
+                  <span class="tag sports">{{course.e3.tag}}</span>
+                  <strong>{{course.e3.title}}</strong>
+                  <span class="meta">{{course.e3.meta}}</span>
+                </article>
+              </li>
+              <li class="stop finish" aria-hidden="true" style="--i: 4">
+                <span class="mark"></span>
+              </li>
+            </ol>
           </figure>
         </div>
       </section>
@@ -105,34 +145,28 @@
         <div class="wrap">
           <h2 id="who">{{who.title}}</h2>
           <p class="section-lead">{{who.lead}}</p>
-          <div class="grid three">
-            <article class="panel">
-              <span class="icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" />
-                  <circle cx="12" cy="9.5" r="2.5" />
-                </svg>
-              </span>
+          <div class="grid three audiences">
+            <article>
+              <svg class="symbol" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" />
+                <circle cx="12" cy="9.5" r="2.5" />
+              </svg>
               <h3>{{who.everyone.title}}</h3>
               <p>{{who.everyone.body}}</p>
             </article>
-            <article class="panel">
-              <span class="icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M2 9l10-5 10 5-10 5z" />
-                  <path d="M6 11v5c3 2.5 9 2.5 12 0v-5" />
-                </svg>
-              </span>
+            <article>
+              <svg class="symbol" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2 9l10-5 10 5-10 5z" />
+                <path d="M6 11v5c3 2.5 9 2.5 12 0v-5" />
+              </svg>
               <h3>{{who.students.title}}</h3>
               <p>{{who.students.body}}</p>
             </article>
-            <article class="panel">
-              <span class="icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M4 21V4" />
-                  <path d="M4 4h12l-2 4 2 4H4" />
-                </svg>
-              </span>
+            <article>
+              <svg class="symbol" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 21V4" />
+                <path d="M4 4h12l-2 4 2 4H4" />
+              </svg>
               <h3>{{who.organizers.title}}</h3>
               <p>{{who.organizers.body}}</p>
             </article>
@@ -140,7 +174,7 @@
         </div>
       </section>
 
-      <section class="section tinted" aria-labelledby="features">
+      <section class="section mapped" aria-labelledby="features">
         <div class="wrap">
           <h2 id="features">{{features.title}}</h2>
           <div class="grid three features">
@@ -175,7 +209,6 @@
       <section class="section" aria-labelledby="organizers">
         <div class="wrap split">
           <div>
-            <p class="eyebrow">{{organizers.eyebrow}}</p>
             <h2 id="organizers">{{organizers.title}}</h2>
             <p class="section-lead">{{organizers.lead}}</p>
             <div class="actions">
@@ -195,6 +228,8 @@
 
       <section class="closing">
         <div class="wrap closing-inner">
+          <!-- The finish: the course started in the hero ends here. -->
+          <span class="finish-mark" aria-hidden="true"></span>
           <h2>{{closing.title}}</h2>
           <p>{{closing.body}}</p>
           <div class="actions center">
@@ -233,6 +268,50 @@
           } catch (e) {}
         });
       });
+
+      // The course's lines: from each mark to the next, stopping short of both (as on an
+      // orienteering map, where lines never cross into a circle). Redrawn when the map's size
+      // changes; each leg is drawn in, one after the other, unless motion is reduced.
+      (function () {
+        var map = document.querySelector('.map');
+        var legs = map && map.querySelector('.legs');
+        if (!legs || !('ResizeObserver' in window)) return;
+        var marks = map.querySelectorAll('.mark');
+        var gap = 6;
+        function draw() {
+          var box = map.getBoundingClientRect();
+          legs.setAttribute('viewBox', '0 0 ' + box.width + ' ' + box.height);
+          legs.innerHTML = '';
+          for (var i = 1; i < marks.length; i++) {
+            var a = marks[i - 1].getBoundingClientRect();
+            var b = marks[i].getBoundingClientRect();
+            var ax = a.left + a.width / 2 - box.left;
+            var ay = a.top + a.height / 2 - box.top;
+            var bx = b.left + b.width / 2 - box.left;
+            var by = b.top + b.height / 2 - box.top;
+            var length = Math.hypot(bx - ax, by - ay);
+            // Their size without the pop-in's scale (which keeps their middles where they are).
+            var from = marks[i - 1].offsetWidth / 2 + gap;
+            var to = marks[i].offsetWidth / 2 + gap;
+            if (length <= from + to) continue;
+            var ux = (bx - ax) / length;
+            var uy = (by - ay) / length;
+            var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', ax + ux * from);
+            line.setAttribute('y1', ay + uy * from);
+            line.setAttribute('x2', bx - ux * to);
+            line.setAttribute('y2', by - uy * to);
+            line.style.setProperty('--length', length - from - to);
+            line.style.setProperty('--i', i);
+            legs.appendChild(line);
+          }
+        }
+        new ResizeObserver(draw).observe(map);
+        // After the first showing, a redraw (a turned phone, a resized window) doesn't replay it.
+        setTimeout(function () {
+          legs.classList.add('settled');
+        }, 3000);
+      })();
     </script>
   </body>
 </html>

@@ -2,11 +2,14 @@ import { meSettingsPartialUpdate } from '@questing/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Platform } from 'react-native';
 
 import { AuthProvider, useAuth } from '@/auth/auth-provider';
+import { FONT_FILES, FontFamily } from '@/constants/fonts';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useTheme } from '@/hooks/use-theme';
 import { restoreAppearance } from '@/lib/appearance';
@@ -29,6 +32,8 @@ export default function RootLayout() {
   const colors = useTheme();
   const [queryClient] = useState(createQueryClient);
   const [persistOptions] = useState(createPersistOptions);
+  // On the web the server render already links the fonts; phones wait under the launch screen.
+  const [fontsLoaded, fontError] = useFonts(FONT_FILES);
 
   const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
   const navigationTheme = {
@@ -39,8 +44,19 @@ export default function RootLayout() {
       background: colors.background,
       card: colors.background,
       text: colors.text,
+      border: colors.backgroundSelected,
+    },
+    fonts: {
+      regular: { fontFamily: FontFamily.body, fontWeight: 'normal' as const },
+      medium: { fontFamily: FontFamily.bodySemiBold, fontWeight: 'normal' as const },
+      bold: { fontFamily: FontFamily.bodyBold, fontWeight: 'normal' as const },
+      heavy: { fontFamily: FontFamily.display, fontWeight: 'normal' as const },
     },
   };
+
+  if (Platform.OS !== 'web' && !fontsLoaded && !fontError) {
+    return null;
+  }
 
   return (
     <PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
@@ -65,7 +81,12 @@ function RootStack() {
 
   return (
     // Every screen with a header gets a way home; screens with their own buttons use HeaderActions.
-    <Stack screenOptions={{ headerRight: () => <HeaderActions /> }}>
+    <Stack
+      screenOptions={{
+        headerRight: () => <HeaderActions />,
+        headerTitleStyle: { fontFamily: FontFamily.display, fontSize: 19 },
+        headerShadowVisible: false,
+      }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="embed/[handle]" options={{ headerShown: false }} />
       <Stack.Screen name="events/[id]/index" options={{ title: t('event.title') }} />
@@ -89,8 +110,9 @@ function RootStack() {
         name="profiles/[handle]/calendars"
         options={{ title: t('calendarSync.title') }}
       />
-      <Stack.Screen name="sign-in" options={{ title: t('common.signIn'), presentation: 'modal' }} />
-      <Stack.Screen name="sign-up" options={{ title: t('auth.signUp'), presentation: 'modal' }} />
+      {/* Ordinary pages, not sheets sliding up from the bottom. */}
+      <Stack.Screen name="sign-in" options={{ title: t('common.signIn') }} />
+      <Stack.Screen name="sign-up" options={{ title: t('auth.signUp') }} />
       <Stack.Screen name="settings" options={{ title: t('common.settings') }} />
       <Stack.Screen name="edit-profile" options={{ title: t('profile.edit') }} />
       <Stack.Screen name="follow-requests" options={{ title: t('followRequests.title') }} />
@@ -109,10 +131,7 @@ function RootStack() {
       <Stack.Screen name="organizations/new" options={{ title: t('organizations.create') }} />
       {/* Development only: the screen redirects home in production builds. */}
       <Stack.Screen name="theme-lab" options={{ title: 'Theme lab' }} />
-      <Stack.Screen
-        name="report"
-        options={{ title: t('moderation.report'), presentation: 'modal' }}
-      />
+      <Stack.Screen name="report" options={{ title: t('moderation.report') }} />
     </Stack>
   );
 }

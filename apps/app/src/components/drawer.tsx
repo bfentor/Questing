@@ -13,6 +13,7 @@ import { useReducedMotion } from '@/hooks/use-reduced-motion';
 import { useTheme } from '@/hooks/use-theme';
 import { TABS } from '@/navigation/tabs';
 
+import { PressableScale } from './pressable-scale';
 import { Avatar } from './avatar';
 import { Button } from './button';
 import { Logo } from './logo';
@@ -129,10 +130,11 @@ function Drawer({ visible, onClose }: { visible: boolean; onClose: () => void })
             ]}>
             <ScrollView contentContainerStyle={styles.content}>
               {me ? (
-                <Pressable
+                <PressableScale
+                  squish="card"
                   role="link"
                   onPress={() => go('/profile')}
-                  style={({ pressed }) => [styles.me, pressed && styles.pressed]}>
+                  style={[styles.me]}>
                   <Avatar name={me.display_name} image={me.avatar} size={52} />
                   <View>
                     <ThemedText type="heading">{me.display_name}</ThemedText>
@@ -140,7 +142,7 @@ function Drawer({ visible, onClose }: { visible: boolean; onClose: () => void })
                       @{me.handle}
                     </ThemedText>
                   </View>
-                </Pressable>
+                </PressableScale>
               ) : (
                 <View style={[styles.me, styles.brand]}>
                   <Logo size={32} />

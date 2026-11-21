@@ -1,6 +1,6 @@
 import type { Event } from '@questing/api';
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type ComponentRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, StyleSheet, View } from 'react-native';
 
@@ -11,7 +11,7 @@ import { WEB_URL } from '@/lib/config';
 import { saveTextFile } from '@/lib/save-file';
 import { shareLink } from '@/lib/share';
 
-import { ActionMenu } from './action-menu';
+import { ActionMenu, type MenuAnchor } from './action-menu';
 import { Button } from './button';
 import { ThemedText } from './themed-text';
 
@@ -27,6 +27,9 @@ export function EventActions({ event }: { event: Event }) {
   const { t } = useTranslation();
   const { status } = useAuth();
   const [calendarOpen, setCalendarOpen] = useState(false);
+  // The calendar choices drop down from their button.
+  const [anchor, setAnchor] = useState<MenuAnchor | null>(null);
+  const calendarButton = useRef<ComponentRef<typeof View>>(null);
   const [copied, setCopied] = useState(false);
   const url = eventUrl(event);
 
@@ -36,6 +39,14 @@ export function EventActions({ event }: { event: Event }) {
     return () => clearTimeout(timer);
   }, [copied]);
 
+  const openCalendar = () => {
+    if (!calendarButton.current) return setCalendarOpen(true);
+    calendarButton.current.measureInWindow((x, y, width, height) => {
+      setAnchor({ x, y, width, height });
+      setCalendarOpen(true);
+    });
+  };
+
   const share = async () => {
     if ((await shareLink(event.title, url)) === 'copied') setCopied(true);
   };
@@ -43,11 +54,11 @@ export function EventActions({ event }: { event: Event }) {
   return (
     <View style={styles.column}>
       <View style={styles.row}>
-        <View style={styles.button}>
+        <View ref={calendarButton} collapsable={false} style={styles.button}>
           <Button
             title={t('eventActions.addToCalendar')}
             variant="secondary"
-            onPress={() => setCalendarOpen(true)}
+            onPress={openCalendar}
           />
         </View>
         <View style={styles.button}>
@@ -69,7 +80,7 @@ export function EventActions({ event }: { event: Event }) {
       <ActionMenu
         visible={calendarOpen}
         onClose={() => setCalendarOpen(false)}
-        title={t('eventActions.addToCalendar')}
+        anchor={anchor}
         actions={[
           {
             label: t('eventActions.calendarFile'),

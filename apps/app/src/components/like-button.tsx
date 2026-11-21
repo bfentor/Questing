@@ -2,14 +2,22 @@ import { postsLikeDestroy, postsLikeUpdate, type Post } from '@questing/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+} from 'react-native-reanimated';
 import { SymbolView } from 'expo-symbols';
 
 import { useAuth } from '@/auth/auth-provider';
 import { Spacing } from '@/constants/theme';
+import { useReducedMotion } from '@/hooks/use-reduced-motion';
 import { useTheme } from '@/hooks/use-theme';
 import { updateCachedPost } from '@/lib/post-cache';
 
+import { PressableScale } from './pressable-scale';
 import { ThemedText } from './themed-text';
 
 /** Heart toggle with the like count; every copy of the post shows the change straight away. */
@@ -38,30 +46,53 @@ export function LikeButton({ post }: { post: Post }) {
 
   const liked = post.is_liked;
   const count = post.like_count;
+  const reducedMotion = useReducedMotion();
+  // Liking makes the heart jump: up past its size and back, with a little wobble.
+  const pop = useSharedValue(1);
+  const heart = useAnimatedStyle(() => ({ transform: [{ scale: pop.get() }] }));
+  const press = () => {
+    if (status !== 'signed-in') {
+      router.push('/sign-in');
+      return;
+    }
+    if (!liked && !reducedMotion) {
+      pop.set(
+        withSequence(
+          withSpring(1.45, { damping: 8, stiffness: 600 }),
+          withSpring(1, { damping: 6, stiffness: 300 }),
+        ),
+      );
+    }
+    toggle.mutate(!liked);
+  };
 
   return (
-    <Pressable
+    <PressableScale
       role="button"
       aria-pressed={liked}
       accessibilityLabel={liked ? t('posts.unlike') : t('posts.like')}
       hitSlop={8}
-      onPress={() => (status === 'signed-in' ? toggle.mutate(!liked) : router.push('/sign-in'))}
-      style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
-      <SymbolView
-        name={
-          liked
-            ? { ios: 'heart.fill', android: 'favorite', web: 'favorite' }
-            : { ios: 'heart', android: 'favorite_border', web: 'favorite_border' }
-        }
-        size={20}
-        tintColor={liked ? theme.danger : theme.textSecondary}
-      />
+      squish="icon"
+      feedback="tick"
+      onPress={press}
+      style={styles.button}>
+      <Animated.View style={heart}>
+        <SymbolView
+          name={
+            liked
+              ? { ios: 'heart.fill', android: 'favorite', web: 'favorite' }
+              : { ios: 'heart', android: 'favorite_border', web: 'favorite_border' }
+          }
+          size={22}
+          tintColor={liked ? theme.tint : theme.textSecondary}
+        />
+      </Animated.View>
       {count > 0 ? (
         <ThemedText type="small" themeColor="textSecondary">
           {count}
         </ThemedText>
       ) : null}
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -71,8 +102,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.one,
     alignSelf: 'flex-start',
-  },
-  pressed: {
-    opacity: 0.6,
   },
 });

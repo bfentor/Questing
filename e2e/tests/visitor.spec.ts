@@ -69,16 +69,16 @@ test('the toolbar colour follows the appearance chosen in Settings', async ({ pa
   // An installed iPhone app colours its status bar with theme-color.
   const themeColor = page.locator('meta[name="theme-color"]');
   await page.goto('/settings');
-  await expect(themeColor).toHaveAttribute('content', '#f8fafc');
+  await expect(themeColor).toHaveAttribute('content', '#f4f6ee');
 
   await page.getByText('Dark', { exact: true }).click();
-  await expect(themeColor).toHaveAttribute('content', '#0b1020');
+  await expect(themeColor).toHaveAttribute('content', '#191527');
   // Already dark before the app starts, on the next visit.
   await page.reload();
-  await expect(themeColor).toHaveAttribute('content', '#0b1020');
+  await expect(themeColor).toHaveAttribute('content', '#191527');
 
   await page.getByText('Light', { exact: true }).click();
-  await expect(themeColor).toHaveAttribute('content', '#f8fafc');
+  await expect(themeColor).toHaveAttribute('content', '#f4f6ee');
 });
 
 test('event pages show where the event is on a map', async ({ page }) => {

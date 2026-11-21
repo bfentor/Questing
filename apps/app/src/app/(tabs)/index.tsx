@@ -219,7 +219,8 @@ function EventGrid({
         <View key={row[0].id} style={styles.row}>
           {row.map((event) => (
             <View key={event.id} style={styles.cell}>
-              <EventCard event={event} fill />
+              {/* Side by side they're narrow, so their pictures go on top. */}
+              <EventCard event={event} fill={columns > 1} />
             </View>
           ))}
           {/* Keeps a lone last card as wide as the others. */}

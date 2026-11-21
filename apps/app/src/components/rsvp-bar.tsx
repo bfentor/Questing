@@ -9,13 +9,17 @@ import {
 } from '@questing/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
 import { Spacing } from '@/constants/theme';
+import { haptic } from '@/lib/haptics';
 
 import { Button } from './button';
+import { ControlFlag } from './course-marks';
+import { Punch } from './punch';
 import { ThemedText } from './themed-text';
 
 type Wants = 'going' | 'interested' | null;
@@ -43,6 +47,8 @@ export function RsvpBar({ event }: { event: Event }) {
   const queryKey = eventsRetrieveQueryKey({ path: { id: event.id } });
   const { attendance } = event;
   const mine = attendance.mine;
+  // Counts the times Going was chosen here, so each one plays the punch again.
+  const [punches, setPunches] = useState(0);
 
   const setAttendance = (summary: AttendanceSummary) =>
     queryClient.setQueryData<Event>(queryKey, (old) => old && { ...old, attendance: summary });
@@ -75,7 +81,12 @@ export function RsvpBar({ event }: { event: Event }) {
       return;
     }
     const current = mine === 'waitlisted' ? 'going' : mine;
-    update.mutate(current === wants ? null : wants);
+    const next = current === wants ? null : wants;
+    if (next === 'going') {
+      haptic('success');
+      setPunches((count) => count + 1);
+    }
+    update.mutate(next);
   };
 
   const goingSelected = mine === 'going' || mine === 'waitlisted';
@@ -86,9 +97,17 @@ export function RsvpBar({ event }: { event: Event }) {
         <View style={styles.button}>
           <Button
             title={mine === 'waitlisted' ? t('rsvp.waitlisted') : t('rsvp.going')}
-            variant={goingSelected ? 'primary' : 'secondary'}
+            variant={mine === 'going' ? 'flag' : goingSelected ? 'primary' : 'secondary'}
             onPress={() => choose('going')}
           />
+          {/* Going is a punched checkpoint: the flag stays on the button's corner. */}
+          {mine === 'going' ? (
+            punches ? (
+              <Punch key={punches} />
+            ) : (
+              <ControlFlag size={24} style={styles.flag} />
+            )
+          ) : null}
         </View>
         <View style={styles.button}>
           <Button
@@ -131,5 +150,11 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
+  },
+  flag: {
+    position: 'absolute',
+    top: -8,
+    left: -6,
+    transform: [{ rotate: '-10deg' }],
   },
 });

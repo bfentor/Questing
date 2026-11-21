@@ -4,6 +4,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
+import { PressableScale } from '@/components/pressable-scale';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
@@ -48,11 +49,11 @@ export default function EmbedScreen() {
         </ThemedText>
       ) : null}
       {shown.map((event) => (
-        <Pressable
+        <PressableScale
+          squish="card"
           key={event.id}
           role="link"
-          onPress={() => open(`/events/${event.id}`)}
-          style={({ pressed }) => pressed && styles.pressed}>
+          onPress={() => open(`/events/${event.id}`)}>
           <ThemedView type="backgroundElement" style={[styles.event, shape.box]}>
             <ThemedText type="small" themeColor="tint">
               {format.eventTime(event.starts_at, event.ends_at)}
@@ -64,7 +65,7 @@ export default function EmbedScreen() {
               </ThemedText>
             ) : null}
           </ThemedView>
-        </Pressable>
+        </PressableScale>
       ))}
       <View style={styles.footer}>
         <Pressable role="link" onPress={() => open(`/profiles/${handle}`)}>
@@ -85,9 +86,6 @@ const styles = StyleSheet.create({
   event: {
     gap: 2,
     padding: Spacing.three,
-  },
-  pressed: {
-    opacity: 0.7,
   },
   footer: {
     alignItems: 'flex-end',

@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
+import { PressableScale } from '@/components/pressable-scale';
 import { AccountSection } from '@/components/account-section';
 import { BuildInfo } from '@/components/build-info';
 import { Button } from '@/components/button';
@@ -347,7 +348,8 @@ function LanguagePicker() {
         {options.map((option) => {
           const selected = choice !== undefined && option.code === choice;
           return (
-            <Pressable
+            <PressableScale
+              squish="card"
               key={option.code ?? 'automatic'}
               role="radio"
               aria-checked={selected}
@@ -355,10 +357,10 @@ function LanguagePicker() {
                 setChoice(option.code);
                 chooseLanguage(option.code);
               }}
-              style={({ pressed }) => [styles.option, pressed && styles.pressed]}>
+              style={[styles.option]}>
               <ThemedText style={selected && { color: theme.tint }}>{option.name}</ThemedText>
               {selected ? <ThemedText style={{ color: theme.tint }}>✓</ThemedText> : null}
-            </Pressable>
+            </PressableScale>
           );
         })}
       </ThemedView>
@@ -384,15 +386,16 @@ function AppearancePicker() {
         {options.map((option) => {
           const selected = option.value === appearance;
           return (
-            <Pressable
+            <PressableScale
+              squish="card"
               key={option.value}
               role="radio"
               aria-checked={selected}
               onPress={() => setAppearance(option.value)}
-              style={({ pressed }) => [styles.option, pressed && styles.pressed]}>
+              style={[styles.option]}>
               <ThemedText style={selected && { color: theme.tint }}>{option.name}</ThemedText>
               {selected ? <ThemedText style={{ color: theme.tint }}>✓</ThemedText> : null}
-            </Pressable>
+            </PressableScale>
           );
         })}
       </ThemedView>
@@ -412,9 +415,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.three,
-  },
-  pressed: {
-    opacity: 0.6,
   },
   switchRow: {
     flexDirection: 'row',

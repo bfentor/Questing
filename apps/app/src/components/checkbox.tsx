@@ -1,10 +1,14 @@
+import { SymbolView } from 'expo-symbols';
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import Animated, { ZoomIn } from 'react-native-reanimated';
 
 import { Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { useReducedMotion } from '@/hooks/use-reduced-motion';
 import { useShape } from '@/hooks/use-shape';
+import { useTheme } from '@/hooks/use-theme';
 
+import { PressableScale } from './pressable-scale';
 import { ThemedText } from './themed-text';
 
 type CheckboxProps = {
@@ -15,18 +19,22 @@ type CheckboxProps = {
   accessibilityLabel?: string;
 };
 
+/** A box whose tick springs in when it's checked. */
 export function Checkbox({ checked, onChange, label, accessibilityLabel }: CheckboxProps) {
   const shape = useShape();
   const theme = useTheme();
+  const reducedMotion = useReducedMotion();
   // A plain-text label names the checkbox and toggles it when tapped.
   const text = typeof label === 'string' ? label : undefined;
   return (
     <View style={styles.row}>
-      <Pressable
+      <PressableScale
         role="checkbox"
         aria-checked={checked}
         accessibilityLabel={accessibilityLabel ?? text}
         hitSlop={8}
+        squish="icon"
+        feedback="tick"
         onPress={() => onChange(!checked)}
         style={[
           styles.box,
@@ -37,9 +45,16 @@ export function Checkbox({ checked, onChange, label, accessibilityLabel }: Check
           },
         ]}>
         {checked ? (
-          <ThemedText style={{ color: theme.onTint, lineHeight: 18 }}>✓</ThemedText>
+          <Animated.View entering={reducedMotion ? undefined : ZoomIn.springify().damping(12)}>
+            <SymbolView
+              name={{ ios: 'checkmark', android: 'check', web: 'check' }}
+              size={18}
+              weight="bold"
+              tintColor={theme.onTint}
+            />
+          </Animated.View>
         ) : null}
-      </Pressable>
+      </PressableScale>
       <View style={styles.label}>
         {text ? <ThemedText onPress={() => onChange(!checked)}>{text}</ThemedText> : label}
       </View>
@@ -54,8 +69,8 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   box: {
-    width: 22,
-    height: 22,
+    width: 24,
+    height: 24,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,

@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { useAuth } from '@/auth/auth-provider';
+import { FontFamily } from '@/constants/fonts';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useShape } from '@/hooks/use-shape';
@@ -205,6 +206,7 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   input: {
+    fontFamily: FontFamily.body,
     minHeight: 72,
     padding: Spacing.three,
     fontSize: 16,

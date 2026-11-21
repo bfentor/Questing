@@ -2,8 +2,9 @@ import { Link } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
+import { PressableScale } from './pressable-scale';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -17,17 +18,18 @@ export function HomeButton() {
 
   return (
     <Link href="/" dismissTo asChild>
-      <Pressable
+      <PressableScale
+        squish="card"
         role="link"
         accessibilityLabel={t('common.home')}
         hitSlop={8}
-        style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
+        style={[styles.button]}>
         <SymbolView
           name={{ ios: 'house', android: 'home', web: 'home' }}
           size={20}
           tintColor={theme.textSecondary}
         />
-      </Pressable>
+      </PressableScale>
     </Link>
   );
 }
@@ -59,8 +61,5 @@ const styles = StyleSheet.create({
   button: {
     padding: 4,
     borderRadius: 999,
-  },
-  pressed: {
-    opacity: 0.6,
   },
 });

@@ -114,6 +114,11 @@ for (const [language, path] of Object.entries(LANGUAGES)) {
 
 writeFileSync(join(DIST, 'style.css'), style);
 copyFileSync(join(APP, 'assets', 'logo', 'logo.svg'), join(DIST, 'logo.svg'));
+// The app's typefaces (Figtree and Anybody), served from here rather than a font service.
+mkdirSync(join(DIST, 'fonts'));
+for (const font of readdirSync(join(SRC, 'fonts'))) {
+  copyFileSync(join(SRC, 'fonts', font), join(DIST, 'fonts', font));
+}
 mkdirSync(join(DIST, 'icons'));
 for (const icon of readdirSync(join(APP, 'public', 'icons'))) {
   copyFileSync(join(APP, 'public', 'icons', icon), join(DIST, 'icons', icon));

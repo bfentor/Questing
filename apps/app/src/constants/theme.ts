@@ -9,24 +9,28 @@ import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
-    text: '#0f172a',
-    background: '#f8fafc',
-    backgroundElement: '#eef2f7',
-    backgroundSelected: '#dbe3ee',
-    textSecondary: '#526079',
-    tint: '#4f46e5',
+    text: '#221c35',
+    background: '#f4f6ee',
+    backgroundElement: '#ffffff',
+    backgroundSelected: '#e3e7d9',
+    textSecondary: '#5e5873',
+    tint: '#b0168f',
     onTint: '#ffffff',
-    danger: '#dc2626',
+    danger: '#c8283b',
+    flag: '#ff7a1f',
+    onFlag: '#221c35',
   },
   dark: {
-    text: '#e2e8f0',
-    background: '#0b1020',
-    backgroundElement: '#151b2e',
-    backgroundSelected: '#2a3350',
-    textSecondary: '#94a3b8',
-    tint: '#818cf8',
-    onTint: '#0b1020',
-    danger: '#f87171',
+    text: '#f3eeff',
+    background: '#191527',
+    backgroundElement: '#241f37',
+    backgroundSelected: '#3a3352',
+    textSecondary: '#b3aacb',
+    tint: '#ff7adf',
+    onTint: '#2a0a24',
+    danger: '#ff7a85',
+    flag: '#ff9a4d',
+    onFlag: '#191527',
   },
 } as const;
 
@@ -38,19 +42,19 @@ export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
  */
 export const Shape = {
   /** Cards, panels and pictures (dialogs are 1.5×, small pictures ½×). */
-  boxRadius: 16,
+  boxRadius: 22,
   /** Buttons and segmented controls. */
-  buttonRadius: 8,
+  buttonRadius: 999,
   /** Text inputs and date fields. */
-  fieldRadius: 8,
+  fieldRadius: 14,
   /** Chips, pills and progress bars (checkboxes stop at 6). 999 is fully round. */
   selectorRadius: 999,
   /** Outline width around cards, dialogs and inputs; 0 for none. */
-  border: 3,
+  border: 0,
   /** Shadow under cards, dialogs and filled buttons: 0 flat, 1 subtle, 2 raised. */
-  depth: 1,
+  depth: 0,
   /** Height of buttons and single-line inputs; 44 is the smallest comfortable touch target. */
-  controlHeight: 56,
+  controlHeight: 52,
 } as const;
 
 export type ShapeToken = keyof typeof Shape;
