@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/bfentor/Questing/compare/v0.3.0...v0.4.0) (2026-11-21)
+
+
+### Features
+
+* **backend:** send email through Resend's SMTP server ([aa518d3](https://github.com/bfentor/Questing/commit/aa518d3274c00f65c1e10e9e47db2b774ab22753))
+
 ## [0.3.0](https://github.com/bfentor/Questing/compare/v0.2.0...v0.3.0) (2026-11-21)
 
 
