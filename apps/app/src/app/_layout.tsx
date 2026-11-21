@@ -17,6 +17,7 @@ import { createPersistOptions, createQueryClient } from '@/lib/query-cache';
 import { restoreThemeLab } from '@/lib/theme-lab';
 import { applyPreferredLanguage, type Language } from '@/i18n';
 import { HeaderActions } from '@/components/home-button';
+import { PageTitle } from '@/components/page-title';
 import { OnboardingGate } from '@/components/onboarding-gate';
 import { TermsGate } from '@/components/terms-gate';
 import { ThemeReady } from '@/components/theme-ready';
@@ -86,7 +87,15 @@ function RootStack() {
         headerRight: () => <HeaderActions />,
         headerTitleStyle: { fontFamily: FontFamily.display, fontSize: 19 },
         headerShadowVisible: false,
-      }}>
+      }}
+      // Each page's title is the browser tab's too. The tabs (no title here) set their own, and
+      // pages titled '' set theirs once they've loaded what they're about.
+      screenLayout={({ children, options }) => (
+        <>
+          {options.title ? <PageTitle title={options.title} /> : null}
+          {children}
+        </>
+      )}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="embed/[handle]" options={{ headerShown: false }} />
       <Stack.Screen name="events/[id]/index" options={{ title: t('event.title') }} />

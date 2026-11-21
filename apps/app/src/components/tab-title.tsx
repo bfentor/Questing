@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Spacing } from '@/constants/theme';
 
 import { DrawerButton } from './drawer-button';
+import { PageTitle } from './page-title';
 import { ThemedText } from './themed-text';
 
 /**
@@ -12,10 +13,22 @@ import { ThemedText } from './themed-text';
  */
 export const LABELLED_ACTIONS_MIN_WIDTH = 480;
 
-/** A tab's title, with the drawer button before it and the tab's own buttons after. */
-export function TabTitle({ title, children }: { title: string; children?: ReactNode }) {
+/**
+ * A tab's title, with the drawer button before it and the tab's own buttons after. It's the
+ * browser tab's title too, unless `pageTitle` says otherwise (null: just "Questing").
+ */
+export function TabTitle({
+  title,
+  pageTitle,
+  children,
+}: {
+  title: string;
+  pageTitle?: string | null;
+  children?: ReactNode;
+}) {
   return (
     <View style={styles.row}>
+      <PageTitle title={pageTitle === undefined ? title : pageTitle} />
       <DrawerButton />
       <ThemedText type="subtitle" style={styles.title}>
         {title}

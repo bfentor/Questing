@@ -52,7 +52,7 @@ export default function HomeScreen() {
 
   return (
     <Screen>
-      <TabTitle title={t('tabs.home')} />
+      <TabTitle title={t('tabs.home')} pageTitle={null} />
       {status === 'loading' ? (
         <ActivityIndicator />
       ) : (
@@ -84,7 +84,7 @@ function SignedInHome() {
       query={feed}
       header={
         <View style={styles.header}>
-          <TabTitle title={t('tabs.home')}>
+          <TabTitle title={t('tabs.home')} pageTitle={null}>
             <NewEventButton compact={compact} />
             <NewPostButton compact={compact} />
           </TabTitle>
