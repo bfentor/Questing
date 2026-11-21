@@ -69,6 +69,12 @@ export default function Root({ children }: PropsWithChildren) {
         <style>{'html[data-theme-pending] #root { visibility: hidden; }'}</style>
         <ScrollViewStyleReset />
         {headNodes}
+        {/*
+          Until the app sets the page's own title (components/page-title.web.tsx), and for link
+          previews of pages without one. After headNodes, since a browser takes the first
+          <title>: an event page's own (lib/metadata.ts) comes before it.
+        */}
+        <title>Questing</title>
       </head>
       <body {...bodyAttributes}>
         {children}
