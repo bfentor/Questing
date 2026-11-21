@@ -16,7 +16,11 @@ export function ControlFlag({ size, style }: { size: number; style?: StyleProp<V
     <View style={style} accessible={false} aria-hidden>
       <Svg width={size} height={size} viewBox="0 0 24 24">
         <Rect x={1} y={1} width={22} height={22} rx={3.5} fill="#ffffff" />
-        <Path d="M23 1 L23 19.5 A3.5 3.5 0 0 1 19.5 23 L1 23 Z" fill={theme.flag} />
+        {/* The orange half follows the square's rounded corners, so none of it shows past them. */}
+        <Path
+          d="M21.975 2.025A3.5 3.5 0 0 1 23 4.5V19.5A3.5 3.5 0 0 1 19.5 23H4.5A3.5 3.5 0 0 1 2.025 21.975Z"
+          fill={theme.flag}
+        />
         <Rect
           x={1}
           y={1}
