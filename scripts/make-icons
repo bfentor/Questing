@@ -4,7 +4,7 @@
 The logo is a map pin turned so that its point is the tail of a Q: Questing, and somewhere
 to go. It's drawn on a 32-unit grid where the pin's round edges and its straight sides fall
 on whole pixels at 32 pixels (and half pixels at 16), so the favicons stay sharp. The hole
-is cut out, so whatever is behind the pin (the indigo, or Android's background) shows
+is cut out, so whatever is behind the pin (the magenta, or Android's background) shows
 through. Change the shapes and colours here, then run this again; it writes
 apps/app/assets/logo/logo.svg too. Needs rsvg-convert (librsvg) and ImageMagick.
 """
@@ -23,12 +23,13 @@ WEB = APP / "public" / "icons"
 MANIFEST = APP / "public" / "manifest.webmanifest"
 VERSION_FILE = APP / "src" / "constants" / "icon-version.ts"
 
-# The app's indigo (constants/theme.ts), as a gentle top-to-bottom gradient.
-TOP = "#6366f1"
-BOTTOM = "#4338ca"
+# The app's accent (constants/theme.ts tint), the magenta orienteering maps draw courses in,
+# as a gentle top-to-bottom gradient.
+TOP = "#c42aa3"
+BOTTOM = "#9a0f7e"
 # The page colours, behind the splash screen.
-LIGHT_PAGE = "#f8fafc"
-DARK_PAGE = "#0b1020"
+LIGHT_PAGE = "#f4f6ee"
+DARK_PAGE = "#191527"
 # The rounded square's corners, in grid units: soft, but still a square.
 CORNER = 7
 
@@ -36,19 +37,19 @@ CORNER = 7
 def svg(*, background=True, corner=CORNER, scale=1.0, colour="#ffffff"):
     """The logo on a 32 × 32 grid.
 
-    background: the indigo square (False for the mark alone, e.g. Android's foreground).
+    background: the magenta square (False for the mark alone, e.g. Android's foreground).
     corner: its corner radius; 0 for systems that round the corners themselves.
     scale: the mark's size around the middle; smaller where a system crops the icon.
     """
     square = (
-        f'<rect width="32" height="32" rx="{corner}" fill="url(#indigo)"/>' if background else ""
+        f'<rect width="32" height="32" rx="{corner}" fill="url(#accent)"/>' if background else ""
     )
     # The pin: a circle of radius 9 around (15, 15) whose bottom-right quarter is a square
     # corner (softened a little), with a hole of radius 4. The mark spans 6 to 24, a point
     # left of and above the middle, which the heavier corner makes up for.
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <defs>
-    <linearGradient id="indigo" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="{TOP}"/>
       <stop offset="1" stop-color="{BOTTOM}"/>
     </linearGradient>

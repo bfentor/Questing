@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <defs>
-    <linearGradient id="indigo" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#6366f1"/>
-      <stop offset="1" stop-color="#4338ca"/>
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c42aa3"/>
+      <stop offset="1" stop-color="#9a0f7e"/>
     </linearGradient>
   </defs>
-  <rect width="32" height="32" rx="7" fill="url(#indigo)"/>
+  <rect width="32" height="32" rx="7" fill="url(#accent)"/>
   <g transform="translate(16 16) scale(1.0) translate(-16 -16)">
     <path d="M15 6A9 9 0 1 0 15 24H22A2 2 0 0 0 24 22V15A9 9 0 0 0 15 6ZM15 11A4 4 0 1 1 15 19A4 4 0 0 1 15 11Z"
       fill="#ffffff" fill-rule="evenodd"/>
