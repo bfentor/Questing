@@ -195,12 +195,25 @@ HEADLESS_FRONTEND_URLS = {
     "account_signup": f"{FRONTEND_URL}/sign-up",
 }
 
+# Email goes through Resend's SMTP server, whose password is the API key.
+# Without a key (local development) emails are printed to the console.
+RESEND_API_KEY = env("RESEND_API_KEY", default="")
 MAILERS = {
-    "default": {
-        # Prints emails to the console by default. Set MAILER_BACKEND (and the
-        # provider's OPTIONS here) once a transactional email service is chosen.
-        "BACKEND": env("MAILER_BACKEND", default="django.core.mail.backends.console.EmailBackend"),
-    },
+    "default": (
+        {
+            "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+            "OPTIONS": {
+                "host": "smtp.resend.com",
+                "port": 587,
+                "username": "resend",
+                "password": RESEND_API_KEY,
+                "use_tls": True,
+                "timeout": 10,
+            },
+        }
+        if RESEND_API_KEY
+        else {"BACKEND": "django.core.mail.backends.console.EmailBackend"}
+    ),
 }
 # Address search for the event form (events/geocoding.py).
 GEOCODER_URL = env("GEOCODER_URL", default="https://nominatim.openstreetmap.org/search")
@@ -211,6 +224,8 @@ GEOCODER_COUNTRY_CODES = env("GEOCODER_COUNTRY_CODES", default="fi")
 EXPO_ACCESS_TOKEN = env("EXPO_ACCESS_TOKEN", default="")
 
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Questing <noreply@localhost>")
+# Django's own emails (e.g. errors to ADMINS) come from the same address
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 
 # API
