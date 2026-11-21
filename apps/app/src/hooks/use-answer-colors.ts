@@ -1,19 +1,17 @@
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useTheme } from '@/hooks/use-theme';
 
 export type Answer = 'going' | 'interested' | 'waitlisted';
 
 /**
- * One colour per RSVP, the same on event cards and the calendar: the accent for going,
- * amber for interested, grey for the waitlist. Amber is darker on light backgrounds, so
- * small text in it stays readable.
+ * One colour per RSVP, the same on event cards and the calendar: the checkpoint flag's orange
+ * for going (filled, with `onFlag` text on it), the accent for interested, grey for the
+ * waitlist.
  */
 export function useAnswerColors(): Record<Answer, string> {
   const theme = useTheme();
-  const dark = useColorScheme() === 'dark';
   return {
-    going: theme.tint,
-    interested: dark ? '#fbbf24' : '#b45309',
+    going: theme.flag,
+    interested: theme.tint,
     waitlisted: theme.textSecondary,
   };
 }

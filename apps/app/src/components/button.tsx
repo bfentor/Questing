@@ -11,8 +11,11 @@ import { ThemedText } from './themed-text';
 type ButtonProps = {
   title: string;
   onPress: () => void;
-  /** `outline` is the accent colour as a border and label, beside a filled primary Button. */
-  variant?: 'primary' | 'secondary' | 'danger' | 'outline';
+  /**
+   * `outline` is the accent colour as a border and label, beside a filled primary Button.
+   * `flag` is the checkpoint flag's orange, for a choice that's been made, e.g. Going.
+   */
+  variant?: 'primary' | 'secondary' | 'danger' | 'outline' | 'flag';
   /** `small` is a compact pill, e.g. Follow or Edit profile beside a profile picture. */
   size?: 'regular' | 'small';
   disabled?: boolean;
@@ -38,12 +41,14 @@ export function Button({
     secondary: theme.backgroundSelected,
     danger: theme.danger,
     outline: 'transparent',
+    flag: theme.flag,
   }[variant];
   const foreground = {
     primary: theme.onTint,
     secondary: theme.text,
     danger: theme.onTint,
     outline: theme.tint,
+    flag: theme.onFlag,
   }[variant];
   const filled = variant !== 'secondary' && variant !== 'outline';
 

@@ -248,7 +248,7 @@ function DayTitles({ events, colors }: { events: Event[]; colors: Record<Answer,
             ]}>
             <ThemedText
               numberOfLines={1}
-              style={[styles.chipText, { color: going ? theme.onTint : theme.text }]}>
+              style={[styles.chipText, { color: going ? theme.onFlag : theme.text }]}>
               {event.title}
             </ThemedText>
           </View>

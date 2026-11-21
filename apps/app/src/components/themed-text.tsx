@@ -35,9 +35,11 @@ export function ThemedText({ style, type = 'default', themeColor, ...rest }: The
   const theme = useTheme();
   const level = HEADING_LEVELS[type];
   // A style may ask for another weight (e.g. bold on a small label); each weight is its own font.
-  const weight = (StyleSheet.flatten(style) as TextStyle | undefined)?.fontWeight;
+  // A style that names its own font keeps it.
+  const flat = StyleSheet.flatten(style) as TextStyle | undefined;
+  const weight = flat?.fontWeight;
   const family =
-    type === 'code' || DISPLAY.has(type)
+    type === 'code' || DISPLAY.has(type) || flat?.fontFamily
       ? undefined
       : {
           fontFamily: bodyFamily(weight ?? (styles[type] as TextStyle).fontWeight),
