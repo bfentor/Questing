@@ -18,7 +18,7 @@ server {
         expires epoch;
         try_files $uri $uri/ @app;
     }
-    location ~ \.(css|svg|png|jpg|ico)$ {
+    location ~ \.(css|svg|png|jpg|ico|ttf)$ {
         expires 7d;
     }
 

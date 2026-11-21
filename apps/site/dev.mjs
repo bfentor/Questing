@@ -29,6 +29,7 @@ const TYPES = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.ico': 'image/x-icon',
+  '.ttf': 'font/ttf',
   '.txt': 'text/plain; charset=utf-8',
   '.xml': 'text/xml; charset=utf-8',
 };
